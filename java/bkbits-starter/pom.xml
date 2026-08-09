@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bkbits</groupId>
+        <artifactId>bkbits</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>bkbits-starter</artifactId>
+    <name>bkbits-starter</name>
+    <description>启动类所在模块</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-admin</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-dbo</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-server-jdkhttp</artifactId>
+        </dependency>
+    </dependencies>
+</project>

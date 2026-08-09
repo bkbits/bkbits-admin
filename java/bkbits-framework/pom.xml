@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bkbits</groupId>
+        <artifactId>bkbits</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>bkbits-framework</artifactId>
+    <packaging>pom</packaging>
+
+    <name>bkbits-framework</name>
+    <description>基础框架聚合，统一管理依赖，不包含业务代码</description>
+
+    <modules>
+        <module>bkbits-core</module>
+        <module>bkbits-utils</module>
+        <module>bkbits-auth</module>
+        <module>bkbits-validation</module>
+        <module>bkbits-security</module>
+        <module>bkbits-json</module>
+        <module>bkbits-cache</module>
+        <module>bkbits-logging</module>
+        <module>bkbits-orm</module>
+        <module>bkbits-datasource</module>
+        <module>bkbits-scheduling</module>
+        <module>bkbits-health</module>
+        <module>bkbits-upload</module>
+        <module>bkbits-base</module>
+    </modules>
+</project>

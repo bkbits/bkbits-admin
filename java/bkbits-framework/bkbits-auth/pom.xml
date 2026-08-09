@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bkbits</groupId>
+        <artifactId>bkbits-framework</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>bkbits-auth</artifactId>
+    <name>bkbits-auth</name>
+    <description>认证配置</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-solon-plugin</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-openapi2-knife4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 编译期为 @BindProps 生成配置元信息（solon-configuration-metadata.json） -->
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-configuration-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bkbits</groupId>
+        <artifactId>bkbits-framework</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>bkbits-upload</artifactId>
+    <name>bkbits-upload</name>
+    <description>上传配置</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-auth</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-orm</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- swagger2 接口文档注解 -->
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-docs-openapi2</artifactId>
+        </dependency>
+    </dependencies>
+</project>

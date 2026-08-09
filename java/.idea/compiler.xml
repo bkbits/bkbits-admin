@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Annotation profile for bkbits" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok-mapstruct-binding/0.2.0/lombok-mapstruct-binding-0.2.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/com/easy-query/sql-processor/3.2.14/sql-processor-3.2.14.jar" />
+          <entry name="$MAVEN_REPOSITORY$/com/easy-query/sql-core/3.2.14/sql-core-3.2.14.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/noear/solon-configuration-processor/3.10.7/solon-configuration-processor-3.10.7.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/noear/solon/3.10.7/solon-3.10.7.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/noear/eggg/1.0.12/eggg-1.0.12.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/noear/solon-expression/3.10.7/solon-expression-3.10.7.jar" />
+        </processorPath>
+        <module name="bkbits-auth" />
+        <module name="bkbits-cache" />
+        <module name="bkbits-upload" />
+        <module name="bkbits-dbo" />
+        <module name="bkbits-datasource" />
+        <module name="bkbits-validation" />
+        <module name="bkbits-json" />
+        <module name="bkbits-security" />
+        <module name="bkbits-starter" />
+        <module name="bkbits-health" />
+        <module name="bkbits-scheduling" />
+        <module name="bkbits-core" />
+        <module name="bkbits-admin" />
+        <module name="bkbits-orm" />
+        <module name="bkbits-logging" />
+        <module name="bkbits-tests" />
+        <module name="bkbits-utils" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bkbits-docs" target="21" />
+      <module name="bkbits-entities" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="bkbits" options="-parameters" />
+      <module name="bkbits-admin" options="-parameters" />
+      <module name="bkbits-auth" options="-parameters" />
+      <module name="bkbits-base" options="-parameters" />
+      <module name="bkbits-cache" options="-parameters" />
+      <module name="bkbits-core" options="-parameters" />
+      <module name="bkbits-datasource" options="-parameters" />
+      <module name="bkbits-dbo" options="-parameters" />
+      <module name="bkbits-docs" options="-parameters" />
+      <module name="bkbits-framework" options="-parameters" />
+      <module name="bkbits-health" options="-parameters" />
+      <module name="bkbits-json" options="-parameters" />
+      <module name="bkbits-logging" options="-parameters" />
+      <module name="bkbits-orm" options="-parameters" />
+      <module name="bkbits-scheduling" options="-parameters" />
+      <module name="bkbits-security" options="-parameters" />
+      <module name="bkbits-starter" options="-parameters" />
+      <module name="bkbits-tests" options="-parameters" />
+      <module name="bkbits-upload" options="-parameters" />
+      <module name="bkbits-utils" options="-parameters" />
+      <module name="bkbits-validation" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,25 @@
+# 服务配置
+server:
+  port: 8080
+
+solon:
+  app:
+    name: bkbits
+  env: dev
+
+# 数据源配置（solon.dataSources 自动构建，启用后无需代码）
+#solon.dataSources:
+#  db!:
+#    class: "com.zaxxer.hikari.HikariDataSource"
+#    jdbcUrl: jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: 123456
+
+# 缓存配置（cache.redis 配置块，由 CacheServiceSupplier 自动构建）
+#cache.redis:
+#  driverType: "redis"
+#  server: "localhost:6379"
+#  db: 0
+#  password: ""
+#  maxTotal: 200

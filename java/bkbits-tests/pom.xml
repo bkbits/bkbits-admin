@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bkbits</groupId>
+        <artifactId>bkbits</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>bkbits-tests</artifactId>
+    <name>bkbits-tests</name>
+    <description>测试模块，所有 api 测试均放在此处</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-admin</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
