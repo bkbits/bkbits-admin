@@ -25,18 +25,31 @@ public class AuthConfig {
     @Inject
     private AuthProperties authProperties;
 
+    /**
+     * 注册 Sa-Token 核心配置。
+     *
+     * <p>默认值取自 {@link AuthProperties}（{@code bkbits.auth.*}）；
+     * 业务模块实现并注册 {@link IAuthConfigProvider} 时覆盖对应配置项。</p>
+     */
     @Bean
     public SaTokenConfig getSaTokenConfigPrimary(
             @Inject(required = false) IAuthConfigProvider authConfigProvider
     ) {
         SaTokenConfig config = new SaTokenConfig();
-        config.setTokenName(authProperties.getTokenName());             // token 名称（同时也是 cookie 名称）
-        config.setTimeout(30 * 24 * 60 * 60);       // token 有效期（单位：秒），默认30天，-1代表永不过期
-        config.setActiveTimeout(30 * 60);              // token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
-        config.setIsConcurrent(true);               // 是否允许同一账号多地同时登录（为 true 时允许一起登录，为 false 时新登录挤掉旧登录）
-        config.setIsShare(false);                    // 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token，为 false 时每次登录新建一个 token）
-        config.setTokenStyle("random-32");               // token 风格
-        config.setIsLog(false);                     // 是否输出操作日志
+        // token 名称（同时也是 cookie 名称）
+        config.setTokenName(authProperties.getTokenName());
+        // token 有效期（单位：秒），默认30天，-1代表永不过期
+        config.setTimeout(authProperties.getTimeout());
+        // token 最低活跃频率（单位：秒），超过此时间未访问会被冻结，默认30分钟，-1代表不限制
+        config.setActiveTimeout(authProperties.getTti());
+        // 是否允许同一账号多地同时登录（true 允许一起登录，false 新登录挤掉旧登录）
+        config.setIsConcurrent(authProperties.isConcurrent());
+        // 多人登录同一账号时，是否共用一个 token（true 共用一个，false 每次登录新建）
+        config.setIsShare(authProperties.isShare());
+        // token 风格
+        config.setTokenStyle(authProperties.getStyle());
+        // 是否输出操作日志
+        config.setIsLog(authProperties.isLog());
 
         // 业务模块提供 authConfigProvider 时，覆盖默认配置
         if (authConfigProvider != null) {

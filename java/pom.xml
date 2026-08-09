@@ -84,6 +84,11 @@
 
     <!-- 全局依赖 -->
     <dependencies>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-openapi2-knife4j</artifactId>
+        </dependency>
+
         <!-- lombok 全局使用，provided 编译期生效 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -124,6 +129,16 @@
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-solon-plugin</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redisx</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-jackson3</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
 

@@ -19,10 +19,13 @@
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-solon-plugin</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-openapi2-knife4j</artifactId>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redisx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-jackson3</artifactId>
         </dependency>
 
         <dependency>

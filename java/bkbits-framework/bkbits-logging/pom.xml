@@ -19,5 +19,21 @@
             <groupId>org.noear</groupId>
             <artifactId>solon-logging-logback</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-orm</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-json</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
