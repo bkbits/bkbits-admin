@@ -10,7 +10,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>bkbits-logging</artifactId>
+    <artifactId>bkbits-log</artifactId>
     <name>bkbits-logging</name>
     <description>日志配置</description>
 

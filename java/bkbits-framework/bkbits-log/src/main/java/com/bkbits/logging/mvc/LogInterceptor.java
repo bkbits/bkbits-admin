@@ -2,7 +2,7 @@ package com.bkbits.logging.mvc;
 
 import com.bkbits.logging.ILogProvider;
 import com.bkbits.logging.annotations.Log;
-import com.bkbits.logging.dbo.LogRecord;
+import com.bkbits.logging.dbo.LogOperation;
 import com.bkbits.utils.AsyncUtil;
 import com.bkbits.utils.StringUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
@@ -33,37 +33,37 @@ public class LogInterceptor implements MethodInterceptor {
         if (logAnno == null) {
             logAnno = inv.getTargetAnnotation(Log.class);
         }
-        final LogRecord logRecord = new LogRecord();
+        final LogOperation logOperation = new LogOperation();
 
         try {
             Context context = Context.current();
-            logRecord.setIp(context.realIp());
-            logRecord.setUserAgent(context.userAgent());
-            logRecord.setUrl(context.url());
+            logOperation.setIp(context.realIp());
+            logOperation.setUserAgent(context.userAgent());
+            logOperation.setUrl(context.url());
         } catch (Throwable ignored) {
         }
 
-        logRecord.setName(logAnno.value());
-        logRecord.setType(StringUtil.trimToEmpty(logAnno.type()));
-        logRecord.setModule(StringUtil.isBlank(logAnno.module()) ?
+        logOperation.setName(logAnno.value());
+        logOperation.setType(StringUtil.trimToEmpty(logAnno.type()));
+        logOperation.setModule(StringUtil.isBlank(logAnno.module()) ?
                 "默认模块" : StringUtil.trimToEmpty(logAnno.module()));
-        logRecord.setMethod(inv.getTargetClz().getName() + "." + inv.method().getMethod().getName());
+        logOperation.setMethod(inv.getTargetClz().getName() + "." + inv.method().getMethod().getName());
         try {
             if (logAnno.args() && inv.args().length > 0) {
-                logRecord.setArgs(serializer.serialize(inv.args()));
+                logOperation.setArgs(serializer.serialize(inv.args()));
             }
         } catch (IOException e) {
             log.error("Log参数序列化失败", e);
         }
 
         try {
-            logRecord.setCreateBy(logProvider.getCreateBy());
+            logOperation.setCreateBy(logProvider.getCreateBy());
         } catch (Throwable e) {
             log.error("获取createBy失败", e);
         }
 
         try {
-            logRecord.setRemark(logProvider.getRemark(logAnno));
+            logOperation.setRemark(logProvider.getRemark(logAnno));
         } catch (Throwable e) {
             log.error("获取remark失败", e);
         }
@@ -72,13 +72,13 @@ public class LogInterceptor implements MethodInterceptor {
         long recordTime = System.currentTimeMillis();
         try {
             result = inv.invoke();
-            logRecord.setCostTime(Math.toIntExact(System.currentTimeMillis() - recordTime));
+            logOperation.setCostTime(Math.toIntExact(System.currentTimeMillis() - recordTime));
         } catch (Throwable throwable) {
-            logRecord.setCostTime(Math.toIntExact(System.currentTimeMillis() - recordTime));
-            logRecord.setResult(throwable.getMessage());
+            logOperation.setCostTime(Math.toIntExact(System.currentTimeMillis() - recordTime));
+            logOperation.setResult(throwable.getMessage());
 
             AsyncUtil.submit(() -> {
-                easyEntityQuery.insertable(logRecord).executeRows();
+                easyEntityQuery.insertable(logOperation).executeRows();
             });
 
             throw throwable;
@@ -86,14 +86,14 @@ public class LogInterceptor implements MethodInterceptor {
 
         try {
             if (logAnno.result() && result != null) {
-                logRecord.setResult(serializer.serialize(result));
+                logOperation.setResult(serializer.serialize(result));
             }
         } catch (IOException e) {
             log.error("Log返回值序列化失败", e);
         }
 
         AsyncUtil.submit(() -> {
-            easyEntityQuery.insertable(logRecord).executeRows();
+            easyEntityQuery.insertable(logOperation).executeRows();
         });
         return result;
     }

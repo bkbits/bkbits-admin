@@ -24,7 +24,7 @@
         <module>bkbits-security</module>
         <module>bkbits-json</module>
         <module>bkbits-cache</module>
-        <module>bkbits-logging</module>
+        <module>bkbits-log</module>
         <module>bkbits-orm</module>
         <module>bkbits-datasource</module>
         <module>bkbits-scheduling</module>

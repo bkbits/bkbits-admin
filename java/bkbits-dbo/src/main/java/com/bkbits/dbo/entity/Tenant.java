@@ -1,6 +1,7 @@
 package com.bkbits.dbo.entity;
 
 import com.bkbits.dbo.entity.proxy.TenantProxy;
+import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;

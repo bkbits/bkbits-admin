@@ -27,16 +27,16 @@ public class PageResultTest {
 
     @Test
     public void testFail() {
-        PageResult<Void> fail = PageResult.fail();
+        PageResult<Void> fail = PageResult.pageFail();
         assertFalse(fail.isOk());
         assertEquals(500, fail.getCode());
         assertEquals("操作失败", fail.getMessage());
 
-        PageResult<Void> withMsg = PageResult.fail("参数错误");
+        PageResult<Void> withMsg = PageResult.pageFail("参数错误");
         assertEquals(500, withMsg.getCode());
         assertEquals("参数错误", withMsg.getMessage());
 
-        PageResult<Void> custom = PageResult.fail(400, "非法请求");
+        PageResult<Void> custom = PageResult.pageFail(400, "非法请求");
         assertFalse(custom.isOk());
         assertEquals(400, custom.getCode());
         assertEquals("非法请求", custom.getMessage());

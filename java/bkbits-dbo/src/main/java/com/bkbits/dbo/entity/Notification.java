@@ -6,7 +6,10 @@ import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +17,7 @@ import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ApiModel("通知")
 @Data
@@ -55,4 +59,12 @@ public class Notification implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAv
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("阅读列表")
+    @Navigate(value = RelationTypeEnum.OneToMany,
+            selfProperty = Notification.Fields.id,
+            targetProperty = NotificationRead.Fields.notificationId,
+            cascade = CascadeTypeEnum.DELETE
+    )
+    private List<NotificationRead> readList;
 }

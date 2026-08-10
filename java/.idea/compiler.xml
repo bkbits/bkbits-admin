@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Annotation profile for bkbits" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -31,10 +32,10 @@
         <module name="bkbits-starter" />
         <module name="bkbits-health" />
         <module name="bkbits-scheduling" />
+        <module name="bkbits-log" />
         <module name="bkbits-core" />
         <module name="bkbits-admin" />
         <module name="bkbits-orm" />
-        <module name="bkbits-logging" />
         <module name="bkbits-tests" />
         <module name="bkbits-utils" />
       </profile>
@@ -58,7 +59,7 @@
       <module name="bkbits-framework" options="-parameters" />
       <module name="bkbits-health" options="-parameters" />
       <module name="bkbits-json" options="-parameters" />
-      <module name="bkbits-logging" options="-parameters" />
+      <module name="bkbits-log" options="-parameters" />
       <module name="bkbits-orm" options="-parameters" />
       <module name="bkbits-scheduling" options="-parameters" />
       <module name="bkbits-security" options="-parameters" />

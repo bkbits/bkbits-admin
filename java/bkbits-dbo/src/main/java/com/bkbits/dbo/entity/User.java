@@ -1,16 +1,11 @@
 package com.bkbits.dbo.entity;
 
-import com.bkbits.dbo.entity.proxy.RoleProxy;
 import com.bkbits.dbo.entity.proxy.UserProxy;
-import com.bkbits.dbo.entity.proxy.UserRoleRelProxy;
+import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.LogicDelete;
-import com.easy.query.core.annotation.Navigate;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;

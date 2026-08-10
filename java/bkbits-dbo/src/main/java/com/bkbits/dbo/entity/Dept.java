@@ -1,6 +1,7 @@
 package com.bkbits.dbo.entity;
 
 import com.bkbits.dbo.entity.proxy.DeptProxy;
+import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
@@ -34,14 +35,6 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @ApiModelProperty("所属租户id")
     private String tenantId;
 
-    @ApiModelProperty("所属租户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = Dept.Fields.tenantId,
-            targetProperty = Tenant.Fields.id
-    )
-    private Tenant tenant;
-
     @ApiModelProperty("部门名称")
     private String name;
 
@@ -67,6 +60,14 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             targetProperty = Dept.Fields.parentId
     )
     private List<Dept> children;
+    
+    @ApiModelProperty("所属租户")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Dept.Fields.tenantId,
+            targetProperty = Tenant.Fields.id
+    )
+    private Tenant tenant;
 
     @ApiModelProperty("部门用户列表")
     @Navigate(

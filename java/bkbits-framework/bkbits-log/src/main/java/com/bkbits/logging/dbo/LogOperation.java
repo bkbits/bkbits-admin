@@ -1,6 +1,6 @@
 package com.bkbits.logging.dbo;
 
-import com.bkbits.logging.dbo.proxy.LogRecordProxy;
+import com.bkbits.logging.dbo.proxy.LogOperationProxy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.annotation.Column;
@@ -14,12 +14,12 @@ import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
-@ApiModel("日志记录")
+@ApiModel("操作日志记录")
 @Data
-@Table("log")
+@Table
 @EntityProxy
 @FieldNameConstants
-public class LogRecord implements IGenId, ICreateBy, ProxyEntityAvailable<LogRecord, LogRecordProxy> {
+public class LogOperation implements IGenId, ICreateBy, ProxyEntityAvailable<LogOperation, LogOperationProxy> {
     @ApiModelProperty("日志编号")
     @Column(primaryKey = true)
     private String id;

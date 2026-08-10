@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-logging</artifactId>
+            <artifactId>bkbits-log</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

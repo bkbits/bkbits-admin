@@ -7,16 +7,13 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
-import org.noear.solon.annotation.Init;
 import org.noear.solon.annotation.Inject;
-import org.noear.solon.logging.LogOptions;
-import org.noear.solon.logging.event.Level;
 
 /**
  * 日志配置。
  */
 @Configuration
-public class LoggingConfig {
+public class LogConfig {
 
     @Bean
     public void init(@Inject ILogProvider logProvider, @Inject EasyEntityQuery easyEntityQuery) {
