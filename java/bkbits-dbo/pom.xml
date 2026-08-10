@@ -13,4 +13,11 @@
     <artifactId>bkbits-dbo</artifactId>
     <name>bkbits-dbo</name>
     <description>实体类所在模块，所有实体类、枚举常量放在此处</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-base</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
 </project>

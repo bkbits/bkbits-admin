@@ -26,17 +26,10 @@
             <artifactId>solon</artifactId>
         </dependency>
 
-        <!-- 编译期为 @BindProps 生成配置元信息（solon-configuration-metadata.json） -->
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-configuration-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-orm</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

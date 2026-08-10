@@ -115,10 +115,19 @@
             <version>${lombok-mapstruct.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- easy-query处理器 -->
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-processor</artifactId>
             <version>${easy-query.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- solon配置处理器 -->
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-configuration-processor</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -157,6 +166,7 @@
                 <artifactId>HikariCP</artifactId>
                 <version>${hikaricp.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

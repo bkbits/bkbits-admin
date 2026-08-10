@@ -39,12 +39,5 @@
             <artifactId>bkbits-cache</artifactId>
             <version>${revision}</version>
         </dependency>
-
-        <!-- 编译期为 @BindProps 生成配置元信息（solon-configuration-metadata.json） -->
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-configuration-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>
