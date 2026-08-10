@@ -60,7 +60,7 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             targetProperty = Dept.Fields.parentId
     )
     private List<Dept> children;
-    
+
     @ApiModelProperty("所属租户")
     @Navigate(
             value = RelationTypeEnum.ManyToOne,
