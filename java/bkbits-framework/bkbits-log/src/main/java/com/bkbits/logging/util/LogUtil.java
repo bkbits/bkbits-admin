@@ -3,7 +3,7 @@ package com.bkbits.logging.util;
 import com.bkbits.logging.ILogProvider;
 import com.bkbits.logging.dbo.LogLogin;
 import com.bkbits.logging.dbo.LogOperation;
-import com.bkbits.utils.AsyncUtil;
+import com.bkbits.util.AsyncUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import lombok.experimental.UtilityClass;
 import org.noear.solon.Solon;

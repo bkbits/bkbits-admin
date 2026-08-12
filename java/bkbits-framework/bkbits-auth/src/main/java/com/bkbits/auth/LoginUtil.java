@@ -56,6 +56,7 @@ public class LoginUtil {
      * 当前会话注销登录。
      */
     public void logout() {
+        checkLogin();
         StpUtil.logout();
     }
 
@@ -66,6 +67,17 @@ public class LoginUtil {
      */
     public void kickout(@NotNull String token) {
         StpUtil.kickoutByTokenValue(token);
+    }
+
+    /**
+     * 获取当前登录用户 ID，未登录抛出 {@link NotLoginException}。
+     *
+     * @return 登录用户 ID
+     * @throws SaTokenException 会话中不存在登录用户信息时抛出
+     */
+    public @NotNull String getLoginUserId() {
+        checkLogin();
+        return StpUtil.getLoginIdAsString();
     }
 
     /**

@@ -7,19 +7,20 @@ solon:
     name: bkbits
   env: dev
 
-# 数据源配置（solon.dataSources 自动构建，启用后无需代码）
-#solon.dataSources:
-#  db!:
-#    class: "com.zaxxer.hikari.HikariDataSource"
-#    jdbcUrl: jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8
-#    driverClassName: com.mysql.cj.jdbc.Driver
-#    username: root
-#    password: 123456
+# 数据源配置
+solon.dataSources:
+  main:
+    class: "com.zaxxer.hikari.HikariDataSource"
+    jdbcUrl: jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: dtzn@2022
 
 # 缓存配置（cache.redis 配置块，由 CacheServiceSupplier 自动构建）
-#cache.redis:
-#  driverType: "redis"
-#  server: "localhost:6379"
-#  db: 0
+cache.redis:
+  driverType: "redis" #驱动类型
+  server: "localhost:6379"
+  db: 0 #默认为 0，可不配置
+#  defSeconds: 30 #默认为 30，可不配置
 #  password: ""
-#  maxTotal: 200
+#  maxTotal: 200 #默认为 200，可不配

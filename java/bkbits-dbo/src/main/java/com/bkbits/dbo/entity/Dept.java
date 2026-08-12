@@ -5,10 +5,12 @@ import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
+import com.bkbits.util.CollectionUtil;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +26,7 @@ import java.util.List;
 @FieldNameConstants
 @Table
 @EntityProxy
-public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<Dept, DeptProxy> {
+public class Dept implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<Dept, String>, ProxyEntityAvailable<Dept, DeptProxy> {
     @ApiModelProperty("部门编号")
     @Column(primaryKey = true)
     private String deptId;
@@ -37,6 +39,9 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
 
     @ApiModelProperty("部门名称")
     private String name;
+
+    @ApiModelProperty("排序")
+    private Integer sort;
 
     @ApiModelProperty(value = "状态", notes = "E=启用,D=禁用")
     private String status;
@@ -73,7 +78,8 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Dept.Fields.deptId,
-            targetProperty = User.Fields.deptId
+            targetProperty = User.Fields.deptId,
+            cascade = CascadeTypeEnum.SET_NULL
     )
     private List<User> userList;
 
@@ -82,12 +88,18 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             value = RelationTypeEnum.OneToMany,
             selfProperty = Dept.Fields.deptId,
             targetProperty = Notification.Fields.targetId,
-            extraFilter = NotificationTargetFilterStrategy.class
+            extraFilter = NotificationTargetFilterStrategy.class,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Notification> notificationList;
 
     @Override
     public void setId(String id) {
         deptId = id;
+    }
+
+    @Override
+    public String getId() {
+        return deptId;
     }
 }

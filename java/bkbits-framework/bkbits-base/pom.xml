@@ -82,5 +82,10 @@
             <artifactId>bkbits-upload</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-encrypt</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>

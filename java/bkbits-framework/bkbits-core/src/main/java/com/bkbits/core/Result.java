@@ -17,26 +17,22 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** 默认成功状态码 */
-    public static final int CODE_SUCCESS = 200;
+    public static final int CODE_SUCCESS = 0;
 
     /** 默认失败状态码 */
-    public static final int CODE_FAILURE = 500;
+    public static final int CODE_FAILURE = 699;
 
     /** 是否成功 */
-    private boolean ok;
+    private boolean ok = false;
 
     /** 状态码 */
-    private int code;
+    private int code = CODE_FAILURE;
 
     /** 提示信息 */
     private String message;
 
     /** 业务数据 */
     private T data;
-
-    /** 无参构造（JSON 反序列化使用） */
-    public Result() {
-    }
 
     /**
      * 构造成功结果（无数据）。

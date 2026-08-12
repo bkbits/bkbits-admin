@@ -6,7 +6,10 @@ import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +17,7 @@ import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ApiModel("数据权限")
 @Data
@@ -22,8 +26,8 @@ import java.time.LocalDateTime;
 @EntityProxy
 public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<DataPermission, DataPermissionProxy> {
 
-    @Column(primaryKey = true)
     @ApiModelProperty("主键id")
+    @Column(primaryKey = true)
     private String id;
 
     @ApiModelProperty("关联权限id")
@@ -46,4 +50,15 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("角色列表")
+    @Navigate(
+            value = RelationTypeEnum.ManyToMany,
+            selfProperty = DataPermission.Fields.id,
+            selfMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId,
+            mappingClass = RoleDataPermissionRel.class,
+            targetProperty = Role.Fields.id,
+            targetMappingProperty = RoleDataPermissionRel.Fields.roleId
+    )
+    private List<Role> roleList;
 }

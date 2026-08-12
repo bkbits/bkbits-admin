@@ -17,6 +17,11 @@
     <dependencies>
         <dependency>
             <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-dbo</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
             <artifactId>bkbits-base</artifactId>
             <version>${revision}</version>
             <type>pom</type>

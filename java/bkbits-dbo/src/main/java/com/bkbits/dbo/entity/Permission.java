@@ -4,10 +4,12 @@ import com.bkbits.dbo.entity.proxy.PermissionProxy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
+import com.bkbits.util.CollectionUtil;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -23,7 +25,7 @@ import java.util.List;
 @FieldNameConstants
 @Table
 @EntityProxy
-public class Permission implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<Permission, PermissionProxy> {
+public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<Permission, String>, ProxyEntityAvailable<Permission, PermissionProxy> {
 
     @ApiModelProperty("主键id")
     @Column(primaryKey = true)
@@ -40,6 +42,9 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvai
 
     @ApiModelProperty("名称")
     private String name;
+
+    @ApiModelProperty("排序")
+    private Integer sort;
 
     @ApiModelProperty("组件")
     private String component;
@@ -71,7 +76,8 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvai
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Permission.Fields.id,
-            targetProperty = DataPermission.Fields.permissionId
+            targetProperty = DataPermission.Fields.permissionId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<DataPermission> dataPermissionList;
 }

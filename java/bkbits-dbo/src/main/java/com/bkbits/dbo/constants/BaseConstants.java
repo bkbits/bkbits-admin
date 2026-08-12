@@ -49,4 +49,24 @@ public interface BaseConstants {
 
     /** 租户类型：租户模板 */
     String TENANT_TYPE_TEMPLATE = "T";
+
+
+    /** 参数类型: 系统参数 */
+    String PARAM_TYPE_SYSTEM = "S";
+    /** 参数类型: 用户参数 */
+    String PARAM_TYPE_USER = "U";
+
+    /** 字典类型: 系统字典 */
+    String DICT_TYPE_SYSTEM = "S";
+    /** 字典类型: 用户字典 */
+    String DICT_TYPE_USER = "U";
+
+    /** 标签类型：SUCCESS */
+    String LABEL_TYPE_DEBUG = "S";
+    /** 标签类型：INFO */
+    String LABEL_TYPE_INFO = "I";
+    /** 标签类型：WARN */
+    String LABEL_TYPE_WARN = "W";
+    /** 标签类型：ERROR */
+    String LABEL_TYPE_ERROR = "E";
 }

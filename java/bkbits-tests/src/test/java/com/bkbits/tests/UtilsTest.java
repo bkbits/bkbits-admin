@@ -1,9 +1,9 @@
 package com.bkbits.tests;
 
-import com.bkbits.utils.AsyncUtil;
-import com.bkbits.utils.CollectionUtil;
-import com.bkbits.utils.DateUtil;
-import com.bkbits.utils.StringUtil;
+import com.bkbits.util.AsyncUtil;
+import com.bkbits.util.CollectionUtil;
+import com.bkbits.util.DateUtil;
+import com.bkbits.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

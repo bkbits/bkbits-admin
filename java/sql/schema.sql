@@ -4,8 +4,8 @@
 --
 -- 兼容性说明：
 --   1. 主键为应用层生成（雪花/Pear，long 类型），统一 bigint，无自增
---   2. 时间字段使用 timestamp，MySQL/PostgreSQL/Oracle/达梦 均支持；
---      SQL Server 需将 timestamp 替换为 datetime（其 timestamp 为 rowversion 语义）
+--   2. 时间字段使用 DATETIME，MySQL/SQL Server 通用；
+--      PostgreSQL/Oracle 请使用 TIMESTAMP
 --   3. LogLogin.succeed 使用 boolean，Oracle 需替换为 NUMBER(1)
 --   4. 枚举常量字段（sex/status/type/upload_status）使用 char(1)
 --   5. 未使用 ENGINE/CHARSET 等数据库专属子句，MySQL 默认 InnoDB/utf8mb4
@@ -19,10 +19,11 @@ CREATE TABLE tenant (
     type        char(1)      NOT NULL COMMENT '租户类型 S=系统租户,U=用户租户,T=租户模板',
     name        varchar(64)  NOT NULL COMMENT '租户名称',
     status      char(1)      NOT NULL COMMENT '状态 E=启用,D=禁用',
-    create_by   varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time timestamp    NULL COMMENT '创建时间',
-    update_by   varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time timestamp    NULL COMMENT '更新时间',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
+    delete_time DATETIME    NULL COMMENT '删除时间（逻辑删除）',
     PRIMARY KEY (id)
 );
 
@@ -36,11 +37,12 @@ CREATE TABLE dept (
     parent_id   bigint       NULL COMMENT '父级部门编号，为空表示顶级部门',
     tenant_id   bigint       NULL COMMENT '所属租户id',
     name        varchar(64)  NOT NULL COMMENT '部门名称',
+    sort        int          NULL COMMENT '排序',
     status      char(1)      NOT NULL COMMENT '状态 E=启用,D=禁用',
-    create_by   varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time timestamp    NULL COMMENT '创建时间',
-    update_by   varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time timestamp    NULL COMMENT '更新时间',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (dept_id)
 );
 
@@ -55,11 +57,12 @@ CREATE TABLE role (
     tenant_id   bigint       NULL COMMENT '所属租户id',
     code        varchar(64)  NOT NULL COMMENT '角色代码',
     name        varchar(64)  NOT NULL COMMENT '角色名',
+    sort        int          NULL COMMENT '排序',
     status      char(1)      NOT NULL COMMENT '状态 E=启用,D=禁用',
-    create_by   varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time timestamp    NULL COMMENT '创建时间',
-    update_by   varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time timestamp    NULL COMMENT '更新时间',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (id)
 );
 
@@ -75,12 +78,13 @@ CREATE TABLE permission (
     type        char(1)       NOT NULL COMMENT '权限类型 D=目录,M=菜单,B=按钮',
     permission  varchar(128)  NULL COMMENT '权限，用 . 作为分隔符',
     name        varchar(64)   NOT NULL COMMENT '名称',
+    sort        int           NULL COMMENT '排序',
     component   varchar(255)  NULL COMMENT '组件',
     status      char(1)       NOT NULL COMMENT '状态 E=启用,D=禁用',
-    create_by   varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time timestamp     NULL COMMENT '创建时间',
-    update_by   varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time timestamp     NULL COMMENT '更新时间',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME     NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME     NULL COMMENT '更新时间',
     PRIMARY KEY (id)
 );
 
@@ -92,9 +96,8 @@ CREATE INDEX idx_permission_permission ON permission (permission);
 -- ---------------------------------------------------------------------
 CREATE TABLE user (
     user_id     bigint       NOT NULL COMMENT '主键id',
-    user_name   varchar(64)  NOT NULL COMMENT '用户名',
+    user_name   varchar(32)  NOT NULL COMMENT '用户名',
     password    varchar(128) NOT NULL COMMENT '密码',
-    salt        varchar(64)  NULL COMMENT '盐值',
     email       varchar(64)  NULL COMMENT '邮箱',
     phone       varchar(20)  NULL COMMENT '手机号',
     real_name   varchar(64)  NULL COMMENT '真实姓名',
@@ -102,11 +105,11 @@ CREATE TABLE user (
     status      char(1)      NOT NULL COMMENT '状态 E=启用,D=禁用',
     tenant_id   bigint       NULL COMMENT '所属租户id',
     dept_id     bigint       NULL COMMENT '所属部门id',
-    create_by   varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time timestamp    NULL COMMENT '创建时间',
-    update_by   varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time timestamp    NULL COMMENT '更新时间',
-    delete_time timestamp    NULL COMMENT '删除时间（逻辑删除）',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
+    delete_time DATETIME    NULL COMMENT '删除时间（逻辑删除）',
     PRIMARY KEY (user_id)
 );
 
@@ -123,10 +126,10 @@ CREATE TABLE data_permission (
     permission_id bigint       NULL COMMENT '关联权限id',
     data_scope    varchar(64)  NULL COMMENT '数据域',
     status        char(1)      NOT NULL COMMENT '状态 E=启用,D=禁用',
-    create_by     varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time   timestamp    NULL COMMENT '创建时间',
-    update_by     varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time   timestamp    NULL COMMENT '更新时间',
+    create_by     varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time   DATETIME    NOT NULL COMMENT '创建时间',
+    update_by     varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time   DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (id)
 );
 
@@ -182,12 +185,12 @@ CREATE TABLE notification (
     target_id    bigint       NULL COMMENT '通知目标id，站内消息时忽略，租户通知时为租户id，部门通知为部门id，用户通知时为用户id',
     title        varchar(255) NOT NULL COMMENT '通知标题',
     content      text         NULL COMMENT '通知内容',
-    publish_time timestamp    NULL COMMENT '发布时间',
-    expired_time timestamp    NULL COMMENT '过期时间',
-    create_by    varchar(64)  NULL COMMENT '创建人（user_name）',
-    create_time  timestamp    NULL COMMENT '创建时间',
-    update_by    varchar(64)  NULL COMMENT '更新人（user_name）',
-    update_time  timestamp    NULL COMMENT '更新时间',
+    publish_time DATETIME    NULL COMMENT '发布时间',
+    expired_time DATETIME    NULL COMMENT '过期时间',
+    create_by    varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time  DATETIME    NOT NULL COMMENT '创建时间',
+    update_by    varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time  DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (id)
 );
 
@@ -201,7 +204,7 @@ CREATE TABLE notification_read (
     id              bigint    NOT NULL COMMENT '主键id',
     notification_id bigint    NOT NULL COMMENT '通知编号',
     user_id         bigint    NOT NULL COMMENT '用户编号',
-    read_time       timestamp NULL COMMENT '阅读时间',
+    read_time       DATETIME NULL COMMENT '阅读时间',
     PRIMARY KEY (id)
 );
 
@@ -224,8 +227,8 @@ CREATE TABLE log_operation (
     url         varchar(255) NULL COMMENT '访问的url',
     cost_time   int          NULL COMMENT '花费时间',
     remark      varchar(512) NULL COMMENT '备注',
-    create_by   varchar(64)  NULL COMMENT '创建者（user_name）',
-    create_time timestamp    NULL COMMENT '创建时间',
+    create_by   varchar(32)   NOT NULL COMMENT '创建者（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
     PRIMARY KEY (id)
 );
 
@@ -243,8 +246,8 @@ CREATE TABLE log_login (
     device      varchar(255) NULL COMMENT '登录设备',
     user_agent  varchar(512) NULL COMMENT 'UserAgent',
     cost_time   int          NULL COMMENT '花费时间',
-    create_by   varchar(64)  NULL COMMENT '登陆者（user_name）',
-    create_time timestamp    NULL COMMENT '登录时间',
+    create_by   varchar(32)   NOT NULL COMMENT '登陆者（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '登录时间',
     PRIMARY KEY (id)
 );
 
@@ -260,8 +263,8 @@ CREATE TABLE upload_file (
     file_size    bigint       NULL COMMENT '文件大小',
     file_name    varchar(255) NULL COMMENT '文件名称',
     hash         varchar(64)  NULL COMMENT '文件哈希',
-    create_by    varchar(64)  NULL COMMENT '创建者（user_name）',
-    create_time  timestamp    NULL COMMENT '创建时间',
+    create_by    varchar(32)   NOT NULL COMMENT '创建者（user_name）',
+    create_time  DATETIME    NOT NULL COMMENT '创建时间',
     PRIMARY KEY (id)
 );
 
@@ -278,8 +281,8 @@ CREATE TABLE upload_task (
     file_size     bigint       NULL COMMENT '文件大小',
     file_name     varchar(255) NULL COMMENT '文件名称',
     hash          varchar(64)  NULL COMMENT '文件哈希',
-    create_by     varchar(64)  NULL COMMENT '创建者（user_name）',
-    create_time   timestamp    NULL COMMENT '创建时间',
+    create_by     varchar(32)   NOT NULL COMMENT '创建者（user_name）',
+    create_time   DATETIME    NOT NULL COMMENT '创建时间',
     PRIMARY KEY (id)
 );
 
@@ -294,10 +297,67 @@ CREATE TABLE upload_task_piece (
     path          varchar(255) NULL COMMENT '保存路径',
     file_size     bigint       NULL COMMENT '文件大小',
     hash          varchar(64)  NULL COMMENT '文件哈希',
-    create_by     varchar(64)  NULL COMMENT '创建者（user_name）',
-    create_time   timestamp    NULL COMMENT '创建时间',
+    create_by     varchar(32)   NOT NULL COMMENT '创建者（user_name）',
+    create_time   DATETIME    NOT NULL COMMENT '创建时间',
     PRIMARY KEY (id)
 );
 
 CREATE UNIQUE INDEX uk_upload_task_piece ON upload_task_piece (upload_id, file_index);
 CREATE INDEX idx_upload_task_piece_upload_id ON upload_task_piece (upload_id);
+
+-- ---------------------------------------------------------------------
+-- 系统字典表
+-- ---------------------------------------------------------------------
+CREATE TABLE dict (
+    id          bigint       NOT NULL COMMENT '主键id',
+    dict_key    varchar(64)  NOT NULL COMMENT '字典键',
+    name        varchar(64)  NOT NULL COMMENT '字典名称',
+    sort        int          NULL COMMENT '排序',
+    type        char(1)      NOT NULL COMMENT '字典类型 S=系统字典,U=用户字典',
+    remark      varchar(512) NULL COMMENT '备注',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_dict_dict_key ON dict (dict_key);
+
+-- ---------------------------------------------------------------------
+-- 系统字典值表
+-- ---------------------------------------------------------------------
+CREATE TABLE dict_value (
+    id        bigint       NOT NULL COMMENT '主键id',
+    dict_id   bigint       NOT NULL COMMENT '关联字典id',
+    value_key varchar(64)  NOT NULL COMMENT '值键',
+    name      varchar(64)  NOT NULL COMMENT '值名称',
+    sort      int          NULL COMMENT '排序',
+    value     varchar(255) NULL COMMENT '值',
+    type      char(1)      NULL COMMENT '类型 S=成功,I=信息,W=警告,E=错误',
+    color     varchar(32)  NULL COMMENT '颜色',
+    remark    varchar(512) NULL COMMENT '备注',
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_dict_value_dict_id ON dict_value (dict_id);
+
+-- ---------------------------------------------------------------------
+-- 系统参数表
+-- ---------------------------------------------------------------------
+CREATE TABLE param (
+    id          bigint       NOT NULL COMMENT '主键id',
+    param_key   varchar(64)  NOT NULL COMMENT '参数键',
+    name        varchar(64)  NOT NULL COMMENT '参数名称',
+    sort        int          NULL COMMENT '排序',
+    value       varchar(255) NULL COMMENT '参数值',
+    type        char(1)      NOT NULL COMMENT '参数类型 S=系统参数,U=用户参数',
+    remark      varchar(512) NULL COMMENT '备注',
+    create_by   varchar(32)   NOT NULL COMMENT '创建人（user_name）',
+    create_time DATETIME    NOT NULL COMMENT '创建时间',
+    update_by   varchar(32)   NULL COMMENT '更新人（user_name）',
+    update_time DATETIME    NULL COMMENT '更新时间',
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_param_param_key ON param (param_key);

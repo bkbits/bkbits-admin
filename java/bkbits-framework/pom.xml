@@ -16,6 +16,13 @@
     <name>bkbits-framework</name>
     <description>基础框架聚合，统一管理依赖，不包含业务代码</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-logging</artifactId>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>bkbits-core</module>
         <module>bkbits-utils</module>
@@ -31,5 +38,6 @@
         <module>bkbits-health</module>
         <module>bkbits-upload</module>
         <module>bkbits-base</module>
+        <module>bkbits-encrypt</module>
     </modules>
 </project>

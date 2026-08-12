@@ -1,6 +1,6 @@
 package com.bkbits.core;
 
-import com.bkbits.utils.JsonUtil;
+import com.bkbits.util.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

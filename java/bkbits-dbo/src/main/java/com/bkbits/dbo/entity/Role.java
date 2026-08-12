@@ -8,6 +8,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -46,6 +47,9 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @ApiModelProperty("角色名")
     private String name;
 
+    @ApiModelProperty("排序")
+    private Integer sort;
+
     @ApiModelProperty(value = "状态", notes = "E=启用,D=禁用")
     private String status;
 
@@ -68,7 +72,8 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             selfMappingProperty = RolePermissionRel.Fields.roleId,
             mappingClass = RolePermissionRel.class,
             targetProperty = Permission.Fields.id,
-            targetMappingProperty = RolePermissionRel.Fields.permissionId
+            targetMappingProperty = RolePermissionRel.Fields.permissionId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Permission> permissionList;
 
@@ -76,7 +81,8 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Role.Fields.id,
-            targetProperty = RoleDataPermissionRel.Fields.roleId
+            targetProperty = RoleDataPermissionRel.Fields.roleId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<RoleDataPermissionRel> dataPermissionList;
 }

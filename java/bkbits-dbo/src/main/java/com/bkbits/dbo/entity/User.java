@@ -7,6 +7,7 @@ import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -33,9 +34,6 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
 
     @ApiModelProperty(value = "密码", hidden = true)
     private String password;
-
-    @ApiModelProperty(value = "盐值", hidden = true)
-    private String salt;
 
     @ApiModelProperty("邮箱")
     private String email;
@@ -81,7 +79,8 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             selfMappingProperty = UserRoleRel.Fields.userId,
             mappingClass = UserRoleRel.class,
             targetProperty = Role.Fields.id,
-            targetMappingProperty = UserRoleRel.Fields.roleId
+            targetMappingProperty = UserRoleRel.Fields.roleId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
 
@@ -106,7 +105,8 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             value = RelationTypeEnum.OneToMany,
             selfProperty = User.Fields.userId,
             targetProperty = Notification.Fields.targetId,
-            extraFilter = NotificationTargetFilterStrategy.class
+            extraFilter = NotificationTargetFilterStrategy.class,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Notification> notificationList;
 

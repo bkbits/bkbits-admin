@@ -5,10 +5,8 @@ import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Navigate;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -49,6 +47,10 @@ public class Tenant implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailabl
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("删除时间")
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.LOCAL_DATE_TIME)
+    private LocalDateTime deleteTime;
 
     @ApiModelProperty("租户用户列表")
     @Navigate(

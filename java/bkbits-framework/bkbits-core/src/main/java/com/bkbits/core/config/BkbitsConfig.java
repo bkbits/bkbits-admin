@@ -1,12 +1,12 @@
 package com.bkbits.core.config;
 
 import com.bkbits.core.BkbitsProperties;
-import com.bkbits.core.generator.IdGenerator;
-import com.bkbits.core.generator.IdGeneratorProperties;
-import com.bkbits.core.generator.IdGeneratorType;
-import com.bkbits.core.generator.impl.PearIdGenerator;
-import com.bkbits.core.generator.impl.SnowflakeIdWorker;
-import com.bkbits.core.generator.impl.UUIDGenerator;
+import com.bkbits.generator.IdGenerator;
+import com.bkbits.generator.IdGeneratorProperties;
+import com.bkbits.generator.IdGeneratorType;
+import com.bkbits.generator.PearIdGenerator;
+import com.bkbits.generator.SnowflakeIdGenerator;
+import com.bkbits.generator.UUIDGenerator;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
@@ -29,7 +29,7 @@ public class BkbitsConfig {
 
         switch (type) {
             case Snowflake:
-                return new SnowflakeIdWorker(
+                return new SnowflakeIdGenerator(
                         generatorProperties.getWorkerId(),
                         generatorProperties.getDatacenterId());
             case Pear:

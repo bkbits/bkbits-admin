@@ -18,6 +18,7 @@
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-base</artifactId>
             <version>${revision}</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
 </project>

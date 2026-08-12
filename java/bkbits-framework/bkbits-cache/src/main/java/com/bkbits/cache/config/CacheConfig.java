@@ -24,18 +24,18 @@ import org.noear.solon.data.cache.CacheService;
 public class CacheConfig {
 
     /**
-     * 注册默认缓存服务；未配置 {@code solon.redis} 时不注册。
+     * 注册默认缓存服务；未配置 {@code cache.redis} 时不注册。
      */
     @Bean
     public CacheService cacheService(
-            @Inject("${solon.redis}") RedisCacheService cacheService
+            @Inject("${cache.redis}") RedisCacheService cacheService
     ) {
         return cacheService;
     }
 
     @Bean
     public RedisClient redisClient(
-            @Inject("${solon.redis}") RedisCacheService cacheService
+            @Inject("${cache.redis}") RedisCacheService cacheService
     ) {
         return cacheService.client();
     }

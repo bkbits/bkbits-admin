@@ -2,3 +2,4 @@ target
 .flattened-pom.xml
 *.log
 /tmp
+/.idea

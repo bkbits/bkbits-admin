@@ -1,6 +1,6 @@
 package com.bkbits.core;
 
-import com.bkbits.core.generator.IdGeneratorProperties;
+import com.bkbits.generator.IdGeneratorProperties;
 import lombok.Data;
 import org.noear.solon.annotation.BindProps;
 import org.noear.solon.annotation.Configuration;

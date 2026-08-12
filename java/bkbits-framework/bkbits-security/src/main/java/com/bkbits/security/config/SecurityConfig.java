@@ -17,10 +17,12 @@ public class SecurityConfig {
      */
     @Init
     public void init() {
-        Solon.app().filter(new SecurityFilter(
-                new XContentTypeOptionsHeaderHandler(),
-                new XXssProtectionHeaderHandler(),
-                new CacheControlHeadersHandler()
-        ));
+        Solon.app()
+                .router()
+                .filter(new SecurityFilter(
+                        new XContentTypeOptionsHeaderHandler(),
+                        new XXssProtectionHeaderHandler(),
+                        new CacheControlHeadersHandler()
+                ));
     }
 }

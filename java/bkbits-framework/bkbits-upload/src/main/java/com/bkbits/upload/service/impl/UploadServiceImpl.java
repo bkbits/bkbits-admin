@@ -1,7 +1,7 @@
 package com.bkbits.upload.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.bkbits.core.generator.IdGenerator;
+import com.bkbits.generator.IdGenerator;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.upload.BkbitsUploadProperties;
 import com.bkbits.upload.UploadFile;
