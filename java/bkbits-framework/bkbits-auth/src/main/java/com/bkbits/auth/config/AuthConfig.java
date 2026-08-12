@@ -22,9 +22,6 @@ import org.noear.solon.annotation.Inject;
 @Configuration
 public class AuthConfig {
 
-    @Inject
-    private AuthProperties authProperties;
-
     /**
      * 注册 Sa-Token 核心配置。
      *
@@ -33,6 +30,7 @@ public class AuthConfig {
      */
     @Bean
     public SaTokenConfig getSaTokenConfigPrimary(
+            @Inject AuthProperties authProperties,
             @Inject(required = false) IAuthConfigProvider authConfigProvider
     ) {
         SaTokenConfig config = new SaTokenConfig();
@@ -68,7 +66,7 @@ public class AuthConfig {
      * <p>{@code index = -100} 为顺序位（低值优先）。</p>
      */
     @Bean(index = -100)
-    public SaTokenInterceptor saTokenInterceptor() {
+    public SaTokenInterceptor saTokenInterceptor(@Inject AuthProperties authProperties) {
         SaTokenInterceptor saTokenInterceptor = new SaTokenInterceptor();
         authProperties.getInclude().forEach(saTokenInterceptor::addInclude);
         authProperties.getExclude().forEach(saTokenInterceptor::addExclude);

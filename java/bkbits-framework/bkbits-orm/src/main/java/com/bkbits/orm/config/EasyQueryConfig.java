@@ -56,6 +56,8 @@ public class EasyQueryConfig {
         encryptionStrategies.forEach(configuration::applyEncryptionStrategy);
         interceptors.forEach(configuration::applyInterceptor);
         converters.forEach(configuration::applyValueConverter);
-        configuration.applyShardingInitializer(shardingInitializer);
+        if (shardingInitializer != null) {
+            configuration.applyShardingInitializer(shardingInitializer);
+        }
     }
 }

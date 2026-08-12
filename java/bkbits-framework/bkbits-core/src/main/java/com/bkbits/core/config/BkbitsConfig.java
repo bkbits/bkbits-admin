@@ -16,12 +16,8 @@ import org.noear.solon.annotation.Inject;
  */
 @Configuration
 public class BkbitsConfig {
-
-    @Inject
-    private BkbitsProperties bkbitsProperties;
-
     @Bean
-    public IdGenerator idGenerator() {
+    public IdGenerator idGenerator(@Inject BkbitsProperties bkbitsProperties) {
         IdGeneratorProperties generatorProperties = bkbitsProperties.getIdGenerator();
         IdGeneratorType type = generatorProperties.getType() == null
                 ? IdGeneratorType.Pear

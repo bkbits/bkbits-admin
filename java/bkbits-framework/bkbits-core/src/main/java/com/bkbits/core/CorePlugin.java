@@ -7,6 +7,7 @@ import org.noear.solon.core.Plugin;
 import org.noear.solon.core.Signal;
 import org.noear.solon.core.event.AppLoadEndEvent;
 import org.noear.solon.core.event.AppPluginInitEndEvent;
+import org.noear.solon.core.event.AppPluginLoadEndEvent;
 import org.noear.solon.core.util.ResourceUtil;
 
 import java.io.BufferedReader;
@@ -50,12 +51,12 @@ public class CorePlugin implements Plugin {
         // 打印启动 banner
         printBanner();
 
-        context.onEvent(AppPluginInitEndEvent.class, e -> {
-            context.beanScan("com.bkbits");
-        });
+        context.onEvent(AppPluginLoadEndEvent.class,
+                e -> context.beanScan("com.bkbits")
+        );
 
         // 启动完成后展示 ip 与端口
-        context.onEvent(AppLoadEndEvent.class, event -> printStartedInfo());
+        context.onEvent(AppLoadEndEvent.class, e -> printStartedInfo());
     }
 
     /**
