@@ -1,7 +1,6 @@
 package com.bkbits.orm.config;
 
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -13,6 +12,7 @@ import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -34,7 +34,9 @@ public class EasyQueryConfig {
      * 未配置数据源 db 时不注册。
      */
     @Bean
-    public EasyEntityQuery easyEntityQuery(@Db("db1") EasyEntityQuery easyEntityQuery) {
+    public EasyEntityQuery easyEntityQuery(
+            @Inject("db1") DataSource dataSource,
+            @Db("db1") EasyEntityQuery easyEntityQuery) {
         return easyEntityQuery;
     }
 
