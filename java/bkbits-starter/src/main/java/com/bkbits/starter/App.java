@@ -9,7 +9,6 @@ import org.noear.solon.scheduling.annotation.EnableScheduling;
  * 启动类。
  */
 @SolonMain
-@Import(scanPackages = "com.bkbits")
 @EnableScheduling
 public class App {
     public static void main(String[] args) {
