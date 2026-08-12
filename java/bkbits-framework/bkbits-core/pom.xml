@@ -16,19 +16,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-utils</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-orm</artifactId>
+            <artifactId>bkbits-utils</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

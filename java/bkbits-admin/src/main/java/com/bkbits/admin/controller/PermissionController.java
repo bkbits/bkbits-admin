@@ -48,7 +48,7 @@ public class PermissionController {
     @Mapping("/role/add")
     @SaCheckPermission("admin.role.add")
     public Result<RoleVO> addRole(@Body RoleDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.addRole(PermissionMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto))));
     }
 
     /**
@@ -62,7 +62,7 @@ public class PermissionController {
     @Mapping("/role/getById")
     @SaCheckPermission("admin.role.query")
     public Result<RoleVO> getRoleById(@Param("roleId") String roleId) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.getRoleById(roleId)));
+        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.getRoleById(roleId)));
     }
 
     /**
@@ -90,7 +90,7 @@ public class PermissionController {
     @Mapping("/role/update")
     @SaCheckPermission("admin.role.update")
     public Result<RoleVO> updateRole(@Body RoleDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.updateRole(PermissionMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto))));
     }
 
     /**
@@ -119,7 +119,7 @@ public class PermissionController {
     @Mapping("/permission/add")
     @SaCheckPermission("admin.permission.add")
     public Result<PermissionVO> addPermission(@Body PermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.addPermission(PermissionMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto))));
     }
 
     /**
@@ -133,7 +133,7 @@ public class PermissionController {
     @Mapping("/permission/getById")
     @SaCheckPermission("admin.permission.query")
     public Result<PermissionVO> getPermissionById(@Param("permissionId") String permissionId) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.getPermissionById(permissionId)));
+        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.getPermissionById(permissionId)));
     }
 
     /**
@@ -160,7 +160,7 @@ public class PermissionController {
     @Mapping("/permission/update")
     @SaCheckPermission("admin.permission.update")
     public Result<PermissionVO> updatePermission(@Body PermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.updatePermission(PermissionMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto))));
     }
 
     /**
@@ -189,9 +189,9 @@ public class PermissionController {
     @Mapping("/dataPermission/add")
     @SaCheckPermission("admin.dataPermission.add")
     public Result<DataPermissionVO> addDataPermission(@Body DataPermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.addDataPermission(
+        return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVO(permissionService.addDataPermission(
                 dto.getMenuPermissionId(),
-                PermissionMapper.INSTANCE.toEntity(dto))));
+                PermissionMapper.INSTANCE.toDataPermissionEntity(dto))));
     }
 
     /**
@@ -219,7 +219,7 @@ public class PermissionController {
     @Mapping("/dataPermission/update")
     @SaCheckPermission("admin.dataPermission.update")
     public Result<DataPermissionVO> updateDataPermission(@Body DataPermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toVO(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVO(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto))));
     }
 
     /**

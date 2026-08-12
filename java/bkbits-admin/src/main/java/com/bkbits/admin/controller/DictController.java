@@ -42,7 +42,7 @@ public class DictController {
     @Mapping("/add")
     @SaCheckPermission("admin.dict.add")
     public Result<DictVO> add(@Body DictDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toVO(dictService.add(DictMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.add(DictMapper.INSTANCE.toDictEntity(dto))));
     }
 
     /**
@@ -56,7 +56,7 @@ public class DictController {
     @Mapping("/getByKey")
     @SaCheckPermission("admin.dict.query")
     public Result<DictVO> getByKey(@Param("key") String key) {
-        return Result.ok(DictMapper.INSTANCE.toVO(dictService.getByKey(key)));
+        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.getByKey(key)));
     }
 
     /**
@@ -83,7 +83,7 @@ public class DictController {
     @Mapping("/update")
     @SaCheckPermission("admin.dict.update")
     public Result<DictVO> update(@Body DictDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toVO(dictService.update(DictMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.update(DictMapper.INSTANCE.toDictEntity(dto))));
     }
 
     /**
@@ -112,7 +112,7 @@ public class DictController {
     @Mapping("/addValue")
     @SaCheckPermission("admin.dictValue.add")
     public Result<DictValueVO> addValue(@Body DictValueDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toVO(dictService.addValue(DictMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 
     /**
@@ -140,7 +140,7 @@ public class DictController {
     @Mapping("/updateValue")
     @SaCheckPermission("admin.dictValue.update")
     public Result<DictValueVO> updateValue(@Body DictValueDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toVO(dictService.updateValue(DictMapper.INSTANCE.toEntity(dto))));
+        return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 
     /**

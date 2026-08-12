@@ -9,7 +9,6 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.solon.annotation.Db;
-import com.easy.query.solon.integration.QueryTrackInterceptor;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
@@ -30,22 +29,12 @@ import java.util.List;
  */
 @Configuration
 public class EasyQueryConfig {
-
-    /**
-     * EasyQueryClient（基础查询客户端）注册为 bean，可通过 {@code @Inject} 注入。
-     * 未配置数据源 db 时不注册。
-     */
-    @Bean
-    public EasyQueryClient easyQueryClient(@Db("main") EasyQueryClient easyQueryClient) {
-        return easyQueryClient;
-    }
-
     /**
      * EasyEntityQuery（实体代理查询客户端）注册为 bean，可通过 {@code @Inject} 注入。
      * 未配置数据源 db 时不注册。
      */
     @Bean
-    public EasyEntityQuery easyEntityQuery(@Db("main") EasyEntityQuery easyEntityQuery) {
+    public EasyEntityQuery easyEntityQuery(@Db("db1") EasyEntityQuery easyEntityQuery) {
         return easyEntityQuery;
     }
 
@@ -54,12 +43,12 @@ public class EasyQueryConfig {
      */
     @Bean
     public void dbQueryConfiguration(
-            @Db("main") QueryConfiguration configuration,
-            @Inject List<LogicDeleteStrategy> logicDeleteStrategies,
-            @Inject List<EncryptionStrategy> encryptionStrategies,
-            @Inject List<Interceptor> interceptors,
-            @Inject ShardingInitializer shardingInitializer,
-            @Inject List<ValueConverter<?, ?>> converters
+            @Db("db1") QueryConfiguration configuration,
+            @Inject(required = false) List<LogicDeleteStrategy> logicDeleteStrategies,
+            @Inject(required = false) List<EncryptionStrategy> encryptionStrategies,
+            @Inject(required = false) List<Interceptor> interceptors,
+            @Inject(required = false) ShardingInitializer shardingInitializer,
+            @Inject(required = false) List<ValueConverter<?, ?>> converters
     ) {
         logicDeleteStrategies.forEach(configuration::applyLogicDeleteStrategy);
         encryptionStrategies.forEach(configuration::applyEncryptionStrategy);

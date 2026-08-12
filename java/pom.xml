@@ -91,6 +91,11 @@
             <artifactId>solon-openapi2-knife4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
         <!-- lombok 全局使用，provided 编译期生效 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -149,7 +154,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-jackson3</artifactId>
+                <artifactId>sa-token-jackson</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
 

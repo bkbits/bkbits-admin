@@ -3,3 +3,5 @@ target
 *.log
 /tmp
 /.idea
+public.pem
+private.pem

@@ -33,7 +33,7 @@ public interface PermissionMapper {
      * @param dto 输入参数
      * @return 角色实体
      */
-    Role toEntity(RoleDTO dto);
+    Role toRoleEntity(RoleDTO dto);
 
     /**
      * 角色实体转输出参数（含权限与数据权限关联）。
@@ -41,7 +41,7 @@ public interface PermissionMapper {
      * @param entity 角色实体
      * @return 输出参数
      */
-    RoleVO toVO(Role entity);
+    RoleVO toRoleVO(Role entity);
 
     /**
      * 角色实体列表转输出参数列表。
@@ -57,7 +57,7 @@ public interface PermissionMapper {
      * @param dto 输入参数
      * @return 权限实体
      */
-    Permission toEntity(PermissionDTO dto);
+    Permission toPermissionEntity(PermissionDTO dto);
 
     /**
      * 权限实体转输出参数（含数据权限列表）。
@@ -65,7 +65,7 @@ public interface PermissionMapper {
      * @param entity 权限实体
      * @return 输出参数
      */
-    PermissionVO toVO(Permission entity);
+    PermissionVO toPermissionVO(Permission entity);
 
     /**
      * 权限实体列表转输出参数列表。
@@ -82,7 +82,7 @@ public interface PermissionMapper {
      * @return 数据权限实体
      */
     @Mapping(target = "permissionId", source = "menuPermissionId")
-    DataPermission toEntity(DataPermissionDTO dto);
+    DataPermission toDataPermissionEntity(DataPermissionDTO dto);
 
     /**
      * 数据权限实体转输出参数。
@@ -90,7 +90,7 @@ public interface PermissionMapper {
      * @param entity 数据权限实体
      * @return 输出参数
      */
-    DataPermissionVO toVO(DataPermission entity);
+    DataPermissionVO toDataPermissionVO(DataPermission entity);
 
     /**
      * 数据权限实体列表转输出参数列表。
@@ -106,7 +106,7 @@ public interface PermissionMapper {
      * @param entity 关联实体
      * @return 输出参数
      */
-    RoleDataPermissionRelVO toVO(RoleDataPermissionRel entity);
+    RoleDataPermissionRelVO toRoleDataPermissionRelVO(RoleDataPermissionRel entity);
 
     /**
      * 角色数据权限关联实体列表转输出参数列表。

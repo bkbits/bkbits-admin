@@ -81,6 +81,16 @@ public class LoginUtil {
     }
 
     /**
+     * 获取当前登录用户名，未登录抛出 {@link NotLoginException}。
+     *
+     * @return 登录用户名
+     * @throws SaTokenException 会话中不存在登录用户信息时抛出
+     */
+    public @NotNull String getLoginUserName() {
+        return getLoginUser().getUserName();
+    }
+
+    /**
      * 获取当前登录用户，未登录抛出 {@link NotLoginException}。
      *
      * @return 登录用户信息

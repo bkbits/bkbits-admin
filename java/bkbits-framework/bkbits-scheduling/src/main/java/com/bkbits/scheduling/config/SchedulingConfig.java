@@ -20,7 +20,7 @@ public class SchedulingConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulingConfig.class);
 
-    public Scheduler scheduled(@Inject("${solon.dataSources.main}") Properties properties) throws SchedulerException {
+    public Scheduler scheduled(@Inject("${db1}") Properties properties) throws SchedulerException {
         Properties prop = new Properties();
 
         // jobStore：JDBC 持久化

@@ -28,14 +28,14 @@ public class CacheConfig {
      */
     @Bean
     public CacheService cacheService(
-            @Inject("${cache.redis}") RedisCacheService cacheService
+            @Inject("${solon.redis}") RedisCacheService cacheService
     ) {
         return cacheService;
     }
 
     @Bean
     public RedisClient redisClient(
-            @Inject("${cache.redis}") RedisCacheService cacheService
+            @Inject("${solon.redis}") RedisCacheService cacheService
     ) {
         return cacheService.client();
     }

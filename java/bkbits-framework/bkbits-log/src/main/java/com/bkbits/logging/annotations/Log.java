@@ -24,4 +24,6 @@ public @interface Log {
     boolean args() default false;
 
     boolean result() default false;
+
+    String remark() default "";
 }

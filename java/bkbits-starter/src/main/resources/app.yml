@@ -9,15 +9,28 @@ solon:
 
 # 数据源配置
 solon.dataSources:
-  main:
+  db1:
     class: "com.zaxxer.hikari.HikariDataSource"
     jdbcUrl: jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: dtzn@2022
 
+easy-query:
+  db1:
+    database: mysql
+    name-conversion: underlined
+    delete-throw: true
+    print-sql: true
+
+solon.logging.logger:
+  "root":
+    level: INFO
+  "com.zaxxer.hikari":
+    level: WARN
+
 # 缓存配置（cache.redis 配置块，由 CacheServiceSupplier 自动构建）
-cache.redis:
+solon.redis:
   driverType: "redis" #驱动类型
   server: "localhost:6379"
   db: 0 #默认为 0，可不配置

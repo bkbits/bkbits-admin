@@ -1,6 +1,5 @@
 package com.bkbits.logging.config;
 
-import com.bkbits.logging.ILogProvider;
 import com.bkbits.logging.annotations.Log;
 import com.bkbits.logging.mvc.LogInterceptor;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
@@ -16,11 +15,13 @@ import org.noear.solon.annotation.Inject;
 public class LogConfig {
 
     @Bean
-    public void init(@Inject ILogProvider logProvider, @Inject EasyEntityQuery easyEntityQuery) {
+    public void init(
+            @Inject EasyEntityQuery easyEntityQuery
+    ) {
         Solon.context()
                 .beanInterceptorAdd(
                         Log.class,
-                        new LogInterceptor(logProvider, easyEntityQuery)
+                        new LogInterceptor(easyEntityQuery)
                 );
     }
 }

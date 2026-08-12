@@ -33,7 +33,6 @@
         <module>bkbits-cache</module>
         <module>bkbits-log</module>
         <module>bkbits-orm</module>
-        <module>bkbits-datasource</module>
         <module>bkbits-scheduling</module>
         <module>bkbits-health</module>
         <module>bkbits-upload</module>

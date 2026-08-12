@@ -1,6 +1,6 @@
 package com.bkbits.logging.mvc;
 
-import com.bkbits.logging.ILogProvider;
+import com.bkbits.auth.LoginUtil;
 import com.bkbits.logging.annotations.Log;
 import com.bkbits.logging.dbo.LogOperation;
 import com.bkbits.util.AsyncUtil;
@@ -19,11 +19,9 @@ import java.io.IOException;
 @Slf4j
 public class LogInterceptor implements MethodInterceptor {
     private final Serializer<String> serializer = Solon.app().serializers().get(SerializerNames.AT_JSON);
-    private final ILogProvider logProvider;
     private final EasyEntityQuery easyEntityQuery;
 
-    public LogInterceptor(ILogProvider logProvider, EasyEntityQuery easyEntityQuery) {
-        this.logProvider = logProvider;
+    public LogInterceptor(EasyEntityQuery easyEntityQuery) {
         this.easyEntityQuery = easyEntityQuery;
     }
 
@@ -57,13 +55,16 @@ public class LogInterceptor implements MethodInterceptor {
         }
 
         try {
-            logOperation.setCreateBy(logProvider.getCreateBy());
+            logOperation.setCreateBy(LoginUtil.getLoginUserName());
         } catch (Throwable e) {
             log.error("获取createBy失败", e);
         }
 
         try {
-            logOperation.setRemark(logProvider.getRemark(logAnno));
+            String remark = StringUtil.trim(logAnno.remark());
+            if (StringUtil.isNotEmpty(remark)) {
+                logOperation.setRemark(remark);
+            }
         } catch (Throwable e) {
             log.error("获取remark失败", e);
         }

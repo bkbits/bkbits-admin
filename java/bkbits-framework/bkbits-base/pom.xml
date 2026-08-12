@@ -64,11 +64,6 @@
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-datasource</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
             <artifactId>bkbits-scheduling</artifactId>
             <version>${revision}</version>
         </dependency>

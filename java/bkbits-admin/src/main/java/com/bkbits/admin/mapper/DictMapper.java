@@ -27,7 +27,7 @@ public interface DictMapper {
      * @param dto 输入参数
      * @return 字典实体
      */
-    Dict toEntity(DictDTO dto);
+    Dict toDictEntity(DictDTO dto);
 
     /**
      * 实体转输出参数（含值列表）。
@@ -35,7 +35,7 @@ public interface DictMapper {
      * @param entity 字典实体
      * @return 输出参数
      */
-    DictVO toVO(Dict entity);
+    DictVO toDictVO(Dict entity);
 
     /**
      * 实体列表转输出参数列表。
@@ -51,7 +51,7 @@ public interface DictMapper {
      * @param dto 输入参数
      * @return 字典值实体
      */
-    DictValue toEntity(DictValueDTO dto);
+    DictValue toDictValueEntity(DictValueDTO dto);
 
     /**
      * 字典值实体转输出参数。
@@ -59,7 +59,7 @@ public interface DictMapper {
      * @param entity 字典值实体
      * @return 输出参数
      */
-    DictValueVO toVO(DictValue entity);
+    DictValueVO toDictValueVO(DictValue entity);
 
     /**
      * 字典值实体列表转输出参数列表。

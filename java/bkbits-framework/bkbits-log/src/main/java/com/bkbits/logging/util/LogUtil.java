@@ -1,6 +1,6 @@
 package com.bkbits.logging.util;
 
-import com.bkbits.logging.ILogProvider;
+import com.bkbits.auth.LoginUtil;
 import com.bkbits.logging.dbo.LogLogin;
 import com.bkbits.logging.dbo.LogOperation;
 import com.bkbits.util.AsyncUtil;
@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @UtilityClass
 public class LogUtil {
     private static final EasyEntityQuery easyEntityQuery = Solon.context().getBean(EasyEntityQuery.class);
-    private static final ILogProvider logProvider = Solon.context().getBean(ILogProvider.class);
 
     /**
      * 添加操作日志
@@ -22,7 +21,11 @@ public class LogUtil {
      */
     public void log(LogOperation logOperation) {
         if (logOperation.getCreateBy() == null) {
-            logOperation.setCreateBy(logProvider.getCreateBy());
+            logOperation.setCreateBy(
+                    LoginUtil.isLogin() ?
+                            LoginUtil.getLoginUserName() :
+                            "system"
+            );
         }
         if (logOperation.getCreateTime() == null) {
             logOperation.setCreateTime(LocalDateTime.now());
@@ -37,7 +40,11 @@ public class LogUtil {
      */
     public void addLoginLog(LogLogin logLogin) {
         if (logLogin.getCreateBy() == null) {
-            logLogin.setCreateBy(logProvider.getCreateBy());
+            logLogin.setCreateBy(
+                    LoginUtil.isLogin() ?
+                            LoginUtil.getLoginUserName() :
+                            "system"
+            );
         }
         if (logLogin.getCreateTime() == null) {
             logLogin.setCreateTime(LocalDateTime.now());

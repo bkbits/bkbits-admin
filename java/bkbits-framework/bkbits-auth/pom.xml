@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-jackson3</artifactId>
+            <artifactId>sa-token-jackson</artifactId>
         </dependency>
 
         <dependency>
