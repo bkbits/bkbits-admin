@@ -5,8 +5,12 @@ import com.bkbits.admin.pojo.DeptDTO;
 import com.bkbits.admin.pojo.DeptVO;
 import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.service.DeptService;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
+import com.bkbits.dbo.entity.Dept;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,9 +32,11 @@ import java.util.List;
 @Mapping("/api/dept")
 public class DeptController {
 
-
     @Inject
     private DeptService deptService;
+
+    @Inject
+    private EasyEntityQuery easyEntityQuery;
 
     /**
      * 新增部门。
@@ -115,5 +121,40 @@ public class DeptController {
     public Result<Void> remove(@Body IdDTO dto) {
         deptService.removeById(dto.getId());
         return Result.ok();
+    }
+
+    /**
+     * 分页查询部门。
+     *
+     * @param tenantId 租户编号（可选）
+     * @param name     部门名称（可选，模糊匹配）
+     * @param status   状态（可选）
+     * @return 分页结果
+     */
+    @ApiOperation("分页查询部门")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.dept.query")
+    public PageResult<Dept> query(@ApiParam("租户编号") @Param("tenantId") String tenantId,
+                                  @ApiParam("部门名称") @Param("name") String name,
+                                  @ApiParam("状态（E=启用,D=禁用）") @Param("status") String status) {
+        return easyEntityQuery.queryable(Dept.class)
+                .where(o -> {
+                    if (tenantId != null && !tenantId.isBlank()) {
+                        o.tenantId().eq(tenantId);
+                    }
+                    if (name != null && !name.isBlank()) {
+                        o.name().like(name);
+                    }
+                    if (status != null && !status.isBlank()) {
+                        o.status().eq(status);
+                    }
+                })
+                .orderBy(o -> {
+                    o.parentId().asc();
+                    o.sort().asc();
+                    o.deptId().asc();
+                })
+                .toPageResult(PageQuery.current().toPager(Dept.class));
     }
 }

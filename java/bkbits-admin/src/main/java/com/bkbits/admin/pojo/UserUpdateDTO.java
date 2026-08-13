@@ -3,25 +3,21 @@ package com.bkbits.admin.pojo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.noear.solon.validation.annotation.NotNull;
 
 /**
  * 用户输入参数。
  */
 @Data
 @ApiModel("用户输入参数")
-public class UserDTO {
+public class UserUpdateDTO {
 
     @ApiModelProperty("用户编号；更新时必填")
+    @NotNull
     private String userId;
 
     @ApiModelProperty("用户名")
     private String userName;
-
-    @ApiModelProperty("密码")
-    private String password;
-
-    @ApiModelProperty("盐值")
-    private String salt;
 
     @ApiModelProperty("邮箱")
     private String email;

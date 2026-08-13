@@ -4,6 +4,7 @@ import com.bkbits.admin.service.NotificationService;
 import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.Notification;
 import com.bkbits.dbo.entity.NotificationRead;
+import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -31,18 +32,18 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Notification getById(String id) {
         return easyEntityQuery.queryable(Notification.class)
-                .whereById(requireText(id, "通知编号"))
+                .whereById(ValidUtil.requireString(id, "通知编号不能为空"))
                 .singleOrNull();
     }
 
     @Override
     public List<Notification> listByTarget(String type, String targetId) {
-        String checkedType = requireText(type, "通知类型");
+        String checkedType = ValidUtil.requireString(type, "通知类型不能为空");
         return easyEntityQuery.queryable(Notification.class)
                 .where(o -> {
                     o.type().eq(checkedType);
                     if (!BaseConstants.NOTIFICATION_TYPE_MESSAGE.equals(checkedType)) {
-                        o.targetId().eq(requireText(targetId, "通知目标编号"));
+                        o.targetId().eq(ValidUtil.requireString(targetId, "通知目标编号不能为空"));
                     }
                 })
                 .orderBy(o -> {
@@ -54,7 +55,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> listForUser(String userId, String tenantId, String deptId) {
-        String checkedUserId = requireText(userId, "用户编号");
+        String checkedUserId = ValidUtil.requireString(userId, "用户编号不能为空");
         return easyEntityQuery.queryable(Notification.class)
                 .where(o -> {
                     o.type().eq(BaseConstants.NOTIFICATION_TYPE_MESSAGE);
@@ -81,7 +82,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Notification update(Notification notification) {
         Objects.requireNonNull(notification, "通知不能为空");
-        requireText(notification.getId(), "通知编号");
+        ValidUtil.requireString(notification.getId(), "通知编号不能为空");
         easyEntityQuery.updatable(notification)
                 .executeRows(1, "更新通知失败");
         return notification;
@@ -90,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transaction
     public void removeById(String id) {
-        String checkedId = requireText(id, "通知编号");
+        String checkedId = ValidUtil.requireString(id, "通知编号不能为空");
         easyEntityQuery.deletable(NotificationRead.class)
                 .where(o -> o.notificationId().eq(checkedId))
                 .executeRows();
@@ -102,8 +103,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transaction
     public NotificationRead markRead(String notificationId, String userId) {
-        String checkedNotificationId = requireText(notificationId, "通知编号");
-        String checkedUserId = requireText(userId, "用户编号");
+        String checkedNotificationId = ValidUtil.requireString(notificationId, "通知编号不能为空");
+        String checkedUserId = ValidUtil.requireString(userId, "用户编号不能为空");
         boolean notificationExists = easyEntityQuery.queryable(Notification.class)
                 .whereById(checkedNotificationId)
                 .any();
@@ -139,8 +140,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public boolean isRead(String notificationId, String userId) {
-        String checkedNotificationId = requireText(notificationId, "通知编号");
-        String checkedUserId = requireText(userId, "用户编号");
+        String checkedNotificationId = ValidUtil.requireString(notificationId, "通知编号不能为空");
+        String checkedUserId = ValidUtil.requireString(userId, "用户编号不能为空");
         return easyEntityQuery.queryable(NotificationRead.class)
                 .where(o -> {
                     o.notificationId().eq(checkedNotificationId);
@@ -149,10 +150,4 @@ public class NotificationServiceImpl implements NotificationService {
                 .any();
     }
 
-    private String requireText(String value, String name) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + "不能为空");
-        }
-        return value;
-    }
 }

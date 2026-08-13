@@ -217,7 +217,7 @@ public class LoginUtil {
      * @param pageQuery 分页参数
      * @return 分页结果
      */
-    public PageResult<LoginUser> getLoginUser(@NotNull PageQuery pageQuery) {
+    public PageResult<LoginUser> pageLoginUser(@NotNull PageQuery pageQuery) {
         List<String> tokenList = StpUtil.searchTokenValue(
                 "",
                 0,

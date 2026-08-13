@@ -40,7 +40,7 @@ public class Result<T> implements Serializable {
      * @return 成功结果，code=200，message=OK
      */
     public static <T> Result<T> ok() {
-        return ok(null, "OK");
+        return ok(null, null);
     }
 
     /**
@@ -50,7 +50,7 @@ public class Result<T> implements Serializable {
      * @return 成功结果，code=200，message=OK
      */
     public static <T> Result<T> ok(T data) {
-        return ok(data, "OK");
+        return ok(data, null);
     }
 
     /**

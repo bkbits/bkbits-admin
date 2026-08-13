@@ -1,20 +1,17 @@
 package com.bkbits.admin.controller;
 
-import com.bkbits.admin.mapper.PermissionMapper;
-import com.bkbits.admin.pojo.BindDataPermissionsToRoleDTO;
-import com.bkbits.admin.pojo.BindPermissionsToRoleDTO;
-import com.bkbits.admin.pojo.BindRolesToUserDTO;
-import com.bkbits.admin.pojo.DataPermissionDTO;
-import com.bkbits.admin.pojo.DataPermissionVO;
-import com.bkbits.admin.pojo.IdDTO;
-import com.bkbits.admin.pojo.PermissionDTO;
-import com.bkbits.admin.pojo.PermissionVO;
-import com.bkbits.admin.pojo.RoleDTO;
-import com.bkbits.admin.pojo.RoleDataPermissionRelVO;
-import com.bkbits.admin.pojo.RoleVO;
-import com.bkbits.admin.service.PermissionService;
-import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.bkbits.admin.mapper.PermissionMapper;
+import com.bkbits.admin.pojo.*;
+import com.bkbits.admin.service.PermissionService;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
+import com.bkbits.core.Result;
+import com.bkbits.dbo.entity.DataPermission;
+import com.bkbits.dbo.entity.Permission;
+import com.bkbits.dbo.entity.Role;
+import com.bkbits.util.CollectionUtil;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,20 +22,24 @@ import org.noear.solon.annotation.Inject;
 import org.noear.solon.annotation.Mapping;
 import org.noear.solon.annotation.Param;
 import org.noear.solon.annotation.Post;
+import org.noear.solon.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色、权限及数据权限控制器。
  */
 @Api("角色权限接口")
 @Controller
-@Mapping("/api/permission")
+@Mapping("/api")
 public class PermissionController {
-
 
     @Inject
     private PermissionService permissionService;
+
+    @Inject
+    private EasyEntityQuery easyEntityQuery;
 
     /**
      * 新增角色。
@@ -50,8 +51,8 @@ public class PermissionController {
     @Post
     @Mapping("/role/add")
     @SaCheckPermission("admin.role.add")
-    public Result<RoleVO> addRole(@Body RoleDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto))));
+    public Result<Role> addRole(@Validated @Body RoleDTO dto) {
+        return Result.ok(permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
     }
 
     /**
@@ -64,22 +65,8 @@ public class PermissionController {
     @Get
     @Mapping("/role/getById")
     @SaCheckPermission("admin.role.query")
-    public Result<RoleVO> getRoleById(@ApiParam("角色编号") @Param("roleId") String roleId) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.getRoleById(roleId)));
-    }
-
-    /**
-     * 查询指定租户下的角色。
-     *
-     * @param tenantId 租户编号
-     * @return 角色列表
-     */
-    @ApiOperation("查询租户下角色")
-    @Get
-    @Mapping("/role/listByTenantId")
-    @SaCheckPermission("admin.role.query")
-    public Result<List<RoleVO>> listRolesByTenantId(@ApiParam("租户编号") @Param("tenantId") String tenantId) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleVOList(permissionService.listRolesByTenantId(tenantId)));
+    public Result<Role> getRoleById(@ApiParam("角色编号") @Param("roleId") String roleId) {
+        return Result.ok(permissionService.getRoleById(roleId));
     }
 
     /**
@@ -92,8 +79,8 @@ public class PermissionController {
     @Post
     @Mapping("/role/update")
     @SaCheckPermission("admin.role.update")
-    public Result<RoleVO> updateRole(@Body RoleDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto))));
+    public Result<Role> updateRole(@Validated @Body RoleDTO dto) {
+        return Result.ok(permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
     }
 
     /**
@@ -106,7 +93,7 @@ public class PermissionController {
     @Post
     @Mapping("/role/remove")
     @SaCheckPermission("admin.role.remove")
-    public Result<Void> removeRole(@Body IdDTO dto) {
+    public Result<Void> removeRole(@Validated @Body IdDTO dto) {
         permissionService.removeRoleById(dto.getId());
         return Result.ok();
     }
@@ -121,8 +108,9 @@ public class PermissionController {
     @Post
     @Mapping("/permission/add")
     @SaCheckPermission("admin.permission.add")
-    public Result<PermissionVO> addPermission(@Body PermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto))));
+    public Result<Permission> addPermission(@Validated @Body PermissionDTO dto) {
+        return Result.ok(
+                permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
     }
 
     /**
@@ -135,8 +123,9 @@ public class PermissionController {
     @Get
     @Mapping("/permission/getById")
     @SaCheckPermission("admin.permission.query")
-    public Result<PermissionVO> getPermissionById(@ApiParam("权限编号") @Param("permissionId") String permissionId) {
-        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.getPermissionById(permissionId)));
+    public Result<Permission> getPermissionById(
+            @ApiParam("权限编号") @Param("permissionId") String permissionId) {
+        return Result.ok(permissionService.getPermissionById(permissionId));
     }
 
     /**
@@ -148,8 +137,21 @@ public class PermissionController {
     @Get
     @Mapping("/permission/list")
     @SaCheckPermission("admin.permission.query")
-    public Result<List<PermissionVO>> listPermissions() {
-        return Result.ok(PermissionMapper.INSTANCE.toPermissionVOList(permissionService.listPermissions()));
+    public Result<List<Permission>> listPermissions(
+            PermissionQueryDTO dto
+    ) {
+        return Result.ok(
+                CollectionUtil.toTree(
+                        easyEntityQuery.queryable(Permission.class)
+                                .whereObject(dto)
+                                .orderBy(p -> {
+                                    p.parentId().asc();
+                                    p.sort().asc();
+                                    p.createTime().asc();
+                                })
+                                .toList()
+                )
+        );
     }
 
     /**
@@ -162,8 +164,8 @@ public class PermissionController {
     @Post
     @Mapping("/permission/update")
     @SaCheckPermission("admin.permission.update")
-    public Result<PermissionVO> updatePermission(@Body PermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto))));
+    public Result<Permission> updatePermission(@Body PermissionDTO dto) {
+        return Result.ok(permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
     }
 
     /**
@@ -191,10 +193,10 @@ public class PermissionController {
     @Post
     @Mapping("/dataPermission/add")
     @SaCheckPermission("admin.dataPermission.add")
-    public Result<DataPermissionVO> addDataPermission(@Body DataPermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVO(permissionService.addDataPermission(
+    public Result<DataPermission> addDataPermission(@Body DataPermissionDTO dto) {
+        return Result.ok(permissionService.addDataPermission(
                 dto.getMenuPermissionId(),
-                PermissionMapper.INSTANCE.toDataPermissionEntity(dto))));
+                PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
     }
 
     /**
@@ -207,8 +209,9 @@ public class PermissionController {
     @Get
     @Mapping("/dataPermission/list")
     @SaCheckPermission("admin.dataPermission.query")
-    public Result<List<DataPermissionVO>> listDataPermissions(@ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
-        return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVOList(permissionService.listDataPermissions(menuPermissionId)));
+    public Result<List<DataPermission>> listDataPermissions(
+            @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
+        return Result.ok(permissionService.listDataPermissions(menuPermissionId));
     }
 
     /**
@@ -221,8 +224,8 @@ public class PermissionController {
     @Post
     @Mapping("/dataPermission/update")
     @SaCheckPermission("admin.dataPermission.update")
-    public Result<DataPermissionVO> updateDataPermission(@Body DataPermissionDTO dto) {
-        return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVO(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto))));
+    public Result<DataPermission> updateDataPermission(@Body DataPermissionDTO dto) {
+        return Result.ok(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
     }
 
     /**
@@ -241,35 +244,6 @@ public class PermissionController {
     }
 
     /**
-     * 使用给定角色集合替换用户现有的全部角色绑定。
-     *
-     * @param dto 用户绑定角色参数
-     * @return 操作结果
-     */
-    @ApiOperation("绑定角色到用户")
-    @Post
-    @Mapping("/bindRolesToUser")
-    @SaCheckPermission("admin.user.bind")
-    public Result<Void> bindRolesToUser(@Body BindRolesToUserDTO dto) {
-        permissionService.bindRolesToUser(dto.getUserId(), dto.getRoleIds());
-        return Result.ok();
-    }
-
-    /**
-     * 查询用户绑定的角色。
-     *
-     * @param userId 用户编号
-     * @return 角色列表
-     */
-    @ApiOperation("查询用户绑定的角色")
-    @Get
-    @Mapping("/listRolesByUserId")
-    @SaCheckPermission("admin.user.query")
-    public Result<List<RoleVO>> listRolesByUserId(@ApiParam("用户编号") @Param("userId") String userId) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleVOList(permissionService.listRolesByUserId(userId)));
-    }
-
-    /**
      * 使用给定权限集合替换角色现有的全部权限绑定。
      *
      * @param dto 角色绑定权限参数
@@ -277,9 +251,9 @@ public class PermissionController {
      */
     @ApiOperation("绑定权限到角色")
     @Post
-    @Mapping("/bindPermissionsToRole")
+    @Mapping("/role/bindPermissions")
     @SaCheckPermission("admin.role.bind")
-    public Result<Void> bindPermissionsToRole(@Body BindPermissionsToRoleDTO dto) {
+    public Result<Void> bindPermissionsToRole(@Validated @Body BindPermissionsToRoleDTO dto) {
         permissionService.bindPermissionsToRole(dto.getRoleId(), dto.getPermissionIds());
         return Result.ok();
     }
@@ -290,12 +264,12 @@ public class PermissionController {
      * @param roleId 角色编号
      * @return 权限列表
      */
-    @ApiOperation("查询角色绑定的权限")
+    @ApiOperation("查询角色绑定的权限id")
     @Get
-    @Mapping("/listPermissionsByRoleId")
+    @Mapping("/role/listPermissionIds")
     @SaCheckPermission("admin.role.query")
-    public Result<List<PermissionVO>> listPermissionsByRoleId(@ApiParam("角色编号") @Param("roleId") String roleId) {
-        return Result.ok(PermissionMapper.INSTANCE.toPermissionVOList(permissionService.listPermissionsByRoleId(roleId)));
+    public Result<List<String>> listPermissionIdsByRoleId(@ApiParam("角色编号") @Param("roleId") String roleId) {
+        return Result.ok(permissionService.listPermissionsByRoleId(roleId));
     }
 
     /**
@@ -306,10 +280,14 @@ public class PermissionController {
      */
     @ApiOperation("绑定数据权限到角色")
     @Post
-    @Mapping("/bindDataPermissionsToRole")
+    @Mapping("/role/bindDataPermissions")
     @SaCheckPermission("admin.role.bind")
     public Result<Void> bindDataPermissionsToRole(@Body BindDataPermissionsToRoleDTO dto) {
-        permissionService.bindDataPermissionsToRole(dto.getRoleId(), dto.getMenuPermissionId(), dto.getDataPermissionIds());
+        permissionService.bindDataPermissionsToRole(
+                dto.getRoleId(),
+                dto.getMenuPermissionId(),
+                dto.getDataPermissionIds()
+        );
         return Result.ok();
     }
 
@@ -322,10 +300,13 @@ public class PermissionController {
      */
     @ApiOperation("查询角色菜单数据权限关联")
     @Get
-    @Mapping("/listRoleDataPermissions")
+    @Mapping("/role/listDataPermissionIds")
     @SaCheckPermission("admin.role.query")
-    public Result<List<RoleDataPermissionRelVO>> listRoleDataPermissions(@ApiParam("角色编号") @Param("roleId") String roleId,
-                                                                         @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
-        return Result.ok(PermissionMapper.INSTANCE.toRoleDataPermissionRelVOList(permissionService.listRoleDataPermissions(roleId, menuPermissionId)));
+    public Result<List<String>> listRoleDataPermissions(
+            @ApiParam("角色编号") @Param("roleId") String roleId,
+            @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
+        return Result.ok(
+                permissionService.listRoleDataPermissions(roleId, menuPermissionId)
+        );
     }
 }

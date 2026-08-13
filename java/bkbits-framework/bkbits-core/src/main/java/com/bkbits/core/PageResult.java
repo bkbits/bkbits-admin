@@ -1,5 +1,7 @@
 package com.bkbits.core;
 
+import com.easy.query.core.api.pagination.EasyPageResult;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,17 @@ import java.util.List;
  * @param <T> 行数据类型
  */
 public class PageResult<T> extends Result<PageData<T>> {
+
+    /**
+     * easyQuery结果构造PageResult
+     *
+     * @param easyPageResult easyquery返回的分页结果
+     * @param <T>            类型
+     * @return 分页结果
+     */
+    public static <T> PageResult<T> of(EasyPageResult<T> easyPageResult) {
+        return page(easyPageResult.getTotal(), easyPageResult.getData());
+    }
 
     /**
      * 构造成功分页结果。
@@ -20,7 +33,6 @@ public class PageResult<T> extends Result<PageData<T>> {
         PageResult<T> result = new PageResult<>();
         result.setOk(true);
         result.setCode(CODE_SUCCESS);
-        result.setMessage("OK");
         result.setData(new PageData<>(total, rows));
         return result;
     }

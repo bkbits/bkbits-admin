@@ -1,12 +1,16 @@
 package com.bkbits.admin.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.TenantMapper;
 import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.pojo.TenantDTO;
 import com.bkbits.admin.pojo.TenantVO;
 import com.bkbits.admin.service.TenantService;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
-import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.bkbits.dbo.entity.Tenant;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,9 +32,11 @@ import java.util.List;
 @Mapping("/api/tenant")
 public class TenantController {
 
-
     @Inject
     private TenantService tenantService;
+
+    @Inject
+    private EasyEntityQuery easyEntityQuery;
 
     /**
      * 新增租户。
@@ -100,5 +106,36 @@ public class TenantController {
     public Result<Void> remove(@Body IdDTO dto) {
         tenantService.removeById(dto.getId());
         return Result.ok();
+    }
+
+    /**
+     * 分页查询租户。
+     *
+     * @param name   租户名称（可选，模糊匹配）
+     * @param type   租户类型（可选）
+     * @param status 状态（可选）
+     * @return 分页结果
+     */
+    @ApiOperation("分页查询租户")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.tenant.query")
+    public PageResult<Tenant> query(@ApiParam("租户名称") @Param("name") String name,
+                                    @ApiParam("租户类型（S=系统租户,U=用户租户,T=租户模板）") @Param("type") String type,
+                                    @ApiParam("状态（E=启用,D=禁用）") @Param("status") String status) {
+        return easyEntityQuery.queryable(Tenant.class)
+                .where(o -> {
+                    if (name != null && !name.isBlank()) {
+                        o.name().like(name);
+                    }
+                    if (type != null && !type.isBlank()) {
+                        o.type().eq(type);
+                    }
+                    if (status != null && !status.isBlank()) {
+                        o.status().eq(status);
+                    }
+                })
+                .orderBy(o -> o.id().asc())
+                .toPageResult(PageQuery.current().toPager(Tenant.class));
     }
 }

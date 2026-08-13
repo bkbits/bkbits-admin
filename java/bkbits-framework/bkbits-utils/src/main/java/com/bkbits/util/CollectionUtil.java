@@ -127,9 +127,9 @@ public class CollectionUtil {
      * @param <T>  元素类型
      * @return 去重后的新列表；空列表返回原列表
      */
-    public static <T> List<T> distinct(List<T> list) {
+    public static <T> List<T> distinct(Collection<T> list) {
         if (isEmpty(list)) {
-            return list;
+            return new ArrayList<>(list);
         }
         return new ArrayList<>(new java.util.LinkedHashSet<>(list));
     }

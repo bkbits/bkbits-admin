@@ -296,6 +296,7 @@ public class UploadServiceImpl implements UploadService {
 
     // ---------- 内部工具 ----------
 
+    /** 读取上传文件内容为字节数组 */
     private byte[] readBytes(UploadedFile file) {
         try {
             return file.getContentAsBytes();
@@ -304,11 +305,13 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
+    /** 填充创建人与创建时间审计字段 */
     private void fillAudit(ICreateBy entity) {
         entity.setCreateBy(loginId());
         entity.setCreateTime(LocalDateTime.now());
     }
 
+    /** 获取当前登录用户编号，非登录上下文（如测试）时返回 null */
     private String loginId() {
         try {
             return StpUtil.getLoginIdAsString();
@@ -336,18 +339,22 @@ public class UploadServiceImpl implements UploadService {
         return uploadDir().relativize(target).toString().replace('\\', '/');
     }
 
+    /** 上传临时目录 */
     private Path tempDir() {
         return Path.of(uploadProperties.getTemp());
     }
 
+    /** 上传根目录 */
     private Path uploadDir() {
         return Path.of(uploadProperties.getUpload());
     }
 
+    /** 上传任务分片临时目录 */
     private Path taskTempDir(String taskId) {
         return tempDir().resolve("upload").resolve(taskId);
     }
 
+    /** 清理文件名中的非法字符，空值或清理后为空时返回 file */
     private static String sanitizeFileName(String name) {
         if (name == null || name.isBlank()) {
             return "file";
@@ -356,6 +363,7 @@ public class UploadServiceImpl implements UploadService {
         return cleaned.isBlank() ? "file" : cleaned;
     }
 
+    /** 计算字节数组的 SHA-256 摘要（十六进制） */
     private static String sha256Hex(byte[] bytes) {
         try {
             return hex(MessageDigest.getInstance("SHA-256").digest(bytes));
@@ -364,6 +372,7 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
+    /** 流式计算文件的 SHA-256 摘要（十六进制） */
     private static String sha256Hex(Path file) {
         try (InputStream in = Files.newInputStream(file)) {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -378,6 +387,7 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
+    /** 字节数组转小写十六进制字符串 */
     private static String hex(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {
@@ -387,6 +397,7 @@ public class UploadServiceImpl implements UploadService {
         return sb.toString();
     }
 
+    /** 静默递归删除文件或目录，失败时忽略异常 */
     private static void deleteQuietly(Path path) {
         try {
             if (path == null || !Files.exists(path)) {

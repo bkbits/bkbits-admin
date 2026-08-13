@@ -2,6 +2,7 @@ package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.DeptService;
 import com.bkbits.dbo.entity.Dept;
+import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -27,14 +28,14 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public Dept getById(String deptId) {
         return easyEntityQuery.queryable(Dept.class)
-                .whereById(requireText(deptId, "部门编号"))
+                .whereById(ValidUtil.requireString(deptId, "部门编号不能为空"))
                 .singleOrNull();
     }
 
     @Override
     public List<Dept> listByTenantId(String tenantId) {
         return easyEntityQuery.queryable(Dept.class)
-                .where(o -> o.tenantId().eq(requireText(tenantId, "租户编号")))
+                .where(o -> o.tenantId().eq(ValidUtil.requireString(tenantId, "租户编号不能为空")))
                 .orderBy(o -> {
                     o.parentId().asc();
                     o.sort().asc();
@@ -62,8 +63,8 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     public Dept update(Dept dept) {
-        Objects.requireNonNull(dept, "部门不能为空");
-        requireText(dept.getDeptId(), "部门编号");
+        ValidUtil.requireNotNull(dept, "部门不能为空");
+        ValidUtil.requireString(dept.getDeptId(), "部门编号不能为空");
         easyEntityQuery.updatable(dept)
                 .executeRows(1, "更新部门失败");
         return dept;
@@ -72,14 +73,8 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public void removeById(String deptId) {
         easyEntityQuery.deletable(Dept.class)
-                .whereById(requireText(deptId, "部门编号"))
+                .whereById(ValidUtil.requireString(deptId, "部门编号不能为空"))
                 .executeRows(1, "删除部门失败");
     }
 
-    private String requireText(String value, String name) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + "不能为空");
-        }
-        return value;
-    }
 }

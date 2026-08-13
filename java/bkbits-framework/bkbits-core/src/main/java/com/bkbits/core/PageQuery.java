@@ -1,6 +1,7 @@
 package com.bkbits.core;
 
 import com.bkbits.util.JsonUtil;
+import com.easy.query.core.api.pagination.Pager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,29 @@ public class PageQuery {
     private long page = 1;
     private long pageSize = 10;
 
-    public static PageQuery of() {
+    /**
+     * 构造分页查询参数
+     *
+     * @param page     页码，必须 >= 1
+     * @param pageSize 分页尺寸，必须 >= 1
+     * @return 分页查询参数
+     */
+    public static PageQuery of(long page, long pageSize) {
+        if (page < 1) {
+            throw new IllegalArgumentException("page参数必须 >= 1");
+        }
+        if (pageSize < 1) {
+            throw new IllegalArgumentException("pageSize参数必须 >= 1");
+        }
+        return new PageQuery(page, pageSize);
+    }
+
+    /**
+     * 自动从当前上下文中获取
+     *
+     * @return 分页查询参数
+     */
+    public static PageQuery current() {
         Context context = Context.current();
         String pageStr = context.param("page");
         String pageSizeStr = context.param("pageSize");
@@ -60,10 +83,10 @@ public class PageQuery {
             pageSize = 10L;
         }
 
-        if (page <= 0) {
+        if (page < 1) {
             throw new StatusException("page参数不正确: page = " + page, 400);
         }
-        if (pageSize <= 1 || pageSize > 100) {
+        if (pageSize < 1 || pageSize > 100) {
             throw new StatusException("pageSize参数不正确: pageSize = " + pageSize, 400);
         }
 
@@ -71,5 +94,26 @@ public class PageQuery {
                 page,
                 pageSize
         );
+    }
+
+    /**
+     * 转为easyquery分页器
+     *
+     * @param <T> 类型
+     * @return 分页器
+     */
+    public <T> Pager<T, PageResult<T>> toPager() {
+        return new EasyQueryPager<>(this);
+    }
+
+    /**
+     * 转为easyquery分页器
+     *
+     * @param clazz 类型
+     * @param <T>   类型
+     * @return 分页器
+     */
+    public <T> Pager<T, PageResult<T>> toPager(Class<T> clazz) {
+        return new EasyQueryPager<>(this);
     }
 }

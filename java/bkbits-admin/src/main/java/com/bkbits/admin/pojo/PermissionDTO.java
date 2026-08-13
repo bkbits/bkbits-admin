@@ -6,6 +6,10 @@ import lombok.Data;
 
 /**
  * 权限输入参数。
+ * {@link com.bkbits.dbo.entity.Permission }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
 @ApiModel("权限输入参数")

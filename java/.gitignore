@@ -1,6 +1,8 @@
 target
 .flattened-pom.xml
 *.log
+*.iml
+*.class
 /tmp
 /.idea
 public.pem

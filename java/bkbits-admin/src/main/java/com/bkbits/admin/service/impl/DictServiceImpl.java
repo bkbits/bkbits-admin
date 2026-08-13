@@ -3,6 +3,7 @@ package com.bkbits.admin.service.impl;
 import com.bkbits.admin.service.DictService;
 import com.bkbits.dbo.entity.Dict;
 import com.bkbits.dbo.entity.DictValue;
+import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -39,7 +40,7 @@ public class DictServiceImpl implements DictService {
                     x.sort().asc();
                     x.id().asc();
                 }))
-                .where(o -> o.dictKey().eq(requireText(key, "字典键")))
+                .where(o -> o.dictKey().eq(ValidUtil.requireString(key, "字典键不能为空")))
                 .singleOrNull();
     }
 
@@ -57,7 +58,7 @@ public class DictServiceImpl implements DictService {
     @CacheRemove(tags = CACHE_TAG)
     public Dict update(Dict dict) {
         Objects.requireNonNull(dict, "系统字典不能为空");
-        requireText(dict.getId(), "字典编号");
+        ValidUtil.requireString(dict.getId(), "字典编号不能为空");
         easyEntityQuery.updatable(dict)
                 .executeRows(1, "更新系统字典失败");
         return dict;
@@ -67,7 +68,7 @@ public class DictServiceImpl implements DictService {
     @Transaction
     @CacheRemove(tags = CACHE_TAG)
     public void removeById(String id) {
-        String checkedId = requireText(id, "字典编号");
+        String checkedId = ValidUtil.requireString(id, "字典编号不能为空");
         easyEntityQuery.deletable(DictValue.class)
                 .where(o -> o.dictId().eq(checkedId))
                 .executeRows();
@@ -80,7 +81,7 @@ public class DictServiceImpl implements DictService {
     @CacheRemove(tags = CACHE_TAG)
     public DictValue addValue(DictValue dictValue) {
         Objects.requireNonNull(dictValue, "字典值不能为空");
-        requireText(dictValue.getDictId(), "字典编号");
+        ValidUtil.requireString(dictValue.getDictId(), "字典编号不能为空");
         if (easyEntityQuery.insertable(dictValue).executeRows() != 1) {
             throw new IllegalStateException("创建字典值失败");
         }
@@ -91,7 +92,7 @@ public class DictServiceImpl implements DictService {
     @Cache(key = "admin:dict:values:${dictKey}", tags = CACHE_TAG, seconds = 3600)
     public List<DictValue> listValues(String dictKey) {
         return easyEntityQuery.queryable(DictValue.class)
-                .where(o -> o.valueKey().eq(requireText(dictKey, "字典编号")))
+                .where(o -> o.valueKey().eq(ValidUtil.requireString(dictKey, "字典编号不能为空")))
                 .orderBy(o -> {
                     o.sort().asc();
                     o.id().asc();
@@ -103,7 +104,7 @@ public class DictServiceImpl implements DictService {
     @CacheRemove(tags = CACHE_TAG)
     public DictValue updateValue(DictValue dictValue) {
         Objects.requireNonNull(dictValue, "字典值不能为空");
-        requireText(dictValue.getId(), "字典值编号");
+        ValidUtil.requireString(dictValue.getId(), "字典值编号不能为空");
         easyEntityQuery.updatable(dictValue)
                 .executeRows(1, "更新字典值失败");
         return dictValue;
@@ -113,14 +114,8 @@ public class DictServiceImpl implements DictService {
     @CacheRemove(tags = CACHE_TAG)
     public void removeValueById(String id) {
         easyEntityQuery.deletable(DictValue.class)
-                .whereById(requireText(id, "字典值编号"))
+                .whereById(ValidUtil.requireString(id, "字典值编号不能为空"))
                 .executeRows(1, "删除字典值失败");
     }
 
-    private String requireText(String value, String name) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + "不能为空");
-        }
-        return value;
-    }
 }

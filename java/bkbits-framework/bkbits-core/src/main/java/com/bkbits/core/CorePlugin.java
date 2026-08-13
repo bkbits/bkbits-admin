@@ -1,5 +1,6 @@
 package com.bkbits.core;
 
+import com.github.xiaoymin.knife4j.solon.extension.OpenApiExtensionResolver;
 import org.noear.solon.Solon;
 import org.noear.solon.Utils;
 import org.noear.solon.core.AppContext;
@@ -95,18 +96,39 @@ public class CorePlugin implements Plugin {
             }
         }
 
-        System.out.println("Started " + appName() + " in " + (System.currentTimeMillis() - startupTime) + "ms");
+        System.out.println("    Started " + appName() + " in " + (System.currentTimeMillis() - startupTime) + "ms");
         if (httpSignals.isEmpty()) {
             // 无 http 信号时回退到配置端口
             int port = Solon.cfg().serverPort();
-            System.out.println("Local:   http://127.0.0.1:" + port + contextPath);
-            System.out.println("Network: http://" + localIp + ":" + port + contextPath);
+            System.out.println("    Local:   http://127.0.0.1:" + port + contextPath);
+            System.out.println("    Network: http://" + localIp + ":" + port + contextPath);
+            printDocUrl(port, contextPath);
             return;
         }
         for (Signal signal : httpSignals) {
             String protocol = signal.protocol();
-            System.out.println("Local:   " + protocol + "://127.0.0.1:" + signal.port() + contextPath);
-            System.out.println("Network: " + protocol + "://" + localIp + ":" + signal.port() + contextPath);
+            System.out.println("    Local:   " + protocol + "://127.0.0.1:" + signal.port() + contextPath);
+            System.out.println("    Network: " + protocol + "://" + localIp + ":" + signal.port() + contextPath);
+        }
+        printDocUrl(httpSignals.get(0).port(), contextPath);
+    }
+
+    /**
+     * 打印 knife4j 文档地址（未集成 knife4j 或未开启时静默跳过）
+     */
+    private void printDocUrl(int port, String contextPath) {
+        try {
+            Class<?> resolverClass = Class.forName("com.github.xiaoymin.knife4j.solon.extension.OpenApiExtensionResolver");
+            Object resolver = Solon.context().getBean(resolverClass);
+            if (resolver == null) {
+                return;
+            }
+            Object setting = resolverClass.getMethod("getSetting").invoke(resolver);
+            if ((boolean) setting.getClass().getMethod("isEnable").invoke(setting)) {
+                System.out.println("    Doc:     http://localhost:" + port + contextPath + "/doc.html");
+            }
+        } catch (Throwable ignored) {
+            // 未集成 knife4j 或 API 变动时静默跳过
         }
     }
 

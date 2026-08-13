@@ -3,6 +3,7 @@ package com.bkbits.admin.pojo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.noear.solon.validation.annotation.NotNull;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class BindPermissionsToRoleDTO {
 
     @ApiModelProperty("角色编号")
+    @NotNull
     private String roleId;
 
     @ApiModelProperty("权限编号集合；为空时清空绑定")

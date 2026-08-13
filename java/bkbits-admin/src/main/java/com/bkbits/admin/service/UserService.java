@@ -74,6 +74,14 @@ public interface UserService {
     User update(User user);
 
     /**
+     * 修改密码
+     *
+     * @param userId   用户id
+     * @param password 新密码
+     */
+    void updatePassword(String userId, String password);
+
+    /**
      * 按编号删除用户及其角色关联。
      *
      * @param userId 用户编号

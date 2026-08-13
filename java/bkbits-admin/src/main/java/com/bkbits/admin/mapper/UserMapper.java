@@ -1,6 +1,7 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.UserDTO;
+import com.bkbits.admin.pojo.UserAddDTO;
+import com.bkbits.admin.pojo.UserUpdateDTO;
 import com.bkbits.admin.pojo.UserVO;
 import com.bkbits.dbo.entity.User;
 import org.mapstruct.Mapper;
@@ -15,7 +16,9 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
-    /** 内置静态单例 */
+    /**
+     * 内置静态单例
+     */
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     /**
@@ -24,7 +27,10 @@ public interface UserMapper {
      * @param dto 输入参数
      * @return 用户实体
      */
-    User toEntity(UserDTO dto);
+    User toAddEntity(UserAddDTO dto);
+
+
+    User toUpdateEntity(UserUpdateDTO dto);
 
     /**
      * 实体转输出参数。

@@ -218,6 +218,12 @@
                             <artifactId>sql-processor</artifactId>
                             <version>${easy-query.version}</version>
                         </path>
+                        <!-- sql-processor 的运行依赖，缺省会破坏整个注解处理链 -->
+                        <path>
+                            <groupId>com.easy-query</groupId>
+                            <artifactId>sql-core</artifactId>
+                            <version>${easy-query.version}</version>
+                        </path>
                         <!-- 为 @BindProps 自动生成配置元信息 -->
                         <path>
                             <groupId>org.noear</groupId>

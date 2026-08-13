@@ -1,5 +1,6 @@
 package com.bkbits.admin.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.DictMapper;
 import com.bkbits.admin.pojo.DictDTO;
 import com.bkbits.admin.pojo.DictValueDTO;
@@ -7,8 +8,11 @@ import com.bkbits.admin.pojo.DictValueVO;
 import com.bkbits.admin.pojo.DictVO;
 import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.service.DictService;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
-import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.bkbits.dbo.entity.Dict;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,9 +34,11 @@ import java.util.List;
 @Mapping("/api/dict")
 public class DictController {
 
-
     @Inject
     private DictService dictService;
+
+    @Inject
+    private EasyEntityQuery easyEntityQuery;
 
     /**
      * 新增系统字典。
@@ -159,5 +165,39 @@ public class DictController {
     public Result<Void> removeValue(@Body IdDTO dto) {
         dictService.removeValueById(dto.getId());
         return Result.ok();
+    }
+
+    /**
+     * 分页查询系统字典。
+     *
+     * @param key  字典键（可选，模糊匹配）
+     * @param name 字典名称（可选，模糊匹配）
+     * @param type 字典类型（可选）
+     * @return 分页结果
+     */
+    @ApiOperation("分页查询系统字典")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.dict.query")
+    public PageResult<Dict> query(@ApiParam("字典键") @Param("key") String key,
+                                  @ApiParam("字典名称") @Param("name") String name,
+                                  @ApiParam("字典类型（S=系统字典,U=用户字典）") @Param("type") String type) {
+        return easyEntityQuery.queryable(Dict.class)
+                .where(o -> {
+                    if (key != null && !key.isBlank()) {
+                        o.dictKey().like(key);
+                    }
+                    if (name != null && !name.isBlank()) {
+                        o.name().like(name);
+                    }
+                    if (type != null && !type.isBlank()) {
+                        o.type().eq(type);
+                    }
+                })
+                .orderBy(o -> {
+                    o.sort().asc();
+                    o.createTime().asc();
+                })
+                .toPageResult(PageQuery.current().toPager(Dict.class));
     }
 }

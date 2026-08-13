@@ -33,6 +33,12 @@
         <artifactId>sql-processor</artifactId>
         <version>${easy-query.version}</version>
     </path>
+    <!-- sql-processor 的运行依赖，缺省会破坏整个注解处理链 -->
+    <path>
+        <groupId>com.easy-query</groupId>
+        <artifactId>sql-core</artifactId>
+        <version>${easy-query.version}</version>
+    </path>
     <path>
         <groupId>org.noear</groupId>
         <artifactId>solon-configuration-processor</artifactId>
@@ -138,6 +144,7 @@
 | org.mapstruct | mapstruct-processor | 1.6.3 |
 | org.projectlombok | lombok-mapstruct-binding | 0.2.0 |
 | com.easy-query | sql-processor | 3.2.14 |
+| com.easy-query | sql-core | 3.2.14 | sql-processor 运行依赖 |
 | org.noear | solon-configuration-processor | 3.10.7 | 为 @BindProps 生成配置元信息 |
 
 ## 各模块直接依赖

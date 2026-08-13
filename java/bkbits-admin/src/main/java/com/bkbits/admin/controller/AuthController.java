@@ -14,19 +14,25 @@ import com.bkbits.encrypt.IPasswordEncrypt;
 import com.bkbits.util.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.noear.solon.annotation.*;
+import org.noear.solon.annotation.Body;
+import org.noear.solon.annotation.Controller;
+import org.noear.solon.annotation.Get;
+import org.noear.solon.annotation.Inject;
+import org.noear.solon.annotation.Mapping;
+import org.noear.solon.annotation.Post;
 import org.noear.solon.core.handle.Context;
 import org.noear.solon.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
 /**
- * 示例控制器。
+ * 认证控制器。
  */
 @Api("认证接口")
 @Controller
 @Mapping("/api")
 public class AuthController implements AdminParamConstants, BaseConstants {
+
     @Inject
     private IPasswordEncrypt passwordEncrypt;
 
@@ -111,9 +117,7 @@ public class AuthController implements AdminParamConstants, BaseConstants {
     }
 
     @ApiOperation("注销登录")
-    @Get
     @Post
-    @SaIgnore
     @Mapping("/logout")
     public Result<Void> logout() {
         LoginUtil.logout();
@@ -122,7 +126,6 @@ public class AuthController implements AdminParamConstants, BaseConstants {
 
     @ApiOperation("获取登录用户")
     @Get
-    @SaIgnore
     @Mapping("/loginUser")
     public Result<LoginUser> getLoginUser() {
         return Result.ok(LoginUtil.getLoginUser());

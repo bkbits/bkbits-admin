@@ -69,13 +69,6 @@ public interface PermissionService {
     Permission getPermissionById(String permissionId);
 
     /**
-     * 查询全部权限。
-     *
-     * @return 权限列表
-     */
-    List<Permission> listPermissions();
-
-    /**
      * 更新权限。
      *
      * @param permission 待更新的权限信息
@@ -152,7 +145,7 @@ public interface PermissionService {
      * @param roleId 角色编号
      * @return 权限列表
      */
-    List<Permission> listPermissionsByRoleId(String roleId);
+    List<String> listPermissionsByRoleId(String roleId);
 
     /**
      * 使用给定数据权限集合替换角色在指定菜单权限下的全部数据权限绑定。
@@ -171,5 +164,5 @@ public interface PermissionService {
      * @param menuPermissionId 菜单权限编号
      * @return 角色数据权限关联列表
      */
-    List<RoleDataPermissionRel> listRoleDataPermissions(String roleId, String menuPermissionId);
+    List<String> listRoleDataPermissions(String roleId, String menuPermissionId);
 }

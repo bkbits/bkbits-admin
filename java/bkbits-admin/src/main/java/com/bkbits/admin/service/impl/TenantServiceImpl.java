@@ -2,6 +2,7 @@ package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.TenantService;
 import com.bkbits.dbo.entity.Tenant;
+import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -27,7 +28,7 @@ public class TenantServiceImpl implements TenantService {
     @Override
     public Tenant getById(String id) {
         return easyEntityQuery.queryable(Tenant.class)
-                .whereById(requireText(id, "租户编号"))
+                .whereById(ValidUtil.requireString(id, "租户编号不能为空"))
                 .singleOrNull();
     }
 
@@ -41,7 +42,7 @@ public class TenantServiceImpl implements TenantService {
     @Override
     public Tenant update(Tenant tenant) {
         Objects.requireNonNull(tenant, "租户不能为空");
-        requireText(tenant.getId(), "租户编号");
+        ValidUtil.requireString(tenant.getId(), "租户编号不能为空");
         easyEntityQuery.updatable(tenant)
                 .executeRows(1, "更新租户失败");
         return tenant;
@@ -50,14 +51,8 @@ public class TenantServiceImpl implements TenantService {
     @Override
     public void removeById(String id) {
         easyEntityQuery.deletable(Tenant.class)
-                .whereById(requireText(id, "租户编号"))
+                .whereById(ValidUtil.requireString(id, "租户编号不能为空"))
                 .executeRows(1, "删除租户失败");
     }
 
-    private String requireText(String value, String name) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + "不能为空");
-        }
-        return value;
-    }
 }

@@ -6,6 +6,10 @@ import lombok.Data;
 
 /**
  * 角色输入参数。
+ * {@link com.bkbits.dbo.entity.Role }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
 @ApiModel("角色输入参数")

@@ -1,5 +1,6 @@
 package com.bkbits.admin.pojo;
 
+import com.bkbits.dbo.entity.DataPermission;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,5 +25,5 @@ public class RoleDataPermissionRelVO {
     private String dataPermissionId;
 
     @ApiModelProperty("关联数据权限")
-    private DataPermissionVO dataPermission;
+    private DataPermission dataPermission;
 }
