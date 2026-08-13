@@ -79,10 +79,23 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
 
     @ApiModelProperty("数据权限列表")
     @Navigate(
-            value = RelationTypeEnum.OneToMany,
+            value = RelationTypeEnum.ManyToMany,
             selfProperty = Role.Fields.id,
-            targetProperty = RoleDataPermissionRel.Fields.roleId,
-            cascade = CascadeTypeEnum.DELETE
+            selfMappingProperty = RoleDataPermissionRel.Fields.roleId,
+            mappingClass = RoleDataPermissionRel.class,
+            targetProperty = DataPermission.Fields.id,
+            targetMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId
     )
-    private List<RoleDataPermissionRel> dataPermissionList;
+    private List<DataPermission> dataPermissionList;
+
+    @ApiModelProperty("用户列表")
+    @Navigate(
+            value = RelationTypeEnum.ManyToMany,
+            selfProperty = Role.Fields.id,
+            selfMappingProperty = UserRoleRel.Fields.roleId,
+            mappingClass = UserRoleRel.class,
+            targetProperty = User.Fields.userId,
+            targetMappingProperty = UserRoleRel.Fields.userId
+    )
+    private List<User> userList;
 }

@@ -66,6 +66,14 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<
     )
     private List<Dept> children;
 
+    @ApiModelProperty("父级部门")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Dept.Fields.parentId,
+            targetProperty = Dept.Fields.deptId
+    )
+    private Dept parent;
+
     @ApiModelProperty("所属租户")
     @Navigate(
             value = RelationTypeEnum.ManyToOne,

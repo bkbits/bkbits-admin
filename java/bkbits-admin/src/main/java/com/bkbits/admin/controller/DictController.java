@@ -9,7 +9,9 @@ import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.service.DictService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -23,6 +25,7 @@ import java.util.List;
 /**
  * 系统字典控制器。
  */
+@Api("系统字典接口")
 @Controller
 @Mapping("/api/dict")
 public class DictController {
@@ -55,7 +58,7 @@ public class DictController {
     @Get
     @Mapping("/getByKey")
     @SaCheckPermission("admin.dict.query")
-    public Result<DictVO> getByKey(@Param("key") String key) {
+    public Result<DictVO> getByKey(@ApiParam("字典键") @Param("key") String key) {
         return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.getByKey(key)));
     }
 
@@ -125,7 +128,7 @@ public class DictController {
     @Get
     @Mapping("/listValues")
     @SaCheckPermission("admin.dictValue.query")
-    public Result<List<DictValueVO>> listValues(@Param("dictKey") String dictKey) {
+    public Result<List<DictValueVO>> listValues(@ApiParam("字典键") @Param("dictKey") String dictKey) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVOList(dictService.listValues(dictKey)));
     }
 

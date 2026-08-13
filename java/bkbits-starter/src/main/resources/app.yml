@@ -37,3 +37,9 @@ solon.redis:
 #  defSeconds: 30 #默认为 30，可不配置
 #  password: ""
 #  maxTotal: 200 #默认为 200，可不配
+
+knife4j.enable: true
+knife4j.basic.enable: false
+knife4j.setting.enableOpenApi: true
+knife4j.setting.enableSwaggerModels: true
+knife4j.setting.enableFooter: true

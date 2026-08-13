@@ -34,9 +34,7 @@ public class EasyQueryConfig {
      * 未配置数据源 db 时不注册。
      */
     @Bean
-    public EasyEntityQuery easyEntityQuery(
-            @Inject("db1") DataSource dataSource,
-            @Db("db1") EasyEntityQuery easyEntityQuery) {
+    public EasyEntityQuery easyEntityQuery(@Db("db1") EasyEntityQuery easyEntityQuery) {
         return easyEntityQuery;
     }
 

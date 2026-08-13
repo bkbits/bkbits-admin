@@ -12,6 +12,7 @@ import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.User;
 import com.bkbits.encrypt.IPasswordEncrypt;
 import com.bkbits.util.StringUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.noear.solon.annotation.*;
 import org.noear.solon.core.handle.Context;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 /**
  * 示例控制器。
  */
+@Api("认证接口")
 @Controller
 @Mapping("/api")
 public class AuthController implements AdminParamConstants, BaseConstants {

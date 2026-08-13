@@ -7,7 +7,9 @@ import com.bkbits.admin.pojo.UserVO;
 import com.bkbits.admin.service.UserService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -21,6 +23,7 @@ import java.util.List;
 /**
  * 用户控制器。
  */
+@Api("用户接口")
 @Controller
 @Mapping("/api/user")
 public class UserController {
@@ -53,7 +56,7 @@ public class UserController {
     @Get
     @Mapping("/getByUserId")
     @SaCheckPermission("admin.user.query")
-    public Result<UserVO> getByUserId(@Param("userId") String userId) {
+    public Result<UserVO> getByUserId(@ApiParam("用户编号") @Param("userId") String userId) {
         return Result.ok(UserMapper.INSTANCE.toVO(userService.getByUserId(userId)));
     }
 
@@ -67,7 +70,7 @@ public class UserController {
     @Get
     @Mapping("/getByUserName")
     @SaCheckPermission("admin.user.query")
-    public Result<UserVO> getByUserName(@Param("userName") String userName) {
+    public Result<UserVO> getByUserName(@ApiParam("用户名") @Param("userName") String userName) {
         return Result.ok(UserMapper.INSTANCE.toVO(userService.getByUserName(userName)));
     }
 
@@ -81,7 +84,7 @@ public class UserController {
     @Get
     @Mapping("/getByPhone")
     @SaCheckPermission("admin.user.query")
-    public Result<UserVO> getByPhone(@Param("phone") String phone) {
+    public Result<UserVO> getByPhone(@ApiParam("手机号") @Param("phone") String phone) {
         return Result.ok(UserMapper.INSTANCE.toVO(userService.getByPhone(phone)));
     }
 
@@ -95,7 +98,7 @@ public class UserController {
     @Get
     @Mapping("/getByEmail")
     @SaCheckPermission("admin.user.query")
-    public Result<UserVO> getByEmail(@Param("email") String email) {
+    public Result<UserVO> getByEmail(@ApiParam("邮箱") @Param("email") String email) {
         return Result.ok(UserMapper.INSTANCE.toVO(userService.getByEmail(email)));
     }
 
@@ -109,7 +112,7 @@ public class UserController {
     @Get
     @Mapping("/listByTenantId")
     @SaCheckPermission("admin.user.query")
-    public Result<List<UserVO>> listByTenantId(@Param("tenantId") String tenantId) {
+    public Result<List<UserVO>> listByTenantId(@ApiParam("租户编号") @Param("tenantId") String tenantId) {
         return Result.ok(UserMapper.INSTANCE.toVOList(userService.listByTenantId(tenantId)));
     }
 
@@ -123,7 +126,7 @@ public class UserController {
     @Get
     @Mapping("/listByDeptId")
     @SaCheckPermission("admin.user.query")
-    public Result<List<UserVO>> listByDeptId(@Param("deptId") String deptId) {
+    public Result<List<UserVO>> listByDeptId(@ApiParam("部门编号") @Param("deptId") String deptId) {
         return Result.ok(UserMapper.INSTANCE.toVOList(userService.listByDeptId(deptId)));
     }
 

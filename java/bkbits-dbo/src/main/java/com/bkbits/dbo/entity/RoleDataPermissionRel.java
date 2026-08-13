@@ -27,9 +27,6 @@ public class RoleDataPermissionRel implements IGenId, ProxyEntityAvailable<RoleD
     @ApiModelProperty("关联角色id")
     private String roleId;
 
-    @ApiModelProperty("关联权限id")
-    private String permissionId;
-
     @ApiModelProperty("关联数据权限id")
     private String dataPermissionId;
 
@@ -40,14 +37,6 @@ public class RoleDataPermissionRel implements IGenId, ProxyEntityAvailable<RoleD
             targetProperty = DataPermission.Fields.id
     )
     private DataPermission dataPermission;
-
-    @ApiModelProperty("关联权限")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = RoleDataPermissionRel.Fields.permissionId,
-            targetProperty = Permission.Fields.id
-    )
-    private Permission permission;
 
     @ApiModelProperty("关联角色")
     @Navigate(

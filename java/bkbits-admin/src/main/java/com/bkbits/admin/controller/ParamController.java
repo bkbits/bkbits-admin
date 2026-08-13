@@ -7,7 +7,9 @@ import com.bkbits.admin.pojo.ParamVO;
 import com.bkbits.admin.service.ParamService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -21,6 +23,7 @@ import java.util.List;
 /**
  * 系统参数控制器。
  */
+@Api("系统参数接口")
 @Controller
 @Mapping("/api/param")
 public class ParamController {
@@ -53,7 +56,7 @@ public class ParamController {
     @Get
     @Mapping("/getByKey")
     @SaCheckPermission("admin.param.query")
-    public Result<ParamVO> getByKey(@Param("key") String key) {
+    public Result<ParamVO> getByKey(@ApiParam("参数键") @Param("key") String key) {
         return Result.ok(ParamMapper.INSTANCE.toVO(paramService.getByKey(key)));
     }
 
@@ -68,7 +71,7 @@ public class ParamController {
     @Get
     @Mapping("/getString")
     @SaCheckPermission("admin.param.query")
-    public Result<String> getString(@Param("key") String key, @Param("defaultValue") String defaultValue) {
+    public Result<String> getString(@ApiParam("参数键") @Param("key") String key, @ApiParam("默认值") @Param("defaultValue") String defaultValue) {
         return Result.ok(paramService.getString(key, defaultValue));
     }
 
@@ -83,7 +86,7 @@ public class ParamController {
     @Get
     @Mapping("/getInt")
     @SaCheckPermission("admin.param.query")
-    public Result<Integer> getInt(@Param("key") String key, @Param("defaultValue") int defaultValue) {
+    public Result<Integer> getInt(@ApiParam("参数键") @Param("key") String key, @ApiParam("默认值") @Param("defaultValue") int defaultValue) {
         return Result.ok(paramService.getInt(key, defaultValue));
     }
 
@@ -98,7 +101,7 @@ public class ParamController {
     @Get
     @Mapping("/getLong")
     @SaCheckPermission("admin.param.query")
-    public Result<Long> getLong(@Param("key") String key, @Param("defaultValue") long defaultValue) {
+    public Result<Long> getLong(@ApiParam("参数键") @Param("key") String key, @ApiParam("默认值") @Param("defaultValue") long defaultValue) {
         return Result.ok(paramService.getLong(key, defaultValue));
     }
 
@@ -113,7 +116,7 @@ public class ParamController {
     @Get
     @Mapping("/getDouble")
     @SaCheckPermission("admin.param.query")
-    public Result<Double> getDouble(@Param("key") String key, @Param("defaultValue") double defaultValue) {
+    public Result<Double> getDouble(@ApiParam("参数键") @Param("key") String key, @ApiParam("默认值") @Param("defaultValue") double defaultValue) {
         return Result.ok(paramService.getDouble(key, defaultValue));
     }
 
@@ -128,7 +131,7 @@ public class ParamController {
     @Get
     @Mapping("/getBoolean")
     @SaCheckPermission("admin.param.query")
-    public Result<Boolean> getBoolean(@Param("key") String key, @Param("defaultValue") boolean defaultValue) {
+    public Result<Boolean> getBoolean(@ApiParam("参数键") @Param("key") String key, @ApiParam("默认值") @Param("defaultValue") boolean defaultValue) {
         return Result.ok(paramService.getBoolean(key, defaultValue));
     }
 

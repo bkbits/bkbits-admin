@@ -15,7 +15,9 @@ import com.bkbits.admin.pojo.RoleVO;
 import com.bkbits.admin.service.PermissionService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -29,6 +31,7 @@ import java.util.List;
 /**
  * 角色、权限及数据权限控制器。
  */
+@Api("角色权限接口")
 @Controller
 @Mapping("/api/permission")
 public class PermissionController {
@@ -61,7 +64,7 @@ public class PermissionController {
     @Get
     @Mapping("/role/getById")
     @SaCheckPermission("admin.role.query")
-    public Result<RoleVO> getRoleById(@Param("roleId") String roleId) {
+    public Result<RoleVO> getRoleById(@ApiParam("角色编号") @Param("roleId") String roleId) {
         return Result.ok(PermissionMapper.INSTANCE.toRoleVO(permissionService.getRoleById(roleId)));
     }
 
@@ -75,7 +78,7 @@ public class PermissionController {
     @Get
     @Mapping("/role/listByTenantId")
     @SaCheckPermission("admin.role.query")
-    public Result<List<RoleVO>> listRolesByTenantId(@Param("tenantId") String tenantId) {
+    public Result<List<RoleVO>> listRolesByTenantId(@ApiParam("租户编号") @Param("tenantId") String tenantId) {
         return Result.ok(PermissionMapper.INSTANCE.toRoleVOList(permissionService.listRolesByTenantId(tenantId)));
     }
 
@@ -132,7 +135,7 @@ public class PermissionController {
     @Get
     @Mapping("/permission/getById")
     @SaCheckPermission("admin.permission.query")
-    public Result<PermissionVO> getPermissionById(@Param("permissionId") String permissionId) {
+    public Result<PermissionVO> getPermissionById(@ApiParam("权限编号") @Param("permissionId") String permissionId) {
         return Result.ok(PermissionMapper.INSTANCE.toPermissionVO(permissionService.getPermissionById(permissionId)));
     }
 
@@ -204,7 +207,7 @@ public class PermissionController {
     @Get
     @Mapping("/dataPermission/list")
     @SaCheckPermission("admin.dataPermission.query")
-    public Result<List<DataPermissionVO>> listDataPermissions(@Param("menuPermissionId") String menuPermissionId) {
+    public Result<List<DataPermissionVO>> listDataPermissions(@ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
         return Result.ok(PermissionMapper.INSTANCE.toDataPermissionVOList(permissionService.listDataPermissions(menuPermissionId)));
     }
 
@@ -262,7 +265,7 @@ public class PermissionController {
     @Get
     @Mapping("/listRolesByUserId")
     @SaCheckPermission("admin.user.query")
-    public Result<List<RoleVO>> listRolesByUserId(@Param("userId") String userId) {
+    public Result<List<RoleVO>> listRolesByUserId(@ApiParam("用户编号") @Param("userId") String userId) {
         return Result.ok(PermissionMapper.INSTANCE.toRoleVOList(permissionService.listRolesByUserId(userId)));
     }
 
@@ -291,7 +294,7 @@ public class PermissionController {
     @Get
     @Mapping("/listPermissionsByRoleId")
     @SaCheckPermission("admin.role.query")
-    public Result<List<PermissionVO>> listPermissionsByRoleId(@Param("roleId") String roleId) {
+    public Result<List<PermissionVO>> listPermissionsByRoleId(@ApiParam("角色编号") @Param("roleId") String roleId) {
         return Result.ok(PermissionMapper.INSTANCE.toPermissionVOList(permissionService.listPermissionsByRoleId(roleId)));
     }
 
@@ -321,8 +324,8 @@ public class PermissionController {
     @Get
     @Mapping("/listRoleDataPermissions")
     @SaCheckPermission("admin.role.query")
-    public Result<List<RoleDataPermissionRelVO>> listRoleDataPermissions(@Param("roleId") String roleId,
-                                                                         @Param("menuPermissionId") String menuPermissionId) {
+    public Result<List<RoleDataPermissionRelVO>> listRoleDataPermissions(@ApiParam("角色编号") @Param("roleId") String roleId,
+                                                                         @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
         return Result.ok(PermissionMapper.INSTANCE.toRoleDataPermissionRelVOList(permissionService.listRoleDataPermissions(roleId, menuPermissionId)));
     }
 }

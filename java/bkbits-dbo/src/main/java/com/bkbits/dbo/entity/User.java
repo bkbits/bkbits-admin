@@ -110,6 +110,14 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     )
     private List<Notification> notificationList;
 
+    @ApiModelProperty("通知阅读记录列表")
+    @Navigate(
+            value = RelationTypeEnum.OneToMany,
+            selfProperty = User.Fields.userId,
+            targetProperty = NotificationRead.Fields.userId
+    )
+    private List<NotificationRead> notificationReadList;
+
     @Override
     public void setId(String id) {
         userId = id;

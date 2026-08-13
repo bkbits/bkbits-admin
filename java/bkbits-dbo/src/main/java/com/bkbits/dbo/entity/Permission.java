@@ -72,6 +72,14 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
     )
     private List<Permission> children;
 
+    @ApiModelProperty("父级权限")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Permission.Fields.parentId,
+            targetProperty = Permission.Fields.id
+    )
+    private Permission parent;
+
     @ApiModelProperty("数据权限列表")
     @Navigate(
             value = RelationTypeEnum.OneToMany,
@@ -80,4 +88,14 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
             cascade = CascadeTypeEnum.DELETE
     )
     private List<DataPermission> dataPermissionList;
+
+    @Navigate(
+            value = RelationTypeEnum.ManyToMany,
+            selfProperty = Permission.Fields.id,
+            selfMappingProperty = RolePermissionRel.Fields.permissionId,
+            mappingClass = RolePermissionRel.class,
+            targetProperty = Role.Fields.id,
+            targetMappingProperty = RolePermissionRel.Fields.roleId
+    )
+    private List<Role> roleList;
 }

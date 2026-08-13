@@ -7,7 +7,9 @@ import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.service.DeptService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -21,6 +23,7 @@ import java.util.List;
 /**
  * 部门控制器。
  */
+@Api("部门管理接口")
 @Controller
 @Mapping("/api/dept")
 public class DeptController {
@@ -53,7 +56,7 @@ public class DeptController {
     @Get
     @Mapping("/getById")
     @SaCheckPermission("admin.dept.query")
-    public Result<DeptVO> getById(@Param("deptId") String deptId) {
+    public Result<DeptVO> getById(@ApiParam("部门编号") @Param("deptId") String deptId) {
         return Result.ok(DeptMapper.INSTANCE.toVO(deptService.getById(deptId)));
     }
 
@@ -67,7 +70,7 @@ public class DeptController {
     @Get
     @Mapping("/listByTenantId")
     @SaCheckPermission("admin.dept.query")
-    public Result<List<DeptVO>> listByTenantId(@Param("tenantId") String tenantId) {
+    public Result<List<DeptVO>> listByTenantId(@ApiParam("租户编号") @Param("tenantId") String tenantId) {
         return Result.ok(DeptMapper.INSTANCE.toVOList(deptService.listByTenantId(tenantId)));
     }
 
@@ -81,7 +84,7 @@ public class DeptController {
     @Get
     @Mapping("/listByParentId")
     @SaCheckPermission("admin.dept.query")
-    public Result<List<DeptVO>> listByParentId(@Param("parentId") String parentId) {
+    public Result<List<DeptVO>> listByParentId(@ApiParam("父部门编号；为空时查询顶级部门") @Param("parentId") String parentId) {
         return Result.ok(DeptMapper.INSTANCE.toVOList(deptService.listByParentId(parentId)));
     }
 

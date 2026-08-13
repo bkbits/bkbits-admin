@@ -7,7 +7,9 @@ import com.bkbits.admin.pojo.TenantVO;
 import com.bkbits.admin.service.TenantService;
 import com.bkbits.core.Result;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.Body;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
@@ -21,6 +23,7 @@ import java.util.List;
 /**
  * 租户控制器。
  */
+@Api("租户接口")
 @Controller
 @Mapping("/api/tenant")
 public class TenantController {
@@ -53,7 +56,7 @@ public class TenantController {
     @Get
     @Mapping("/getById")
     @SaCheckPermission("admin.tenant.query")
-    public Result<TenantVO> getById(@Param("id") String id) {
+    public Result<TenantVO> getById(@ApiParam("租户编号") @Param("id") String id) {
         return Result.ok(TenantMapper.INSTANCE.toVO(tenantService.getById(id)));
     }
 

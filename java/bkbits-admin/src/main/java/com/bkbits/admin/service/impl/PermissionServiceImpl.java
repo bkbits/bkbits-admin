@@ -10,6 +10,7 @@ import com.bkbits.dbo.entity.RolePermissionRel;
 import com.bkbits.dbo.entity.User;
 import com.bkbits.dbo.entity.UserRoleRel;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -25,7 +26,7 @@ import java.util.Objects;
 public class PermissionServiceImpl implements PermissionService {
 
     @Inject
-    EasyEntityQuery easyEntityQuery;
+    private EasyEntityQuery easyEntityQuery;
 
     @Override
     public Role addRole(Role role) {
@@ -124,6 +125,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    @EasyQueryTrack
     @Transaction
     public void removePermissionById(String permissionId) {
         String checkedPermissionId = requireText(permissionId, "权限编号");
@@ -134,18 +136,23 @@ public class PermissionServiceImpl implements PermissionService {
             throw new IllegalStateException("权限存在子权限，不能删除");
         }
 
-        easyEntityQuery.deletable(RolePermissionRel.class)
-                .where(o -> o.permissionId().eq(checkedPermissionId))
-                .executeRows();
-        easyEntityQuery.deletable(RoleDataPermissionRel.class)
-                .where(o -> o.permissionId().eq(checkedPermissionId))
-                .executeRows();
-        easyEntityQuery.deletable(DataPermission.class)
-                .where(o -> o.permissionId().eq(checkedPermissionId))
-                .executeRows();
-        easyEntityQuery.deletable(Permission.class)
-                .whereById(checkedPermissionId)
-                .executeRows(1, "删除权限失败");
+        Permission permission = easyEntityQuery.queryable(Permission.class)
+                .include2((ctx, p) -> {
+                    ctx.query(p.roleList()); //所有关联角色
+                    ctx.query(p.dataPermissionList()); // 所有关联数据权限
+                    ctx.query(p.roleList().flatElement().dataPermissionList()) //所有角色绑定的数据权限
+                            .where(t -> {
+                                t.id().in(
+                                        easyEntityQuery.queryable(DataPermission.class)
+                                                .where(d -> d.permissionId().eq(permissionId))
+                                                .selectColumn(d -> d.id())
+                                );
+                            });
+                })
+                .whereById(permissionId)
+                .firstNotNull("找不到权限");
+
+        easyEntityQuery.savable(permission).removeRoot().executeCommand();
     }
 
     @Override
@@ -281,16 +288,12 @@ public class PermissionServiceImpl implements PermissionService {
         requireDataPermissionsBelongToMenu(checkedPermissionId, checkedDataPermissionIds);
 
         easyEntityQuery.deletable(RoleDataPermissionRel.class)
-                .where(o -> {
-                    o.roleId().eq(checkedRoleId);
-                    o.permissionId().eq(checkedPermissionId);
-                })
+                .where(o -> o.roleId().eq(checkedRoleId))
                 .executeRows();
         if (!checkedDataPermissionIds.isEmpty()) {
             List<RoleDataPermissionRel> relations = checkedDataPermissionIds.stream().map(dataPermissionId -> {
                 RoleDataPermissionRel relation = new RoleDataPermissionRel();
                 relation.setRoleId(checkedRoleId);
-                relation.setPermissionId(checkedPermissionId);
                 relation.setDataPermissionId(dataPermissionId);
                 return relation;
             }).toList();
@@ -302,14 +305,14 @@ public class PermissionServiceImpl implements PermissionService {
     public List<RoleDataPermissionRel> listRoleDataPermissions(String roleId, String menuPermissionId) {
         return easyEntityQuery.queryable(RoleDataPermissionRel.class)
                 .include(o -> o.dataPermission())
-                .where(o -> {
-                    o.roleId().eq(requireText(roleId, "角色编号"));
-                    o.permissionId().eq(requireText(menuPermissionId, "菜单权限编号"));
-                })
+                .where(o -> o.roleId().eq(requireText(roleId, "角色编号")))
                 .orderBy(o -> o.id().asc())
                 .toList();
     }
 
+    /**
+     * 校验菜单权限编号非空，且对应权限存在且为菜单类型，返回校验后的编号。
+     */
     private String requireMenuPermission(String permissionId) {
         String checkedId = requireText(permissionId, "菜单权限编号");
         Permission permission = easyEntityQuery.queryable(Permission.class)
@@ -324,6 +327,9 @@ public class PermissionServiceImpl implements PermissionService {
         return checkedId;
     }
 
+    /**
+     * 校验全部角色编号对应的角色都存在，否则抛出异常。
+     */
     private void requireAllRolesExist(List<String> roleIds) {
         if (roleIds.isEmpty()) {
             return;
@@ -336,6 +342,9 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
+    /**
+     * 校验全部权限编号对应的权限都存在，否则抛出异常。
+     */
     private void requireAllPermissionsExist(List<String> permissionIds) {
         if (permissionIds.isEmpty()) {
             return;
@@ -348,6 +357,9 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
+    /**
+     * 校验数据权限均存在且归属指定菜单权限，否则抛出异常。
+     */
     private void requireDataPermissionsBelongToMenu(String permissionId, List<String> dataPermissionIds) {
         if (dataPermissionIds.isEmpty()) {
             return;
@@ -361,18 +373,27 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
+    /**
+     * 校验用户存在，否则抛出异常。
+     */
     private void requireUserExists(String userId) {
         if (!easyEntityQuery.queryable(User.class).whereById(userId).any()) {
             throw new IllegalArgumentException("用户不存在");
         }
     }
 
+    /**
+     * 校验角色存在，否则抛出异常。
+     */
     private void requireRoleExists(String roleId) {
         if (!easyEntityQuery.queryable(Role.class).whereById(roleId).any()) {
             throw new IllegalArgumentException("角色不存在");
         }
     }
 
+    /**
+     * 逐个校验编号非空并去重，返回去重后的编号集合。
+     */
     private List<String> distinctIds(Collection<String> ids, String name) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
@@ -384,6 +405,9 @@ public class PermissionServiceImpl implements PermissionService {
         return List.copyOf(result);
     }
 
+    /**
+     * 校验文本非空，为空时抛出异常，否则返回原值。
+     */
     private String requireText(String value, String name) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(name + "不能为空");

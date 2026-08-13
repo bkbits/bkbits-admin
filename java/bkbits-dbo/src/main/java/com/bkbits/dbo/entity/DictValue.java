@@ -4,7 +4,9 @@ import com.bkbits.dbo.entity.proxy.DictValueProxy;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,6 +26,14 @@ public class DictValue implements IGenId, ProxyEntityAvailable<DictValue, DictVa
 
     @ApiModelProperty("关联字典id")
     private String dictId;
+
+    @ApiModelProperty("所属字典")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = DictValue.Fields.dictId,
+            targetProperty = Dict.Fields.id
+    )
+    private Dict dict;
 
     @ApiModelProperty("值键")
     private String valueKey;
