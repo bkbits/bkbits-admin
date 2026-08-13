@@ -66,7 +66,8 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
             selfMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId,
             mappingClass = RoleDataPermissionRel.class,
             targetProperty = Role.Fields.id,
-            targetMappingProperty = RoleDataPermissionRel.Fields.roleId
+            targetMappingProperty = RoleDataPermissionRel.Fields.roleId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
 }

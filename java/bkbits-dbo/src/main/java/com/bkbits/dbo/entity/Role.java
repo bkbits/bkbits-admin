@@ -84,7 +84,8 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             selfMappingProperty = RoleDataPermissionRel.Fields.roleId,
             mappingClass = RoleDataPermissionRel.class,
             targetProperty = DataPermission.Fields.id,
-            targetMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId
+            targetMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<DataPermission> dataPermissionList;
 
@@ -95,7 +96,8 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             selfMappingProperty = UserRoleRel.Fields.roleId,
             mappingClass = UserRoleRel.class,
             targetProperty = User.Fields.userId,
-            targetMappingProperty = UserRoleRel.Fields.userId
+            targetMappingProperty = UserRoleRel.Fields.userId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<User> userList;
 }

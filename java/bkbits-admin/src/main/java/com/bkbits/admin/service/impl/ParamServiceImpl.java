@@ -4,7 +4,6 @@ import com.bkbits.admin.service.ParamService;
 import com.bkbits.dbo.entity.Param;
 import com.bkbits.util.StringUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Cache;
@@ -104,7 +103,6 @@ public class ParamServiceImpl implements ParamService {
         Objects.requireNonNull(param, "系统参数不能为空");
         requireText(param.getId(), "参数编号");
         easyEntityQuery.updatable(param)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新系统参数失败");
         return param;
     }

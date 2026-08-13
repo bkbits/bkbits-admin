@@ -95,7 +95,8 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
             selfMappingProperty = RolePermissionRel.Fields.permissionId,
             mappingClass = RolePermissionRel.class,
             targetProperty = Role.Fields.id,
-            targetMappingProperty = RolePermissionRel.Fields.roleId
+            targetMappingProperty = RolePermissionRel.Fields.roleId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
 }

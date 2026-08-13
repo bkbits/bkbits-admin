@@ -2,25 +2,14 @@ package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.PermissionService;
 import com.bkbits.dbo.constants.BaseConstants;
-import com.bkbits.dbo.entity.DataPermission;
-import com.bkbits.dbo.entity.Permission;
-import com.bkbits.dbo.entity.Role;
-import com.bkbits.dbo.entity.RoleDataPermissionRel;
-import com.bkbits.dbo.entity.RolePermissionRel;
-import com.bkbits.dbo.entity.User;
-import com.bkbits.dbo.entity.UserRoleRel;
+import com.bkbits.dbo.entity.*;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.annotation.EasyQueryTrack;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Transaction;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class PermissionServiceImpl implements PermissionService {
@@ -40,8 +29,10 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public Role getRoleById(String roleId) {
         return easyEntityQuery.queryable(Role.class)
-                .include(o -> o.permissionList())
-                .include(o -> o.dataPermissionList())
+                .include2((ctx, o) -> {
+                    ctx.query(o.permissionList());
+                    ctx.query(o.dataPermissionList());
+                })
                 .whereById(requireText(roleId, "角色编号"))
                 .singleOrNull();
     }
@@ -63,7 +54,6 @@ public class PermissionServiceImpl implements PermissionService {
         Objects.requireNonNull(role, "角色不能为空");
         requireText(role.getId(), "角色编号");
         easyEntityQuery.updatable(role)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新角色失败");
         return role;
     }
@@ -119,7 +109,6 @@ public class PermissionServiceImpl implements PermissionService {
         Objects.requireNonNull(permission, "权限不能为空");
         requireText(permission.getId(), "权限编号");
         easyEntityQuery.updatable(permission)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新权限失败");
         return permission;
     }
@@ -140,14 +129,7 @@ public class PermissionServiceImpl implements PermissionService {
                 .include2((ctx, p) -> {
                     ctx.query(p.roleList()); //所有关联角色
                     ctx.query(p.dataPermissionList()); // 所有关联数据权限
-                    ctx.query(p.roleList().flatElement().dataPermissionList()) //所有角色绑定的数据权限
-                            .where(t -> {
-                                t.id().in(
-                                        easyEntityQuery.queryable(DataPermission.class)
-                                                .where(d -> d.permissionId().eq(permissionId))
-                                                .selectColumn(d -> d.id())
-                                );
-                            });
+                    ctx.query(p.dataPermissionList().flatElement().roleList()); // 所有数据权限关联角色
                 })
                 .whereById(permissionId)
                 .firstNotNull("找不到权限");
@@ -188,7 +170,6 @@ public class PermissionServiceImpl implements PermissionService {
             requireMenuPermission(dataPermission.getPermissionId());
         }
         easyEntityQuery.updatable(dataPermission)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新数据权限失败");
         return dataPermission;
     }

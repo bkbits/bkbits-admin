@@ -3,7 +3,6 @@ package com.bkbits.admin.service.impl;
 import com.bkbits.admin.service.TenantService;
 import com.bkbits.dbo.entity.Tenant;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
@@ -44,7 +43,6 @@ public class TenantServiceImpl implements TenantService {
         Objects.requireNonNull(tenant, "租户不能为空");
         requireText(tenant.getId(), "租户编号");
         easyEntityQuery.updatable(tenant)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新租户失败");
         return tenant;
     }

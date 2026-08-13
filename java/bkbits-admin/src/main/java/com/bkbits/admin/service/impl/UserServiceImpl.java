@@ -4,7 +4,6 @@ import com.bkbits.admin.service.UserService;
 import com.bkbits.dbo.entity.User;
 import com.bkbits.dbo.entity.UserRoleRel;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Transaction;
@@ -77,7 +76,6 @@ public class UserServiceImpl implements UserService {
         Objects.requireNonNull(user, "用户不能为空");
         requireText(user.getUserId(), "用户编号");
         easyEntityQuery.updatable(user)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新用户失败");
         return user;
     }

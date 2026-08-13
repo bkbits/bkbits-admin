@@ -7,6 +7,7 @@ import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -56,7 +57,8 @@ public class Tenant implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailabl
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Tenant.Fields.id,
-            targetProperty = User.Fields.tenantId
+            targetProperty = User.Fields.tenantId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<User> userList;
 
@@ -64,7 +66,8 @@ public class Tenant implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailabl
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Tenant.Fields.id,
-            targetProperty = Role.Fields.tenantId
+            targetProperty = Role.Fields.tenantId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
 
@@ -72,7 +75,8 @@ public class Tenant implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailabl
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Tenant.Fields.id,
-            targetProperty = Dept.Fields.tenantId
+            targetProperty = Dept.Fields.tenantId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Dept> deptList;
 
@@ -81,7 +85,8 @@ public class Tenant implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailabl
             value = RelationTypeEnum.OneToMany,
             selfProperty = Tenant.Fields.id,
             targetProperty = Notification.Fields.targetId,
-            extraFilter = NotificationTargetFilterStrategy.class
+            extraFilter = NotificationTargetFilterStrategy.class,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<Notification> notificationList;
 }

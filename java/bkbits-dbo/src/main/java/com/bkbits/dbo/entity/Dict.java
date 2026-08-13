@@ -8,6 +8,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
@@ -60,7 +61,8 @@ public class Dict implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = Dict.Fields.id,
-            targetProperty = DictValue.Fields.dictId
+            targetProperty = DictValue.Fields.dictId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<DictValue> valueList;
 }

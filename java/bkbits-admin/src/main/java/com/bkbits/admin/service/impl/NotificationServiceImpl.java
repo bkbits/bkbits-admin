@@ -5,7 +5,6 @@ import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.Notification;
 import com.bkbits.dbo.entity.NotificationRead;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Transaction;
@@ -84,7 +83,6 @@ public class NotificationServiceImpl implements NotificationService {
         Objects.requireNonNull(notification, "通知不能为空");
         requireText(notification.getId(), "通知编号");
         easyEntityQuery.updatable(notification)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新通知失败");
         return notification;
     }

@@ -3,7 +3,6 @@ package com.bkbits.admin.service.impl;
 import com.bkbits.admin.service.DeptService;
 import com.bkbits.dbo.entity.Dept;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
@@ -66,7 +65,6 @@ public class DeptServiceImpl implements DeptService {
         Objects.requireNonNull(dept, "部门不能为空");
         requireText(dept.getDeptId(), "部门编号");
         easyEntityQuery.updatable(dept)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新部门失败");
         return dept;
     }

@@ -4,7 +4,6 @@ import com.bkbits.admin.service.DictService;
 import com.bkbits.dbo.entity.Dict;
 import com.bkbits.dbo.entity.DictValue;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Cache;
@@ -60,7 +59,6 @@ public class DictServiceImpl implements DictService {
         Objects.requireNonNull(dict, "系统字典不能为空");
         requireText(dict.getId(), "字典编号");
         easyEntityQuery.updatable(dict)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新系统字典失败");
         return dict;
     }
@@ -107,7 +105,6 @@ public class DictServiceImpl implements DictService {
         Objects.requireNonNull(dictValue, "字典值不能为空");
         requireText(dictValue.getId(), "字典值编号");
         easyEntityQuery.updatable(dictValue)
-                .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                 .executeRows(1, "更新字典值失败");
         return dictValue;
     }

@@ -114,7 +114,8 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Navigate(
             value = RelationTypeEnum.OneToMany,
             selfProperty = User.Fields.userId,
-            targetProperty = NotificationRead.Fields.userId
+            targetProperty = NotificationRead.Fields.userId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<NotificationRead> notificationReadList;
 
