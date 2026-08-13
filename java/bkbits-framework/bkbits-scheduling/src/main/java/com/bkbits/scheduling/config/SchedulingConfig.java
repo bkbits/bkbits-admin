@@ -20,7 +20,8 @@ public class SchedulingConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulingConfig.class);
 
-    public Scheduler scheduled(@Inject("${db1}") Properties properties) throws SchedulerException {
+    @Bean
+    public Scheduler scheduled(@Inject("${solon.dataSources.db1}") Properties properties) throws SchedulerException {
         Properties prop = new Properties();
 
         // jobStore：JDBC 持久化
@@ -30,14 +31,19 @@ public class SchedulingConfig {
         prop.setProperty("org.quartz.jobStore.tablePrefix", "QRTZ_");
         prop.setProperty("org.quartz.jobStore.dataSource", "qzDS");
 
-        // 数据源
-        prop.setProperty("org.quartz.dataSource.qzDS.driver", "com.mysql.jdbc.Driver");
+        // 数据源（取自 solon.dataSources.db1 配置）。
+        // 连接池用 hikaricp：Quartz 2.3.2 对显式 connectionProvider.class 走无参构造，
+        // 而 HikariCpPoolingConnectionProvider 只有 Properties 构造器，须用 provider=hikaricp 触发
+        prop.setProperty("org.quartz.dataSource.qzDS.provider", "hikaricp");
+        prop.setProperty("org.quartz.dataSource.qzDS.driver",
+                properties.getProperty("driverClassName", "com.mysql.cj.jdbc.Driver"));
         prop.setProperty("org.quartz.dataSource.qzDS.URL",
-                "jdbc:mysql://localhost:3306/quartz2?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false");
-        prop.setProperty("org.quartz.dataSource.qzDS.user", "root");
-        prop.setProperty("org.quartz.dataSource.qzDS.password", "123456");
+                properties.getProperty("jdbcUrl", "jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8"));
+        prop.setProperty("org.quartz.dataSource.qzDS.user",
+                properties.getProperty("username", "root"));
+        prop.setProperty("org.quartz.dataSource.qzDS.password",
+                properties.getProperty("password", ""));
         prop.setProperty("org.quartz.dataSource.qzDS.maxConnections", "10");
-        prop.setProperty("org.quartz.dataSource.qzDS.validateOnCheckout", "true");
         prop.setProperty("org.quartz.dataSource.qzDS.validationQuery", "select 1");
 
         // 线程池

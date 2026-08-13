@@ -1,13 +1,11 @@
 package com.bkbits.core;
 
-import com.github.xiaoymin.knife4j.solon.extension.OpenApiExtensionResolver;
 import org.noear.solon.Solon;
 import org.noear.solon.Utils;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
 import org.noear.solon.core.Signal;
 import org.noear.solon.core.event.AppLoadEndEvent;
-import org.noear.solon.core.event.AppPluginInitEndEvent;
 import org.noear.solon.core.event.AppPluginLoadEndEvent;
 import org.noear.solon.core.util.ResourceUtil;
 
@@ -51,7 +49,7 @@ public class CorePlugin implements Plugin {
     public void start(AppContext context) throws Throwable {
         // 打印启动 banner
         printBanner();
-
+        context.beanMake(BkbitsProperties.class);
         context.onEvent(AppPluginLoadEndEvent.class,
                 e -> context.beanScan("com.bkbits")
         );
