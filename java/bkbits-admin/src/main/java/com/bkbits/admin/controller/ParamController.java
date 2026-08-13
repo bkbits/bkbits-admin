@@ -195,9 +195,9 @@ public class ParamController {
     @Mapping("/query")
     @SaCheckPermission("admin.param.query")
     public PageResult<com.bkbits.dbo.entity.Param> query(
-            @ApiParam("参数键") @Param("key") String key,
-            @ApiParam("参数名称") @Param("name") String name,
-            @ApiParam("参数类型（S=系统参数,U=用户参数）") @Param("type") String type) {
+            @ApiParam("参数键") @Param(value = "key", required = false) String key,
+            @ApiParam("参数名称") @Param(value = "name", required = false) String name,
+            @ApiParam("参数类型（S=系统参数,U=用户参数）") @Param(value = "type", required = false) String type) {
         return easyEntityQuery.queryable(com.bkbits.dbo.entity.Param.class)
                 .where(o -> {
                     if (key != null && !key.isBlank()) {

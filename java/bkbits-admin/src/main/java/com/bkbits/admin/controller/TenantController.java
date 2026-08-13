@@ -120,9 +120,10 @@ public class TenantController {
     @Get
     @Mapping("/query")
     @SaCheckPermission("admin.tenant.query")
-    public PageResult<Tenant> query(@ApiParam("租户名称") @Param("name") String name,
-                                    @ApiParam("租户类型（S=系统租户,U=用户租户,T=租户模板）") @Param("type") String type,
-                                    @ApiParam("状态（E=启用,D=禁用）") @Param("status") String status) {
+    public PageResult<Tenant> query(
+            @ApiParam("租户名称") @Param(value = "name", required = false) String name,
+            @ApiParam("租户类型（S=系统租户,U=用户租户,T=租户模板）") @Param(value = "type", required = false) String type,
+            @ApiParam("状态（E=启用,D=禁用）") @Param(value = "status", required = false) String status) {
         return easyEntityQuery.queryable(Tenant.class)
                 .where(o -> {
                     if (name != null && !name.isBlank()) {

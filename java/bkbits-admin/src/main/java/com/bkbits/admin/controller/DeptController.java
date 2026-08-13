@@ -2,6 +2,7 @@ package com.bkbits.admin.controller;
 
 import com.bkbits.admin.mapper.DeptMapper;
 import com.bkbits.admin.pojo.DeptDTO;
+import com.bkbits.admin.pojo.DeptQueryDTO;
 import com.bkbits.admin.pojo.DeptVO;
 import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.service.DeptService;
@@ -90,7 +91,8 @@ public class DeptController {
     @Get
     @Mapping("/listByParentId")
     @SaCheckPermission("admin.dept.query")
-    public Result<List<DeptVO>> listByParentId(@ApiParam("父部门编号；为空时查询顶级部门") @Param("parentId") String parentId) {
+    public Result<List<DeptVO>> listByParentId(
+            @ApiParam("父部门编号；为空时查询顶级部门") @Param("parentId") String parentId) {
         return Result.ok(DeptMapper.INSTANCE.toVOList(deptService.listByParentId(parentId)));
     }
 
@@ -126,30 +128,16 @@ public class DeptController {
     /**
      * 分页查询部门。
      *
-     * @param tenantId 租户编号（可选）
-     * @param name     部门名称（可选，模糊匹配）
-     * @param status   状态（可选）
+     * @param dto 查询参数
      * @return 分页结果
      */
     @ApiOperation("分页查询部门")
     @Get
     @Mapping("/query")
     @SaCheckPermission("admin.dept.query")
-    public PageResult<Dept> query(@ApiParam("租户编号") @Param("tenantId") String tenantId,
-                                  @ApiParam("部门名称") @Param("name") String name,
-                                  @ApiParam("状态（E=启用,D=禁用）") @Param("status") String status) {
+    public PageResult<Dept> query(DeptQueryDTO dto) {
         return easyEntityQuery.queryable(Dept.class)
-                .where(o -> {
-                    if (tenantId != null && !tenantId.isBlank()) {
-                        o.tenantId().eq(tenantId);
-                    }
-                    if (name != null && !name.isBlank()) {
-                        o.name().like(name);
-                    }
-                    if (status != null && !status.isBlank()) {
-                        o.status().eq(status);
-                    }
-                })
+                .whereObject(dto)
                 .orderBy(o -> {
                     o.parentId().asc();
                     o.sort().asc();

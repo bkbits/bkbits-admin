@@ -179,9 +179,10 @@ public class DictController {
     @Get
     @Mapping("/query")
     @SaCheckPermission("admin.dict.query")
-    public PageResult<Dict> query(@ApiParam("字典键") @Param("key") String key,
-                                  @ApiParam("字典名称") @Param("name") String name,
-                                  @ApiParam("字典类型（S=系统字典,U=用户字典）") @Param("type") String type) {
+    public PageResult<Dict> query(
+            @ApiParam("字典键") @Param(value = "key", required = false) String key,
+            @ApiParam("字典名称") @Param(value = "name", required = false) String name,
+            @ApiParam("字典类型（S=系统字典,U=用户字典）") @Param(value = "type", required = false) String type) {
         return easyEntityQuery.queryable(Dict.class)
                 .where(o -> {
                     if (key != null && !key.isBlank()) {
