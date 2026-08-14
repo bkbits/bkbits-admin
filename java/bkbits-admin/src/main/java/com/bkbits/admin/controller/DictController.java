@@ -140,7 +140,7 @@ public class DictController {
      */
     @ApiOperation("查询字典值列表")
     @Get
-    @Mapping("/listValues")
+    @Mapping("/value/list")
     @SaCheckPermission("admin.dict.query")
     public Result<List<DictValueVO>> listValues(@ApiParam("字典键") @Param("dictKey") String dictKey) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVOList(dictService.listValues(dictKey)));
@@ -154,7 +154,7 @@ public class DictController {
      */
     @ApiOperation("更新字典值")
     @Post
-    @Mapping("/updateValue")
+    @Mapping("/value/update")
     @SaCheckPermission("admin.dict.update")
     public Result<Void> updateValue(@Validated @Body DictValueUpdateDTO dto) {
         dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto));
@@ -169,7 +169,7 @@ public class DictController {
      */
     @ApiOperation("删除字典值")
     @Post
-    @Mapping("/removeValue")
+    @Mapping("/value/remove")
     @SaCheckPermission("admin.dict.update")
     public Result<Void> removeValue(@Body IdDTO dto) {
         dictService.removeValueById(dto.getId());
