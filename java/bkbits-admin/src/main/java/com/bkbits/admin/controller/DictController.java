@@ -2,11 +2,7 @@ package com.bkbits.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.DictMapper;
-import com.bkbits.admin.pojo.DictDTO;
-import com.bkbits.admin.pojo.DictValueDTO;
-import com.bkbits.admin.pojo.DictValueVO;
-import com.bkbits.admin.pojo.DictVO;
-import com.bkbits.admin.pojo.IdDTO;
+import com.bkbits.admin.pojo.*;
 import com.bkbits.admin.service.DictService;
 import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
@@ -23,6 +19,7 @@ import org.noear.solon.annotation.Inject;
 import org.noear.solon.annotation.Mapping;
 import org.noear.solon.annotation.Param;
 import org.noear.solon.annotation.Post;
+import org.noear.solon.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -41,17 +38,23 @@ public class DictController {
     private EasyEntityQuery easyEntityQuery;
 
     /**
-     * 新增系统字典。
+     * 分页查询系统字典。
      *
-     * @param dto 字典输入参数
-     * @return 新增后的字典
+     * @param dto 查询参数
+     * @return 分页结果
      */
-    @ApiOperation("新增系统字典")
-    @Post
-    @Mapping("/add")
-    @SaCheckPermission("admin.dict.add")
-    public Result<DictVO> add(@Body DictDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.add(DictMapper.INSTANCE.toDictEntity(dto))));
+    @ApiOperation("分页查询系统字典")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.dict.query")
+    public PageResult<Dict> query(DictQueryDTO dto) {
+        return easyEntityQuery.queryable(Dict.class)
+                .whereObject(dto)
+                .orderBy(o -> {
+                    o.sort().asc();
+                    o.createTime().asc();
+                })
+                .toPageResult(PageQuery.current().toPager(Dict.class));
     }
 
     /**
@@ -68,17 +71,19 @@ public class DictController {
         return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.getByKey(key)));
     }
 
+
     /**
-     * 查询全部系统字典。
+     * 新增系统字典。
      *
-     * @return 字典列表
+     * @param dto 字典输入参数
+     * @return 新增后的字典
      */
-    @ApiOperation("查询全部字典")
-    @Get
-    @Mapping("/list")
-    @SaCheckPermission("admin.dict.query")
-    public Result<List<DictVO>> list() {
-        return Result.ok(DictMapper.INSTANCE.toDictVOList(dictService.list()));
+    @ApiOperation("新增系统字典")
+    @Post
+    @Mapping("/add")
+    @SaCheckPermission("admin.dict.add")
+    public Result<DictVO> add(@Validated @Body DictAddDTO dto) {
+        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.add(DictMapper.INSTANCE.toDictEntity(dto))));
     }
 
     /**
@@ -91,7 +96,7 @@ public class DictController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictVO> update(@Body DictDTO dto) {
+    public Result<DictVO> update(@Validated @Body DictUpdateDTO dto) {
         return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.update(DictMapper.INSTANCE.toDictEntity(dto))));
     }
 
@@ -119,8 +124,8 @@ public class DictController {
     @ApiOperation("新增字典值")
     @Post
     @Mapping("/addValue")
-    @SaCheckPermission("admin.dictValue.add")
-    public Result<DictValueVO> addValue(@Body DictValueDTO dto) {
+    @SaCheckPermission("admin.dict.update")
+    public Result<DictValueVO> addValue(@Body DictValueAddDTO dto) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 
@@ -133,7 +138,7 @@ public class DictController {
     @ApiOperation("查询字典值列表")
     @Get
     @Mapping("/listValues")
-    @SaCheckPermission("admin.dictValue.query")
+    @SaCheckPermission("admin.dict.query")
     public Result<List<DictValueVO>> listValues(@ApiParam("字典键") @Param("dictKey") String dictKey) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVOList(dictService.listValues(dictKey)));
     }
@@ -147,8 +152,8 @@ public class DictController {
     @ApiOperation("更新字典值")
     @Post
     @Mapping("/updateValue")
-    @SaCheckPermission("admin.dictValue.update")
-    public Result<DictValueVO> updateValue(@Body DictValueDTO dto) {
+    @SaCheckPermission("admin.dict.update")
+    public Result<DictValueVO> updateValue(@Body DictValueAddDTO dto) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 
@@ -161,44 +166,9 @@ public class DictController {
     @ApiOperation("删除字典值")
     @Post
     @Mapping("/removeValue")
-    @SaCheckPermission("admin.dictValue.remove")
+    @SaCheckPermission("admin.dict.update")
     public Result<Void> removeValue(@Body IdDTO dto) {
         dictService.removeValueById(dto.getId());
         return Result.ok();
-    }
-
-    /**
-     * 分页查询系统字典。
-     *
-     * @param key  字典键（可选，模糊匹配）
-     * @param name 字典名称（可选，模糊匹配）
-     * @param type 字典类型（可选）
-     * @return 分页结果
-     */
-    @ApiOperation("分页查询系统字典")
-    @Get
-    @Mapping("/query")
-    @SaCheckPermission("admin.dict.query")
-    public PageResult<Dict> query(
-            @ApiParam("字典键") @Param(value = "key", required = false) String key,
-            @ApiParam("字典名称") @Param(value = "name", required = false) String name,
-            @ApiParam("字典类型（S=系统字典,U=用户字典）") @Param(value = "type", required = false) String type) {
-        return easyEntityQuery.queryable(Dict.class)
-                .where(o -> {
-                    if (key != null && !key.isBlank()) {
-                        o.dictKey().like(key);
-                    }
-                    if (name != null && !name.isBlank()) {
-                        o.name().like(name);
-                    }
-                    if (type != null && !type.isBlank()) {
-                        o.type().eq(type);
-                    }
-                })
-                .orderBy(o -> {
-                    o.sort().asc();
-                    o.createTime().asc();
-                })
-                .toPageResult(PageQuery.current().toPager(Dict.class));
     }
 }

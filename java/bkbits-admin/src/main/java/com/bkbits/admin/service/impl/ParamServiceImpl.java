@@ -11,7 +11,6 @@ import org.noear.solon.data.annotation.Cache;
 import org.noear.solon.data.annotation.CacheRemove;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 @Component
@@ -25,7 +24,7 @@ public class ParamServiceImpl implements ParamService {
     @Override
     @CacheRemove(tags = CACHE_TAG)
     public Param add(Param param) {
-        Objects.requireNonNull(param, "系统参数不能为空");
+        ValidUtil.requireNotNull(param, "系统参数不能为空");
         if (easyEntityQuery.insertable(param).executeRows() != 1) {
             throw new IllegalStateException("创建系统参数失败");
         }
@@ -107,7 +106,7 @@ public class ParamServiceImpl implements ParamService {
     @Override
     @CacheRemove(tags = CACHE_TAG)
     public Param update(Param param) {
-        Objects.requireNonNull(param, "系统参数不能为空");
+        ValidUtil.requireNotNull(param, "系统参数不能为空");
         ValidUtil.requireString(param.getId(), "参数编号不能为空");
         easyEntityQuery.updatable(param)
                 .executeRows(1, "更新系统参数失败");

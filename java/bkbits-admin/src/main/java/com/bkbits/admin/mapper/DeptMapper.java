@@ -1,6 +1,6 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.DeptDTO;
+import com.bkbits.admin.pojo.DeptAddDTO;
 import com.bkbits.admin.pojo.DeptVO;
 import com.bkbits.dbo.entity.Dept;
 import org.mapstruct.Mapper;
@@ -24,7 +24,7 @@ public interface DeptMapper {
      * @param dto 输入参数
      * @return 部门实体
      */
-    Dept toEntity(DeptDTO dto);
+    Dept toEntity(DeptAddDTO dto);
 
     /**
      * 实体转输出参数（含子部门）。

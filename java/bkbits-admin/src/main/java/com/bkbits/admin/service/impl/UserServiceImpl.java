@@ -11,7 +11,6 @@ import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Transaction;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -24,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User add(User user) {
-        Objects.requireNonNull(user, "用户不能为空");
+        ValidUtil.requireNotNull(user, "用户不能为空");
         if (easyEntityQuery.insertable(user).executeRows() != 1) {
             throw new IllegalStateException("创建用户失败");
         }
@@ -78,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        Objects.requireNonNull(user, "用户不能为空");
+        ValidUtil.requireNotNull(user, "用户不能为空");
         ValidUtil.requireString(user.getUserId(), "用户编号不能为空");
         easyEntityQuery.updatable(user)
                 .executeRows(1, "更新用户失败");
@@ -87,8 +86,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(String userId, String password) {
-        Objects.requireNonNull(userId);
-        Objects.requireNonNull(password);
+        ValidUtil.requireNotNull(userId, "用户编号不能为空");
+        ValidUtil.requireNotNull(password, "密码不能为空");
 
         String passwordHash = passwordEncrypt.hash(password);
 

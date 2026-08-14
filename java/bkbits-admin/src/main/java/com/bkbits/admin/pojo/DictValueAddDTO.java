@@ -6,19 +6,19 @@ import lombok.Data;
 
 /**
  * 字典值输入参数。
+ * {@link com.bkbits.dbo.entity.DictValue }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
 @ApiModel("字典值输入参数")
-public class DictValueDTO {
-
-    @ApiModelProperty("字典值编号；更新时必填")
-    private String id;
-
+public class DictValueAddDTO {
     @ApiModelProperty("关联字典id")
     private String dictId;
 
     @ApiModelProperty("值键")
-    private String key;
+    private String valueKey;
 
     @ApiModelProperty("值名称")
     private String name;

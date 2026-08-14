@@ -13,4 +13,11 @@ public interface IGenId {
      * @param id 主键值
      */
     void setId(String id);
+
+    /**
+     * 获取主键
+     *
+     * @return 主键
+     */
+    String getId();
 }

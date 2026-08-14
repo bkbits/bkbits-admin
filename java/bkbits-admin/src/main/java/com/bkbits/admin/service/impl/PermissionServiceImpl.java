@@ -21,7 +21,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Role addRole(Role role) {
-        Objects.requireNonNull(role, "角色不能为空");
+        ValidUtil.requireNotNull(role, "角色不能为空");
         if (easyEntityQuery.insertable(role).executeRows() != 1) {
             throw new IllegalStateException("创建角色失败");
         }
@@ -53,7 +53,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Role updateRole(Role role) {
-        Objects.requireNonNull(role, "角色不能为空");
+        ValidUtil.requireNotNull(role, "角色不能为空");
         ValidUtil.requireString(role.getId(), "角色编号不能为空");
         easyEntityQuery.updatable(role)
                 .executeRows(1, "更新角色失败");
@@ -80,7 +80,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Permission addPermission(Permission permission) {
-        Objects.requireNonNull(permission, "权限不能为空");
+        ValidUtil.requireNotNull(permission, "权限不能为空");
         if (easyEntityQuery.insertable(permission).executeRows() != 1) {
             throw new IllegalStateException("创建权限失败");
         }
@@ -97,7 +97,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Permission updatePermission(Permission permission) {
-        Objects.requireNonNull(permission, "权限不能为空");
+        ValidUtil.requireNotNull(permission, "权限不能为空");
         ValidUtil.requireString(permission.getId(), "权限编号不能为空");
         easyEntityQuery.updatable(permission)
                 .executeRows(1, "更新权限失败");
@@ -131,7 +131,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public DataPermission addDataPermission(String menuPermissionId, DataPermission dataPermission) {
         String checkedPermissionId = requireMenuPermission(menuPermissionId);
-        Objects.requireNonNull(dataPermission, "数据权限不能为空");
+        ValidUtil.requireNotNull(dataPermission, "数据权限不能为空");
         dataPermission.setPermissionId(checkedPermissionId);
         if (easyEntityQuery.insertable(dataPermission).executeRows() != 1) {
             throw new IllegalStateException("创建数据权限失败");
@@ -149,7 +149,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public DataPermission updateDataPermission(DataPermission dataPermission) {
-        Objects.requireNonNull(dataPermission, "数据权限不能为空");
+        ValidUtil.requireNotNull(dataPermission, "数据权限不能为空");
         String dataPermissionId = ValidUtil.requireString(dataPermission.getId(), "数据权限编号不能为空");
         DataPermission existing = easyEntityQuery.queryable(DataPermission.class)
                 .whereById(dataPermissionId)

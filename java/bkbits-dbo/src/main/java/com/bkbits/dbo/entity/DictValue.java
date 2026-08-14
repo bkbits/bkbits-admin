@@ -27,14 +27,6 @@ public class DictValue implements IGenId, ProxyEntityAvailable<DictValue, DictVa
     @ApiModelProperty("关联字典id")
     private String dictId;
 
-    @ApiModelProperty("所属字典")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = DictValue.Fields.dictId,
-            targetProperty = Dict.Fields.id
-    )
-    private Dict dict;
-
     @ApiModelProperty("值键")
     private String valueKey;
 
@@ -55,4 +47,12 @@ public class DictValue implements IGenId, ProxyEntityAvailable<DictValue, DictVa
 
     @ApiModelProperty("备注")
     private String remark;
+
+    @ApiModelProperty("所属字典")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = DictValue.Fields.dictId,
+            targetProperty = Dict.Fields.id
+    )
+    private Dict dict;
 }

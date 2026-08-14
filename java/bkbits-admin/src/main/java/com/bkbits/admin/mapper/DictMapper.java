@@ -1,9 +1,6 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.DictDTO;
-import com.bkbits.admin.pojo.DictValueDTO;
-import com.bkbits.admin.pojo.DictValueVO;
-import com.bkbits.admin.pojo.DictVO;
+import com.bkbits.admin.pojo.*;
 import com.bkbits.dbo.entity.Dict;
 import com.bkbits.dbo.entity.DictValue;
 import org.mapstruct.Mapper;
@@ -27,7 +24,7 @@ public interface DictMapper {
      * @param dto 输入参数
      * @return 字典实体
      */
-    Dict toDictEntity(DictDTO dto);
+    Dict toDictEntity(DictAddDTO dto);
 
     /**
      * 实体转输出参数（含值列表）。
@@ -51,7 +48,7 @@ public interface DictMapper {
      * @param dto 输入参数
      * @return 字典值实体
      */
-    DictValue toDictValueEntity(DictValueDTO dto);
+    DictValue toDictValueEntity(DictValueAddDTO dto);
 
     /**
      * 字典值实体转输出参数。

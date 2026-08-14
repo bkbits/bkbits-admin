@@ -27,13 +27,6 @@ public interface DictService {
     Dict getByKey(String key);
 
     /**
-     * 查询全部系统字典。
-     *
-     * @return 字典列表
-     */
-    List<Dict> list();
-
-    /**
      * 更新系统字典。
      *
      * @param dict 待更新的字典信息

@@ -12,7 +12,6 @@ import org.noear.solon.data.annotation.Transaction;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class NotificationServiceImpl implements NotificationService {
@@ -22,7 +21,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Notification add(Notification notification) {
-        Objects.requireNonNull(notification, "通知不能为空");
+        ValidUtil.requireNotNull(notification, "通知不能为空");
         if (easyEntityQuery.insertable(notification).executeRows() != 1) {
             throw new IllegalStateException("创建通知失败");
         }
@@ -81,7 +80,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Notification update(Notification notification) {
-        Objects.requireNonNull(notification, "通知不能为空");
+        ValidUtil.requireNotNull(notification, "通知不能为空");
         ValidUtil.requireString(notification.getId(), "通知编号不能为空");
         easyEntityQuery.updatable(notification)
                 .executeRows(1, "更新通知失败");

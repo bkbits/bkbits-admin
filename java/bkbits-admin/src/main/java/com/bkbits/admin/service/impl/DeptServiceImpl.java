@@ -8,7 +8,6 @@ import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class DeptServiceImpl implements DeptService {
@@ -18,7 +17,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     public Dept add(Dept dept) {
-        Objects.requireNonNull(dept, "部门不能为空");
+        ValidUtil.requireNotNull(dept, "部门不能为空");
         if (easyEntityQuery.insertable(dept).executeRows() != 1) {
             throw new IllegalStateException("创建部门失败");
         }

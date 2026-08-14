@@ -8,7 +8,6 @@ import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class TenantServiceImpl implements TenantService {
@@ -18,7 +17,7 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public Tenant add(Tenant tenant) {
-        Objects.requireNonNull(tenant, "租户不能为空");
+        ValidUtil.requireNotNull(tenant, "租户不能为空");
         if (easyEntityQuery.insertable(tenant).executeRows() != 1) {
             throw new IllegalStateException("创建租户失败");
         }
@@ -41,7 +40,7 @@ public class TenantServiceImpl implements TenantService {
 
     @Override
     public Tenant update(Tenant tenant) {
-        Objects.requireNonNull(tenant, "租户不能为空");
+        ValidUtil.requireNotNull(tenant, "租户不能为空");
         ValidUtil.requireString(tenant.getId(), "租户编号不能为空");
         easyEntityQuery.updatable(tenant)
                 .executeRows(1, "更新租户失败");

@@ -10,6 +10,7 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -121,8 +122,16 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     )
     private List<NotificationRead> notificationReadList;
 
+    @JsonIgnore
     @Override
     public void setId(String id) {
         userId = id;
+    }
+
+    @JsonIgnore
+    @JsonIgnore
+    @Override
+    public String getId() {
+        return userId;
     }
 }
