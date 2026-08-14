@@ -35,6 +35,55 @@ public class ParamController {
     private EasyEntityQuery easyEntityQuery;
 
     /**
+     * 分页查询系统参数。
+     *
+     * @param dto 查询参数
+     * @return 分页结果
+     */
+    @ApiOperation("分页查询系统参数")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.param.query")
+    public PageResult<ParamVO> query(ParamQueryDTO dto) {
+        return easyEntityQuery.queryable(com.bkbits.dbo.entity.Param.class)
+                .whereObject(dto)
+                .orderBy(o -> {
+                    o.sort().asc();
+                    o.createTime().asc();
+                })
+                .selectAutoInclude(ParamVO.class)
+                .toPageResult(PageQuery.current().toPager(ParamVO.class));
+    }
+
+    /**
+     * 按参数键查询系统参数。
+     *
+     * @param paramKey 参数键
+     * @return 系统参数；不存在时返回 null
+     */
+    @ApiOperation("按参数键查询系统参数")
+    @Get
+    @Mapping("/getByKey")
+    @SaCheckPermission("admin.param.query")
+    public Result<ParamVO> getByKey(@ApiParam("参数键") @Param("paramKey") String paramKey) {
+        return Result.ok(ParamMapper.INSTANCE.toVO(paramService.getByKey(paramKey)));
+    }
+
+    /**
+     * 按参数键查询系统参数。
+     *
+     * @param id 参数键
+     * @return 系统参数；不存在时返回 null
+     */
+    @ApiOperation("按参数键查询系统参数")
+    @Get
+    @Mapping("/getById")
+    @SaCheckPermission("admin.param.query")
+    public Result<ParamVO> getById(@ApiParam("参数键") @Param("id") String id) {
+        return Result.ok(ParamMapper.INSTANCE.toVO(paramService.getById(id)));
+    }
+
+    /**
      * 新增系统参数。
      *
      * @param dto 系统参数输入参数
@@ -44,116 +93,9 @@ public class ParamController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.param.add")
-    public Result<ParamVO> add(@Validated @Body ParamAddDTO dto) {
-        return Result.ok(ParamMapper.INSTANCE.toVO(paramService.add(ParamMapper.INSTANCE.toEntity(dto))));
-    }
-
-    /**
-     * 按参数键查询系统参数。
-     *
-     * @param key 参数键
-     * @return 系统参数；不存在时返回 null
-     */
-    @ApiOperation("按参数键查询系统参数")
-    @Get
-    @Mapping("/getByKey")
-    @SaCheckPermission("admin.param.query")
-    public Result<ParamVO> getByKey(@ApiParam("参数键") @Param("key") String key) {
-        return Result.ok(ParamMapper.INSTANCE.toVO(paramService.getByKey(key)));
-    }
-
-    /**
-     * 按参数键获取字符串值。
-     *
-     * @param key          参数键
-     * @param defaultValue 默认值
-     * @return 参数值；不存在或值为空时返回默认值
-     */
-    @ApiOperation("获取字符串参数值")
-    @Get
-    @Mapping("/getString")
-    @SaCheckPermission("admin.param.query")
-    public Result<String> getString(@ApiParam("参数键") @Param("key") String key,
-                                    @ApiParam("默认值") @Param("defaultValue") String defaultValue) {
-        return Result.ok(paramService.getString(key, defaultValue));
-    }
-
-    /**
-     * 按参数键获取 int 值。
-     *
-     * @param key          参数键
-     * @param defaultValue 默认值
-     * @return 参数值；不存在或格式非法时返回默认值
-     */
-    @ApiOperation("获取 int 参数值")
-    @Get
-    @Mapping("/getInt")
-    @SaCheckPermission("admin.param.query")
-    public Result<Integer> getInt(@ApiParam("参数键") @Param("key") String key,
-                                  @ApiParam("默认值") @Param("defaultValue") int defaultValue) {
-        return Result.ok(paramService.getInt(key, defaultValue));
-    }
-
-    /**
-     * 按参数键获取 long 值。
-     *
-     * @param key          参数键
-     * @param defaultValue 默认值
-     * @return 参数值；不存在或格式非法时返回默认值
-     */
-    @ApiOperation("获取 long 参数值")
-    @Get
-    @Mapping("/getLong")
-    @SaCheckPermission("admin.param.query")
-    public Result<Long> getLong(@ApiParam("参数键") @Param("key") String key,
-                                @ApiParam("默认值") @Param("defaultValue") long defaultValue) {
-        return Result.ok(paramService.getLong(key, defaultValue));
-    }
-
-    /**
-     * 按参数键获取 double 值。
-     *
-     * @param key          参数键
-     * @param defaultValue 默认值
-     * @return 参数值；不存在或格式非法时返回默认值
-     */
-    @ApiOperation("获取 double 参数值")
-    @Get
-    @Mapping("/getDouble")
-    @SaCheckPermission("admin.param.query")
-    public Result<Double> getDouble(@ApiParam("参数键") @Param("key") String key,
-                                    @ApiParam("默认值") @Param("defaultValue") double defaultValue) {
-        return Result.ok(paramService.getDouble(key, defaultValue));
-    }
-
-    /**
-     * 按参数键获取 boolean 值。
-     *
-     * @param key          参数键
-     * @param defaultValue 默认值
-     * @return 参数值；不存在或格式非法时返回默认值
-     */
-    @ApiOperation("获取 boolean 参数值")
-    @Get
-    @Mapping("/getBoolean")
-    @SaCheckPermission("admin.param.query")
-    public Result<Boolean> getBoolean(
-            @ApiParam("参数键") @Param("key") String key,
-            @ApiParam("默认值") @Param("defaultValue") boolean defaultValue) {
-        return Result.ok(paramService.getBoolean(key, defaultValue));
-    }
-
-    /**
-     * 查询全部系统参数。
-     *
-     * @return 系统参数列表
-     */
-    @ApiOperation("查询全部系统参数")
-    @Get
-    @Mapping("/list")
-    @SaCheckPermission("admin.param.query")
-    public Result<List<ParamVO>> list() {
-        return Result.ok(ParamMapper.INSTANCE.toVOList(paramService.list()));
+    public Result<Void> add(@Validated @Body ParamAddDTO dto) {
+        paramService.add(ParamMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -166,8 +108,9 @@ public class ParamController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.param.update")
-    public Result<ParamVO> update(@Validated @Body ParamUpdateDTO dto) {
-        return Result.ok(ParamMapper.INSTANCE.toVO(paramService.update(ParamMapper.INSTANCE.toEntity(dto))));
+    public Result<Void> update(@Validated @Body ParamUpdateDTO dto) {
+        paramService.update(ParamMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -183,25 +126,5 @@ public class ParamController {
     public Result<Void> remove(@Body IdDTO dto) {
         paramService.removeById(dto.getId());
         return Result.ok();
-    }
-
-    /**
-     * 分页查询系统参数。
-     *
-     * @param dto 查询参数
-     * @return 分页结果
-     */
-    @ApiOperation("分页查询系统参数")
-    @Get
-    @Mapping("/query")
-    @SaCheckPermission("admin.param.query")
-    public PageResult<com.bkbits.dbo.entity.Param> query(ParamQueryDTO dto) {
-        return easyEntityQuery.queryable(com.bkbits.dbo.entity.Param.class)
-                .whereObject(dto)
-                .orderBy(o -> {
-                    o.sort().asc();
-                    o.createTime().asc();
-                })
-                .toPageResult(PageQuery.current().toPager(com.bkbits.dbo.entity.Param.class));
     }
 }

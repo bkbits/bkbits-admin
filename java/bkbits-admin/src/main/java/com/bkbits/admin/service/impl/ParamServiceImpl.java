@@ -39,6 +39,13 @@ public class ParamServiceImpl implements ParamService {
                 .singleOrNull();
     }
 
+    @Override
+    public Param getById(String id) {
+        return easyEntityQuery.queryable(Param.class)
+                .whereById(id)
+                .singleNotNull("找不到参数");
+    }
+
     /**
      * 按参数键查询参数值，不存在时返回 null。
      */

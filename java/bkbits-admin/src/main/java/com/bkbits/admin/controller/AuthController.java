@@ -2,6 +2,7 @@ package com.bkbits.admin.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.bkbits.admin.AdminParamConstants;
+import com.bkbits.admin.config.BkbitsAdminProperties;
 import com.bkbits.admin.pojo.LoginDTO;
 import com.bkbits.admin.service.ParamService;
 import com.bkbits.admin.service.UserService;
@@ -14,12 +15,7 @@ import com.bkbits.encrypt.IPasswordEncrypt;
 import com.bkbits.util.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.noear.solon.annotation.Body;
-import org.noear.solon.annotation.Controller;
-import org.noear.solon.annotation.Get;
-import org.noear.solon.annotation.Inject;
-import org.noear.solon.annotation.Mapping;
-import org.noear.solon.annotation.Post;
+import org.noear.solon.annotation.*;
 import org.noear.solon.core.handle.Context;
 import org.noear.solon.validation.annotation.Validated;
 
@@ -41,6 +37,9 @@ public class AuthController implements AdminParamConstants, BaseConstants {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private BkbitsAdminProperties adminProperties;
 
     @ApiOperation(value = "获取rsa公钥", notes = "如果平台设置禁用rsa加密，该接口返回404错误")
     @Get
@@ -67,14 +66,14 @@ public class AuthController implements AdminParamConstants, BaseConstants {
             user = userService.getByUserName(userName);
         }
 
-        if (user == null && paramService.getBoolean(PARAM_LOGIN_PHONE, PARAM_LOGIN_PHONE_DEFAULT)) {
-            String phone = loginDTO.getPhone();
-            user = userService.getByPhone(userName);
+        if (user == null && adminProperties.isLoginByPhone() &&
+                paramService.getBoolean(PARAM_LOGIN_PHONE, PARAM_LOGIN_PHONE_DEFAULT)) {
+            user = userService.getByPhone(loginDTO.getPhone());
         }
 
-        if (user == null && paramService.getBoolean(PARAM_LOGIN_EMAIL, PARAM_LOGIN_EMAIL_DEFAULT)) {
-            String email = loginDTO.getEmail();
-            user = userService.getByEmail(email);
+        if (user == null && adminProperties.isLoginByEmail() &&
+                paramService.getBoolean(PARAM_LOGIN_EMAIL, PARAM_LOGIN_EMAIL_DEFAULT)) {
+            user = userService.getByEmail(loginDTO.getEmail());
         }
 
         if (user == null) {
@@ -83,11 +82,6 @@ public class AuthController implements AdminParamConstants, BaseConstants {
 
         if (!StringUtil.equals(user.getStatus(), STATUS_ENABLED)) {
             return Result.fail("用户被停用");
-        }
-
-        if (user == null && paramService.getBoolean(PARAM_LOGIN_EMAIL, PARAM_LOGIN_EMAIL_DEFAULT)) {
-            String email = loginDTO.getEmail();
-            user = userService.getByEmail(email);
         }
 
 //        if (paramService.getBoolean(PARAM_LOGIN_CAPTCHA, PARAM_LOGIN_CAPTCHA_DEFAULT)) {

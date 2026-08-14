@@ -15,11 +15,6 @@ import org.noear.solon.validation.annotation.NotBlank;
 @Data
 @ApiModel("用户输入参数")
 public class UserAddDTO {
-
-    @ApiModelProperty("用户编号；更新时必填")
-    @NotBlank
-    private String userId;
-
     @ApiModelProperty("用户名")
     @NotBlank
     private String userName;

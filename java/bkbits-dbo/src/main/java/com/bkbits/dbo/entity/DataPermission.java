@@ -33,14 +33,6 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
     @ApiModelProperty("关联权限id")
     private String permissionId;
 
-    @ApiModelProperty("所属菜单权限")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = DataPermission.Fields.permissionId,
-            targetProperty = Permission.Fields.id
-    )
-    private Permission permission;
-
     @ApiModelProperty("数据域")
     private String dataScope;
 
@@ -58,6 +50,14 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("所属菜单权限")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = DataPermission.Fields.permissionId,
+            targetProperty = Permission.Fields.id
+    )
+    private Permission permission;
 
     @ApiModelProperty("角色列表")
     @Navigate(

@@ -1,14 +1,18 @@
 package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.PermissionService;
+import com.bkbits.core.Result;
 import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.*;
 import com.bkbits.util.CollectionUtil;
+import com.bkbits.util.StringUtil;
 import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.annotation.EasyQueryTrack;
+import org.jetbrains.annotations.Nullable;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
+import org.noear.solon.core.exception.StatusException;
 import org.noear.solon.data.annotation.Transaction;
 
 import java.util.*;
@@ -129,10 +133,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public DataPermission addDataPermission(String menuPermissionId, DataPermission dataPermission) {
-        String checkedPermissionId = requireMenuPermission(menuPermissionId);
+    public DataPermission addDataPermission(DataPermission dataPermission) {
         ValidUtil.requireNotNull(dataPermission, "数据权限不能为空");
-        dataPermission.setPermissionId(checkedPermissionId);
         if (easyEntityQuery.insertable(dataPermission).executeRows() != 1) {
             throw new IllegalStateException("创建数据权限失败");
         }
@@ -140,9 +142,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<DataPermission> listDataPermissions(String menuPermissionId) {
+    public List<DataPermission> listDataPermissions(String permissionId) {
         return easyEntityQuery.queryable(DataPermission.class)
-                .where(o -> o.permissionId().eq(ValidUtil.requireString(menuPermissionId, "菜单权限编号不能为空")))
+                .where(o ->
+                        o.permissionId().eq(ValidUtil.requireString(permissionId, "菜单权限编号不能为空")))
                 .orderBy(o -> o.id().asc())
                 .toList();
     }
@@ -247,34 +250,76 @@ public class PermissionServiceImpl implements PermissionService {
     @Transaction
     public void bindDataPermissionsToRole(
             String roleId,
-            String menuPermissionId,
-            Collection<String> dataPermissionIds) {
+            Collection<String> dataPermissionIds,
+            @Nullable String permissionId) {
         String checkedRoleId = ValidUtil.requireString(roleId, "角色编号不能为空");
-        String checkedPermissionId = requireMenuPermission(menuPermissionId);
         requireRoleExists(checkedRoleId);
         List<String> checkedDataPermissionIds = CollectionUtil.distinct(dataPermissionIds);
-        requireDataPermissionsBelongToMenu(checkedPermissionId, checkedDataPermissionIds);
+
+
+        if (CollectionUtil.isNotEmpty(checkedDataPermissionIds)) {
+            if (StringUtil.isNotEmpty(permissionId)) {
+                //校验 传入的数据权限是否全部归属指定菜单权限，且该菜单权限已绑定给指定角色
+                ValidUtil.requireTrue(
+                        easyEntityQuery.queryable(DataPermission.class)
+                                .where(p -> {
+                                    //数据权限必须归属于指定菜单权限
+                                    p.permissionId().eq(permissionId);
+                                    //且该菜单权限已绑定给指定角色
+                                    p.permission().roleList().any(r -> r.id().eq(checkedRoleId));
+                                    //且数据权限编号在传入集合内
+                                    p.id().in(checkedDataPermissionIds);
+                                })
+                                .count() == checkedDataPermissionIds.size(),
+                        "部分数据权限不属于该角色"
+                );
+            } else {
+                //校验 传入的数据权限是否全部归属该角色已绑定的任意权限
+                ValidUtil.requireTrue(
+                        easyEntityQuery.queryable(DataPermission.class)
+                                .where(d -> {
+                                    //数据权限归属的菜单权限，必须是该角色已绑定的任意权限
+                                    d.permissionId().in(
+                                            //子查询：查出该角色绑定的全部权限id
+                                            d.expression().subQueryable(Permission.class)
+                                                    .where(p -> p.roleList().any(
+                                                            r -> r.id().eq(roleId)
+                                                    ))
+                                                    .selectColumn(p -> p.id())
+                                    );
+                                })
+                                .count() == checkedDataPermissionIds.size(),
+                        "部分数据权限不属于该角色"
+                );
+            }
+
+        }
 
         easyEntityQuery.deletable(RoleDataPermissionRel.class)
+                .allowDeleteStatement(true)
                 .where(o -> o.roleId().eq(checkedRoleId))
                 .executeRows();
+
+
         if (!checkedDataPermissionIds.isEmpty()) {
-            List<RoleDataPermissionRel> relations = checkedDataPermissionIds.stream().map(dataPermissionId -> {
-                RoleDataPermissionRel relation = new RoleDataPermissionRel();
-                relation.setRoleId(checkedRoleId);
-                relation.setDataPermissionId(dataPermissionId);
-                return relation;
-            }).toList();
-            easyEntityQuery.insertable(relations).executeRows();
+            List<RoleDataPermissionRel> relations = checkedDataPermissionIds.stream()
+                    .map(dataPermissionId -> {
+                        RoleDataPermissionRel relation = new RoleDataPermissionRel();
+                        relation.setRoleId(checkedRoleId);
+                        relation.setDataPermissionId(dataPermissionId);
+                        return relation;
+                    })
+                    .toList();
+            easyEntityQuery.insertable(relations).batch().executeRows();
         }
     }
 
     @Override
-    public List<String> listRoleDataPermissions(String roleId, String menuPermissionId) {
+    public List<String> listRoleDataPermissions(String roleId, String permissionId) {
         return easyEntityQuery.queryable(DataPermission.class)
                 .where(d -> {
                     d.roleList().any(r -> r.id().eq(roleId));
-                    d.permission().id().eq(menuPermissionId);
+                    d.permission().id().eq(permissionId);
                 })
                 .selectColumn(d -> d.id())
                 .toList();
@@ -324,22 +369,6 @@ public class PermissionServiceImpl implements PermissionService {
                 .count();
         if (count != permissionIds.size()) {
             throw new IllegalArgumentException("部分权限不存在");
-        }
-    }
-
-    /**
-     * 校验数据权限均存在且归属指定菜单权限，否则抛出异常。
-     */
-    private void requireDataPermissionsBelongToMenu(String permissionId, List<String> dataPermissionIds) {
-        if (dataPermissionIds.isEmpty()) {
-            return;
-        }
-        long count = easyEntityQuery.queryable(DataPermission.class)
-                .whereByIds(dataPermissionIds)
-                .where(o -> o.permissionId().eq(permissionId))
-                .count();
-        if (count != dataPermissionIds.size()) {
-            throw new IllegalArgumentException("部分数据权限不存在或不属于指定菜单权限");
         }
     }
 

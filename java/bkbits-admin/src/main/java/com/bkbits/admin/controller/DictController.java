@@ -60,15 +60,15 @@ public class DictController {
     /**
      * 按字典键查询字典及其字典值。
      *
-     * @param key 字典键
+     * @param dictKey 字典键
      * @return 字典；不存在时返回 null
      */
     @ApiOperation("按字典键查询字典")
     @Get
     @Mapping("/getByKey")
     @SaCheckPermission("admin.dict.query")
-    public Result<DictVO> getByKey(@ApiParam("字典键") @Param("key") String key) {
-        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.getByKey(key)));
+    public Result<DictVO> getByKey(@ApiParam("字典键") @Param("dictKey") String dictKey) {
+        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.getByKey(dictKey)));
     }
 
 
@@ -82,22 +82,24 @@ public class DictController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.dict.add")
-    public Result<DictVO> add(@Validated @Body DictAddDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.add(DictMapper.INSTANCE.toDictEntity(dto))));
+    public Result<Void> add(@Validated @Body DictAddDTO dto) {
+        dictService.add(DictMapper.INSTANCE.toDictEntity(dto));
+        return Result.ok();
     }
 
     /**
      * 更新系统字典。
      *
      * @param dto 字典输入参数
-     * @return 更新后的字典
+     * @return 操作结果
      */
     @ApiOperation("更新系统字典")
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictVO> update(@Validated @Body DictUpdateDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toDictVO(dictService.update(DictMapper.INSTANCE.toDictEntity(dto))));
+    public Result<Void> update(@Validated @Body DictUpdateDTO dto) {
+        dictService.update(DictMapper.INSTANCE.toDictEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -125,8 +127,9 @@ public class DictController {
     @Post
     @Mapping("/addValue")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictValueVO> addValue(@Validated @Body DictValueAddDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
+    public Result<Void> addValue(@Validated @Body DictValueAddDTO dto) {
+        dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -153,8 +156,9 @@ public class DictController {
     @Post
     @Mapping("/updateValue")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictValueVO> updateValue(@Validated @Body DictValueUpdateDTO dto) {
-        return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
+    public Result<Void> updateValue(@Validated @Body DictValueUpdateDTO dto) {
+        dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto));
+        return Result.ok();
     }
 
     /**

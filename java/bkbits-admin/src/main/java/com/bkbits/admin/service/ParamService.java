@@ -26,6 +26,14 @@ public interface ParamService {
     Param getByKey(String key);
 
     /**
+     * 按参数键查询系统参数。
+     *
+     * @param id 参数id
+     * @return 系统参数；不存在时返回 {@code null}
+     */
+    Param getById(String id);
+
+    /**
      * 按参数键获取字符串值。
      *
      * @param key          参数键

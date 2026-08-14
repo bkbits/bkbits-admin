@@ -16,7 +16,7 @@ import org.noear.solon.validation.annotation.NotBlank;
 @ApiModel("数据权限新增参数")
 public class DataPermissionAddDTO {
 
-    @ApiModelProperty("菜单权限编号；新增时必填，将写入数据权限的关联权限id")
+    @ApiModelProperty(value = "菜单权限编号", notes = "新增时必填，将写入数据权限的关联权限id")
     @NotBlank
     private String permissionId;
 
@@ -24,7 +24,7 @@ public class DataPermissionAddDTO {
     @NotBlank
     private String dataScope;
 
-    @ApiModelProperty("状态（E=启用,D=禁用）")
+    @ApiModelProperty(value = "状态", notes = "（E=启用,D=禁用）")
     @NotBlank
     private String status;
 }

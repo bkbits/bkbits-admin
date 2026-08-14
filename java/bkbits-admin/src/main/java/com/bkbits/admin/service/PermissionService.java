@@ -4,6 +4,7 @@ import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
 import com.bkbits.dbo.entity.Role;
 import com.bkbits.dbo.entity.RoleDataPermissionRel;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -86,19 +87,18 @@ public interface PermissionService {
     /**
      * 为菜单权限添加数据权限。
      *
-     * @param menuPermissionId 菜单权限编号
-     * @param dataPermission   数据权限信息
+     * @param dataPermission 数据权限信息
      * @return 新增后的数据权限
      */
-    DataPermission addDataPermission(String menuPermissionId, DataPermission dataPermission);
+    DataPermission addDataPermission(DataPermission dataPermission);
 
     /**
      * 查询指定菜单权限下的数据权限。
      *
-     * @param menuPermissionId 菜单权限编号
+     * @param permissionId 菜单权限编号
      * @return 数据权限列表
      */
-    List<DataPermission> listDataPermissions(String menuPermissionId);
+    List<DataPermission> listDataPermissions(String permissionId);
 
     /**
      * 更新数据权限。
@@ -150,19 +150,20 @@ public interface PermissionService {
     /**
      * 使用给定数据权限集合替换角色在指定菜单权限下的全部数据权限绑定。
      *
-     * @param roleId           角色编号
-     * @param menuPermissionId 菜单权限编号
+     * @param roleId            角色编号
      * @param dataPermissionIds 数据权限编号集合；为空时清空绑定
+     * @param permissionId      权限id，不为空时进行父级权限校验
      */
-    void bindDataPermissionsToRole(String roleId, String menuPermissionId,
-                                   Collection<String> dataPermissionIds);
+    void bindDataPermissionsToRole(String roleId,
+                                   Collection<String> dataPermissionIds,
+                                   @Nullable String permissionId);
 
     /**
      * 查询角色在指定菜单权限下的数据权限关联。
      *
-     * @param roleId           角色编号
-     * @param menuPermissionId 菜单权限编号
+     * @param roleId       角色编号
+     * @param permissionId 菜单权限编号
      * @return 角色数据权限关联列表
      */
-    List<String> listRoleDataPermissions(String roleId, String menuPermissionId);
+    List<String> listRoleDataPermissions(String roleId, String permissionId);
 }

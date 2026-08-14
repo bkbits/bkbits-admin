@@ -81,8 +81,9 @@ public class DeptController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.dept.add")
-    public Result<DeptVO> add(@Validated @Body DeptAddDTO dto) {
-        return Result.ok(DeptMapper.INSTANCE.toVO(deptService.add(DeptMapper.INSTANCE.toEntity(dto))));
+    public Result<Void> add(@Validated @Body DeptAddDTO dto) {
+        deptService.add(DeptMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
     /**
      * 更新部门。
@@ -94,8 +95,9 @@ public class DeptController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.dept.update")
-    public Result<DeptVO> update(@Validated @Body DeptUpdateDTO dto) {
-        return Result.ok(DeptMapper.INSTANCE.toVO(deptService.update(DeptMapper.INSTANCE.toEntity(dto))));
+    public Result<Void> update(@Validated @Body DeptUpdateDTO dto) {
+        deptService.update(DeptMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
 
     /**

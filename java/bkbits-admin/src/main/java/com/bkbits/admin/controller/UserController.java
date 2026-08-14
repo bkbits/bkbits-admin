@@ -65,6 +65,23 @@ public class UserController {
     }
 
     /**
+     * 分页查询用户。
+     *
+     * @param dto 查询参数
+     * @return 分页结果
+     */
+    @ApiOperation("分页查询用户")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.user.query")
+    public PageResult<User> query(UserQueryDTO dto) {
+        return easyEntityQuery.queryable(User.class)
+                .whereObject(dto)
+                .orderBy(o -> o.createTime().desc())
+                .toPageResult(PageQuery.current().toPager(User.class));
+    }
+
+    /**
      * 按编号查询用户。
      *
      * @param userId 用户编号
@@ -130,26 +147,28 @@ public class UserController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.user.add")
-    public Result<UserVO> add(@Validated @Body UserAddDTO dto) {
+    public Result<Void> add(@Validated @Body UserAddDTO dto) {
         User user = UserMapper.INSTANCE.toAddEntity(dto);
         String password = passwordEncrypt.decrypt(user.getPassword());
         password = passwordEncrypt.hash(password);
         user.setPassword(password);
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.add(user)));
+        userService.add(user);
+        return Result.ok();
     }
 
     /**
      * 更新用户。
      *
      * @param dto 用户输入参数
-     * @return 更新后的用户
+     * @return 操作结果
      */
     @ApiOperation("更新用户")
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.user.update")
-    public Result<UserVO> update(@Validated @Body UserUpdateDTO dto) {
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.update(UserMapper.INSTANCE.toUpdateEntity(dto))));
+    public Result<Void> update(@Validated @Body UserUpdateDTO dto) {
+        userService.update(UserMapper.INSTANCE.toUpdateEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -204,25 +223,6 @@ public class UserController {
     public Result<Void> remove(@Body IdDTO dto) {
         userService.removeById(dto.getId());
         return Result.ok();
-    }
-
-    /**
-     * 分页查询用户。
-     *
-     * @param dto 查询参数
-     * @return 分页结果
-     */
-    @ApiOperation("分页查询用户")
-    @Get
-    @Mapping("/query")
-    @SaCheckPermission("admin.user.query")
-    public PageResult<User> query(
-            @Validated UserQueryDTO dto
-    ) {
-        return easyEntityQuery.queryable(User.class)
-                .whereObject(dto)
-                .orderBy(o -> o.createTime().desc())
-                .toPageResult(PageQuery.current().toPager(User.class));
     }
 
     /**

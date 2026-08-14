@@ -42,17 +42,20 @@ public class TenantController {
     private EasyEntityQuery easyEntityQuery;
 
     /**
-     * 新增租户。
+     * 分页查询租户。
      *
-     * @param dto 租户输入参数
-     * @return 新增后的租户
+     * @param dto 查询参数
+     * @return 分页结果
      */
-    @ApiOperation("新增租户")
-    @Post
-    @Mapping("/add")
-    @SaCheckPermission("admin.tenant.add")
-    public Result<TenantVO> add(@Validated @Body TenantAddDTO dto) {
-        return Result.ok(TenantMapper.INSTANCE.toVO(tenantService.add(TenantMapper.INSTANCE.toEntity(dto))));
+    @ApiOperation("分页查询租户")
+    @Get
+    @Mapping("/query")
+    @SaCheckPermission("admin.tenant.query")
+    public PageResult<Tenant> query(TenantQueryDTO dto) {
+        return easyEntityQuery.queryable(Tenant.class)
+                .whereObject(dto)
+                .orderBy(o -> o.id().asc())
+                .toPageResult(PageQuery.current().toPager(Tenant.class));
     }
 
     /**
@@ -70,16 +73,18 @@ public class TenantController {
     }
 
     /**
-     * 查询全部租户。
+     * 新增租户。
      *
-     * @return 租户列表
+     * @param dto 租户输入参数
+     * @return 新增后的租户
      */
-    @ApiOperation("查询全部租户")
-    @Get
-    @Mapping("/list")
-    @SaCheckPermission("admin.tenant.query")
-    public Result<List<TenantVO>> list() {
-        return Result.ok(TenantMapper.INSTANCE.toVOList(tenantService.list()));
+    @ApiOperation("新增租户")
+    @Post
+    @Mapping("/add")
+    @SaCheckPermission("admin.tenant.add")
+    public Result<Void> add(@Validated @Body TenantAddDTO dto) {
+        tenantService.add(TenantMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -92,8 +97,9 @@ public class TenantController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.tenant.update")
-    public Result<TenantVO> update(@Validated @Body TenantUpdateDTO dto) {
-        return Result.ok(TenantMapper.INSTANCE.toVO(tenantService.update(TenantMapper.INSTANCE.toEntity(dto))));
+    public Result<Void> update(@Validated @Body TenantUpdateDTO dto) {
+        tenantService.update(TenantMapper.INSTANCE.toEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -109,22 +115,5 @@ public class TenantController {
     public Result<Void> remove(@Body IdDTO dto) {
         tenantService.removeById(dto.getId());
         return Result.ok();
-    }
-
-    /**
-     * 分页查询租户。
-     *
-     * @param dto 查询参数
-     * @return 分页结果
-     */
-    @ApiOperation("分页查询租户")
-    @Get
-    @Mapping("/query")
-    @SaCheckPermission("admin.tenant.query")
-    public PageResult<Tenant> query(TenantQueryDTO dto) {
-        return easyEntityQuery.queryable(Tenant.class)
-                .whereObject(dto)
-                .orderBy(o -> o.id().asc())
-                .toPageResult(PageQuery.current().toPager(Tenant.class));
     }
 }

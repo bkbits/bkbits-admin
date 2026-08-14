@@ -48,22 +48,23 @@ public class PermissionController {
     @Post
     @Mapping("/role/add")
     @SaCheckPermission("admin.role.add")
-    public Result<Role> addRole(@Validated @Body RoleAddDTO dto) {
-        return Result.ok(permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
+    public Result<Void> addRole(@Validated @Body RoleAddDTO dto) {
+        permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
+        return Result.ok();
     }
 
     /**
      * 按编号查询角色及其权限、数据权限关联。
      *
-     * @param roleId 角色编号
+     * @param id 角色编号
      * @return 角色；不存在时返回 null
      */
     @ApiOperation("按编号查询角色")
     @Get
     @Mapping("/role/getById")
     @SaCheckPermission("admin.role.query")
-    public Result<Role> getRoleById(@ApiParam("角色编号") @Param("roleId") String roleId) {
-        return Result.ok(permissionService.getRoleById(roleId));
+    public Result<Role> getRoleById(@ApiParam("角色编号") @Param("id") String id) {
+        return Result.ok(permissionService.getRoleById(id));
     }
 
     /**
@@ -76,8 +77,9 @@ public class PermissionController {
     @Post
     @Mapping("/role/update")
     @SaCheckPermission("admin.role.update")
-    public Result<Role> updateRole(@Validated @Body RoleUpdateDTO dto) {
-        return Result.ok(permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
+    public Result<Void> updateRole(@Validated @Body RoleUpdateDTO dto) {
+        permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -105,15 +107,15 @@ public class PermissionController {
     @Post
     @Mapping("/permission/add")
     @SaCheckPermission("admin.permission.add")
-    public Result<Permission> addPermission(@Validated @Body PermissionAddDTO dto) {
-        return Result.ok(
-                permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
+    public Result<Void> addPermission(@Validated @Body PermissionAddDTO dto) {
+        permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto));
+        return Result.ok();
     }
 
     /**
      * 按编号查询权限及其数据权限。
      *
-     * @param permissionId 权限编号
+     * @param id 权限编号
      * @return 权限；不存在时返回 null
      */
     @ApiOperation("按编号查询权限")
@@ -121,8 +123,8 @@ public class PermissionController {
     @Mapping("/permission/getById")
     @SaCheckPermission("admin.permission.query")
     public Result<Permission> getPermissionById(
-            @ApiParam("权限编号") @Param("permissionId") String permissionId) {
-        return Result.ok(permissionService.getPermissionById(permissionId));
+            @ApiParam("权限编号") @Param("id") String id) {
+        return Result.ok(permissionService.getPermissionById(id));
     }
 
     /**
@@ -134,9 +136,7 @@ public class PermissionController {
     @Get
     @Mapping("/permission/list")
     @SaCheckPermission("admin.permission.query")
-    public Result<List<Permission>> listPermissions(
-            PermissionQueryDTO dto
-    ) {
+    public Result<List<Permission>> listPermissions(PermissionQueryDTO dto) {
         return Result.ok(
                 CollectionUtil.toTree(
                         easyEntityQuery.queryable(Permission.class)
@@ -161,8 +161,9 @@ public class PermissionController {
     @Post
     @Mapping("/permission/update")
     @SaCheckPermission("admin.permission.update")
-    public Result<Permission> updatePermission(@Validated @Body PermissionUpdateDTO dto) {
-        return Result.ok(permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
+    public Result<Void> updatePermission(@Validated @Body PermissionUpdateDTO dto) {
+        permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -189,26 +190,25 @@ public class PermissionController {
     @ApiOperation("为菜单权限添加数据权限")
     @Post
     @Mapping("/dataPermission/add")
-    @SaCheckPermission("admin.dataPermission.add")
-    public Result<DataPermission> addDataPermission(@Validated @Body DataPermissionAddDTO dto) {
-        return Result.ok(permissionService.addDataPermission(
-                dto.getPermissionId(),
-                PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
+    @SaCheckPermission("admin.permission.add")
+    public Result<Void> addDataPermission(@Validated @Body DataPermissionAddDTO dto) {
+        permissionService.addDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto));
+        return Result.ok();
     }
 
     /**
      * 查询指定菜单权限下的数据权限。
      *
-     * @param menuPermissionId 菜单权限编号
+     * @param permissionId 菜单权限编号
      * @return 数据权限列表
      */
     @ApiOperation("查询菜单权限下数据权限")
     @Get
     @Mapping("/dataPermission/list")
-    @SaCheckPermission("admin.dataPermission.query")
+    @SaCheckPermission("admin.permission.query")
     public Result<List<DataPermission>> listDataPermissions(
-            @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
-        return Result.ok(permissionService.listDataPermissions(menuPermissionId));
+            @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
+        return Result.ok(permissionService.listDataPermissions(permissionId));
     }
 
     /**
@@ -220,9 +220,10 @@ public class PermissionController {
     @ApiOperation("更新数据权限")
     @Post
     @Mapping("/dataPermission/update")
-    @SaCheckPermission("admin.dataPermission.update")
-    public Result<DataPermission> updateDataPermission(@Validated @Body DataPermissionUpdateDTO dto) {
-        return Result.ok(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
+    @SaCheckPermission("admin.permission.update")
+    public Result<Void> updateDataPermission(@Validated @Body DataPermissionUpdateDTO dto) {
+        permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto));
+        return Result.ok();
     }
 
     /**
@@ -234,7 +235,7 @@ public class PermissionController {
     @ApiOperation("删除数据权限")
     @Post
     @Mapping("/dataPermission/remove")
-    @SaCheckPermission("admin.dataPermission.remove")
+    @SaCheckPermission("admin.permission.remove")
     public Result<Void> removeDataPermission(@Body IdDTO dto) {
         permissionService.removeDataPermissionById(dto.getId());
         return Result.ok();
@@ -251,7 +252,22 @@ public class PermissionController {
     @Mapping("/role/bindPermissions")
     @SaCheckPermission("admin.role.bind")
     public Result<Void> bindPermissionsToRole(@Validated @Body BindPermissionsToRoleDTO dto) {
-        permissionService.bindPermissionsToRole(dto.getRoleId(), dto.getPermissionIds());
+        permissionService.bindPermissionsToRole(dto.getRoleId(), dto.getPermissionIds()); //绑定菜单权限
+        return Result.ok();
+    }
+
+    /**
+     * 使用给定权限集合替换角色现有的全部权限绑定。
+     *
+     * @param dto 角色绑定数据权限参数
+     * @return 操作结果
+     */
+    @ApiOperation("绑定数据权限到角色")
+    @Post
+    @Mapping("/role/bindDataPermissions")
+    @SaCheckPermission("admin.role.bind")
+    public Result<Void> bindDataPermissionsToRole(@Validated @Body BindDataPermissionsToRoleDTO dto) {
+        permissionService.bindDataPermissionsToRole(dto.getRoleId(), dto.getDataPermissionIds(), dto.getPermissionId()); //绑定数据权限
         return Result.ok();
     }
 
@@ -270,29 +286,10 @@ public class PermissionController {
     }
 
     /**
-     * 使用给定数据权限集合替换角色在指定菜单权限下的全部数据权限绑定。
-     *
-     * @param dto 角色绑定数据权限参数
-     * @return 操作结果
-     */
-    @ApiOperation("绑定数据权限到角色")
-    @Post
-    @Mapping("/role/bindDataPermissions")
-    @SaCheckPermission("admin.role.bind")
-    public Result<Void> bindDataPermissionsToRole(@Body BindDataPermissionsToRoleDTO dto) {
-        permissionService.bindDataPermissionsToRole(
-                dto.getRoleId(),
-                dto.getPermissionId(),
-                dto.getDataPermissionIds()
-        );
-        return Result.ok();
-    }
-
-    /**
      * 查询角色在指定菜单权限下的数据权限关联。
      *
-     * @param roleId           角色编号
-     * @param menuPermissionId 菜单权限编号
+     * @param roleId       角色编号
+     * @param permissionId 菜单权限编号
      * @return 角色数据权限关联列表
      */
     @ApiOperation("查询角色菜单数据权限关联")
@@ -301,9 +298,9 @@ public class PermissionController {
     @SaCheckPermission("admin.role.query")
     public Result<List<String>> listRoleDataPermissions(
             @ApiParam("角色编号") @Param("roleId") String roleId,
-            @ApiParam("菜单权限编号") @Param("menuPermissionId") String menuPermissionId) {
+            @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
         return Result.ok(
-                permissionService.listRoleDataPermissions(roleId, menuPermissionId)
+                permissionService.listRoleDataPermissions(roleId, permissionId)
         );
     }
 }
