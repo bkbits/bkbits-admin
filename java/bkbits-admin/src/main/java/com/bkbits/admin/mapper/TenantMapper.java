@@ -1,6 +1,7 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.TenantDTO;
+import com.bkbits.admin.pojo.TenantAddDTO;
+import com.bkbits.admin.pojo.TenantUpdateDTO;
 import com.bkbits.admin.pojo.TenantVO;
 import com.bkbits.dbo.entity.Tenant;
 import org.mapstruct.Mapper;
@@ -19,12 +20,20 @@ public interface TenantMapper {
     TenantMapper INSTANCE = Mappers.getMapper(TenantMapper.class);
 
     /**
-     * 输入参数转实体。
+     * 新增参数转实体。
      *
-     * @param dto 输入参数
+     * @param dto 新增参数
      * @return 租户实体
      */
-    Tenant toEntity(TenantDTO dto);
+    Tenant toEntity(TenantAddDTO dto);
+
+    /**
+     * 更新参数转实体。
+     *
+     * @param dto 更新参数
+     * @return 租户实体
+     */
+    Tenant toEntity(TenantUpdateDTO dto);
 
     /**
      * 实体转输出参数。

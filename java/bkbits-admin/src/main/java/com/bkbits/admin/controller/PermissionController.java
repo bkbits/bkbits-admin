@@ -4,8 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.PermissionMapper;
 import com.bkbits.admin.pojo.*;
 import com.bkbits.admin.service.PermissionService;
-import com.bkbits.core.PageQuery;
-import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
@@ -25,7 +23,6 @@ import org.noear.solon.annotation.Post;
 import org.noear.solon.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 角色、权限及数据权限控制器。
@@ -51,7 +48,7 @@ public class PermissionController {
     @Post
     @Mapping("/role/add")
     @SaCheckPermission("admin.role.add")
-    public Result<Role> addRole(@Validated @Body RoleDTO dto) {
+    public Result<Role> addRole(@Validated @Body RoleAddDTO dto) {
         return Result.ok(permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
     }
 
@@ -79,7 +76,7 @@ public class PermissionController {
     @Post
     @Mapping("/role/update")
     @SaCheckPermission("admin.role.update")
-    public Result<Role> updateRole(@Validated @Body RoleDTO dto) {
+    public Result<Role> updateRole(@Validated @Body RoleUpdateDTO dto) {
         return Result.ok(permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto)));
     }
 
@@ -108,7 +105,7 @@ public class PermissionController {
     @Post
     @Mapping("/permission/add")
     @SaCheckPermission("admin.permission.add")
-    public Result<Permission> addPermission(@Validated @Body PermissionDTO dto) {
+    public Result<Permission> addPermission(@Validated @Body PermissionAddDTO dto) {
         return Result.ok(
                 permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
     }
@@ -164,7 +161,7 @@ public class PermissionController {
     @Post
     @Mapping("/permission/update")
     @SaCheckPermission("admin.permission.update")
-    public Result<Permission> updatePermission(@Body PermissionDTO dto) {
+    public Result<Permission> updatePermission(@Validated @Body PermissionUpdateDTO dto) {
         return Result.ok(permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto)));
     }
 
@@ -193,9 +190,9 @@ public class PermissionController {
     @Post
     @Mapping("/dataPermission/add")
     @SaCheckPermission("admin.dataPermission.add")
-    public Result<DataPermission> addDataPermission(@Body DataPermissionDTO dto) {
+    public Result<DataPermission> addDataPermission(@Validated @Body DataPermissionAddDTO dto) {
         return Result.ok(permissionService.addDataPermission(
-                dto.getMenuPermissionId(),
+                dto.getPermissionId(),
                 PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
     }
 
@@ -224,7 +221,7 @@ public class PermissionController {
     @Post
     @Mapping("/dataPermission/update")
     @SaCheckPermission("admin.dataPermission.update")
-    public Result<DataPermission> updateDataPermission(@Body DataPermissionDTO dto) {
+    public Result<DataPermission> updateDataPermission(@Validated @Body DataPermissionUpdateDTO dto) {
         return Result.ok(permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto)));
     }
 
@@ -285,7 +282,7 @@ public class PermissionController {
     public Result<Void> bindDataPermissionsToRole(@Body BindDataPermissionsToRoleDTO dto) {
         permissionService.bindDataPermissionsToRole(
                 dto.getRoleId(),
-                dto.getMenuPermissionId(),
+                dto.getPermissionId(),
                 dto.getDataPermissionIds()
         );
         return Result.ok();

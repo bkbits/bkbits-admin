@@ -220,17 +220,7 @@ public class UserController {
             @Validated UserQueryDTO dto
     ) {
         return easyEntityQuery.queryable(User.class)
-                .where(o -> {
-                    o.userId().eq(StringUtil.isNotBlank(dto.getUserId()), dto.getUserId());
-                    o.tenantId().eq(StringUtil.isNotBlank(dto.getTenantId()), dto.getTenantId());
-                    o.deptId().eq(StringUtil.isNotBlank(dto.getDeptId()), dto.getDeptId());
-                    o.userName().like(StringUtil.isNotBlank(dto.getUserName()), dto.getUserName());
-                    o.realName().like(StringUtil.isNotBlank(dto.getRealName()), dto.getRealName());
-                    o.phone().like(StringUtil.isNotBlank(dto.getPhone()), dto.getPhone());
-                    o.email().like(StringUtil.isNotBlank(dto.getEmail()), dto.getEmail());
-                    o.sex().eq(StringUtil.isNotBlank(dto.getSex()), dto.getSex());
-                    o.status().eq(StringUtil.isNotBlank(dto.getStatus()), dto.getStatus());
-                })
+                .whereObject(dto)
                 .orderBy(o -> o.createTime().desc())
                 .toPageResult(PageQuery.current().toPager(User.class));
     }

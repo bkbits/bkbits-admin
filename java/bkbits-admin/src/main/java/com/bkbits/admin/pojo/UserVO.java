@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * 用户输出参数。
+ * {@link com.bkbits.dbo.entity.User }
+ *
+ * @author lkq
+ * @easy-query-dto schema: response
  */
 @Data
 @ApiModel("用户输出参数")

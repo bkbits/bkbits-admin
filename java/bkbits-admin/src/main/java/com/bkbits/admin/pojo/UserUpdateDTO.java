@@ -3,17 +3,21 @@ package com.bkbits.admin.pojo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.noear.solon.validation.annotation.NotNull;
+import org.noear.solon.validation.annotation.NotBlank;
 
 /**
- * 用户输入参数。
+ * 用户更新参数。
+ * {@link com.bkbits.dbo.entity.User }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
 @ApiModel("用户输入参数")
 public class UserUpdateDTO {
 
     @ApiModelProperty("用户编号；更新时必填")
-    @NotNull
+    @NotBlank
     private String userId;
 
     @ApiModelProperty("用户名")

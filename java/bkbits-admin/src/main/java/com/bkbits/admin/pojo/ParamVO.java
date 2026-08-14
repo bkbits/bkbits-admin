@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * 系统参数输出参数。
+ * {@link com.bkbits.dbo.entity.Param }
+ *
+ * @author lkq
+ * @easy-query-dto schema: response
  */
 @Data
 @ApiModel("系统参数输出参数")
@@ -17,7 +21,7 @@ public class ParamVO {
     private String id;
 
     @ApiModelProperty("参数键")
-    private String key;
+    private String paramKey;
 
     @ApiModelProperty("参数名称")
     private String name;

@@ -3,8 +3,14 @@ package com.bkbits.admin.pojo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.noear.solon.validation.annotation.NotNull;
+import org.noear.solon.validation.annotation.NotBlank;
 
+/**
+ * 登录参数。
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
+ */
 @ApiModel("登录参数")
 @Data
 public class LoginDTO {
@@ -18,12 +24,12 @@ public class LoginDTO {
     private String email;
 
     @ApiModelProperty("密码")
-    @NotNull
+    @NotBlank
     private String password;
 
     @ApiModelProperty("验证码")
-    private String catpcha;
+    private String captcha;
 
     @ApiModelProperty("验证码id")
-    private String catpchaId;
+    private String captchaId;
 }

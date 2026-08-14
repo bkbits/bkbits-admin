@@ -7,7 +7,11 @@ import org.noear.solon.validation.annotation.NotEmpty;
 import org.noear.solon.validation.annotation.NotNull;
 
 /**
- * 部门输入参数。
+ * 部门新增参数。
+ * {@link com.bkbits.dbo.entity.Dept }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
 @ApiModel("部门输入参数")

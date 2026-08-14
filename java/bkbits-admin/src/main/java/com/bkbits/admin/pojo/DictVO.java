@@ -1,5 +1,7 @@
 package com.bkbits.admin.pojo;
 
+import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.enums.RelationTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,6 +11,10 @@ import java.util.List;
 
 /**
  * 系统字典输出参数。
+ * {@link com.bkbits.dbo.entity.Dict }
+ *
+ * @author lkq
+ * @easy-query-dto schema: response
  */
 @Data
 @ApiModel("系统字典输出参数")
@@ -18,7 +24,7 @@ public class DictVO {
     private String id;
 
     @ApiModelProperty("字典键")
-    private String key;
+    private String dictKey;
 
     @ApiModelProperty("字典名称")
     private String name;
@@ -44,6 +50,7 @@ public class DictVO {
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
 
+    @Navigate(value = RelationTypeEnum.OneToMany)
     @ApiModelProperty("值列表")
     private List<DictValueVO> valueList;
 }

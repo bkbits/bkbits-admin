@@ -1,5 +1,7 @@
 package com.bkbits.admin.pojo;
 
+import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.enums.RelationTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,6 +11,10 @@ import java.util.List;
 
 /**
  * 部门输出参数。
+ * {@link com.bkbits.dbo.entity.Dept }
+ *
+ * @author lkq
+ * @easy-query-dto schema: response
  */
 @Data
 @ApiModel("部门输出参数")
@@ -44,6 +50,7 @@ public class DeptVO {
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
 
+    @Navigate(value = RelationTypeEnum.OneToMany)
     @ApiModelProperty("子部门列表")
     private List<DeptVO> children;
 }

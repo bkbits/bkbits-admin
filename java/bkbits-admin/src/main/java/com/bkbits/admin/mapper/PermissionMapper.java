@@ -1,8 +1,11 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.DataPermissionDTO;
-import com.bkbits.admin.pojo.PermissionDTO;
-import com.bkbits.admin.pojo.RoleDTO;
+import com.bkbits.admin.pojo.DataPermissionAddDTO;
+import com.bkbits.admin.pojo.DataPermissionUpdateDTO;
+import com.bkbits.admin.pojo.PermissionAddDTO;
+import com.bkbits.admin.pojo.PermissionUpdateDTO;
+import com.bkbits.admin.pojo.RoleAddDTO;
+import com.bkbits.admin.pojo.RoleUpdateDTO;
 import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
 import com.bkbits.dbo.entity.Role;
@@ -20,26 +23,50 @@ public interface PermissionMapper {
     PermissionMapper INSTANCE = Mappers.getMapper(PermissionMapper.class);
 
     /**
-     * 角色输入参数转实体。
+     * 角色新增参数转实体。
      *
-     * @param dto 输入参数
+     * @param dto 新增参数
      * @return 角色实体
      */
-    Role toRoleEntity(RoleDTO dto);
+    Role toRoleEntity(RoleAddDTO dto);
 
     /**
-     * 权限输入参数转实体。
+     * 角色更新参数转实体。
      *
-     * @param dto 输入参数
+     * @param dto 更新参数
+     * @return 角色实体
+     */
+    Role toRoleEntity(RoleUpdateDTO dto);
+
+    /**
+     * 权限新增参数转实体。
+     *
+     * @param dto 新增参数
      * @return 权限实体
      */
-    Permission toPermissionEntity(PermissionDTO dto);
+    Permission toPermissionEntity(PermissionAddDTO dto);
 
     /**
-     * 数据权限输入参数转实体（menuPermissionId 映射为 permissionId）。
+     * 权限更新参数转实体。
      *
-     * @param dto 输入参数
+     * @param dto 更新参数
+     * @return 权限实体
+     */
+    Permission toPermissionEntity(PermissionUpdateDTO dto);
+
+    /**
+     * 数据权限新增参数转实体（menuPermissionId 映射为 permissionId）。
+     *
+     * @param dto 新增参数
      * @return 数据权限实体
      */
-    DataPermission toDataPermissionEntity(DataPermissionDTO dto);
+    DataPermission toDataPermissionEntity(DataPermissionAddDTO dto);
+
+    /**
+     * 数据权限更新参数转实体（menuPermissionId 映射为 permissionId）。
+     *
+     * @param dto 更新参数
+     * @return 数据权限实体
+     */
+    DataPermission toDataPermissionEntity(DataPermissionUpdateDTO dto);
 }

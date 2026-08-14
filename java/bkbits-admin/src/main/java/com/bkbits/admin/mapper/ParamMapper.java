@@ -1,9 +1,11 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.ParamDTO;
+import com.bkbits.admin.pojo.ParamAddDTO;
+import com.bkbits.admin.pojo.ParamUpdateDTO;
 import com.bkbits.admin.pojo.ParamVO;
 import com.bkbits.dbo.entity.Param;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -19,12 +21,20 @@ public interface ParamMapper {
     ParamMapper INSTANCE = Mappers.getMapper(ParamMapper.class);
 
     /**
-     * 输入参数转实体。
+     * 新增参数转实体（key 映射为 paramKey）。
      *
-     * @param dto 输入参数
+     * @param dto 新增参数
      * @return 系统参数实体
      */
-    Param toEntity(ParamDTO dto);
+    Param toEntity(ParamAddDTO dto);
+
+    /**
+     * 更新参数转实体（key 映射为 paramKey）。
+     *
+     * @param dto 更新参数
+     * @return 系统参数实体
+     */
+    Param toEntity(ParamUpdateDTO dto);
 
     /**
      * 实体转输出参数。

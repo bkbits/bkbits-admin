@@ -3,7 +3,9 @@ package com.bkbits.admin.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.ParamMapper;
 import com.bkbits.admin.pojo.IdDTO;
-import com.bkbits.admin.pojo.ParamDTO;
+import com.bkbits.admin.pojo.ParamAddDTO;
+import com.bkbits.admin.pojo.ParamQueryDTO;
+import com.bkbits.admin.pojo.ParamUpdateDTO;
 import com.bkbits.admin.pojo.ParamVO;
 import com.bkbits.admin.service.ParamService;
 import com.bkbits.core.PageQuery;
@@ -14,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.noear.solon.annotation.*;
+import org.noear.solon.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class ParamController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.param.add")
-    public Result<ParamVO> add(@Body ParamDTO dto) {
+    public Result<ParamVO> add(@Validated @Body ParamAddDTO dto) {
         return Result.ok(ParamMapper.INSTANCE.toVO(paramService.add(ParamMapper.INSTANCE.toEntity(dto))));
     }
 
@@ -163,7 +166,7 @@ public class ParamController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.param.update")
-    public Result<ParamVO> update(@Body ParamDTO dto) {
+    public Result<ParamVO> update(@Validated @Body ParamUpdateDTO dto) {
         return Result.ok(ParamMapper.INSTANCE.toVO(paramService.update(ParamMapper.INSTANCE.toEntity(dto))));
     }
 
@@ -185,31 +188,16 @@ public class ParamController {
     /**
      * 分页查询系统参数。
      *
-     * @param key  参数键（可选，模糊匹配）
-     * @param name 参数名称（可选，模糊匹配）
-     * @param type 参数类型（可选）
+     * @param dto 查询参数
      * @return 分页结果
      */
     @ApiOperation("分页查询系统参数")
     @Get
     @Mapping("/query")
     @SaCheckPermission("admin.param.query")
-    public PageResult<com.bkbits.dbo.entity.Param> query(
-            @ApiParam("参数键") @Param(value = "key", required = false) String key,
-            @ApiParam("参数名称") @Param(value = "name", required = false) String name,
-            @ApiParam("参数类型（S=系统参数,U=用户参数）") @Param(value = "type", required = false) String type) {
+    public PageResult<com.bkbits.dbo.entity.Param> query(ParamQueryDTO dto) {
         return easyEntityQuery.queryable(com.bkbits.dbo.entity.Param.class)
-                .where(o -> {
-                    if (key != null && !key.isBlank()) {
-                        o.paramKey().like(key);
-                    }
-                    if (name != null && !name.isBlank()) {
-                        o.name().like(name);
-                    }
-                    if (type != null && !type.isBlank()) {
-                        o.type().eq(type);
-                    }
-                })
+                .whereObject(dto)
                 .orderBy(o -> {
                     o.sort().asc();
                     o.createTime().asc();

@@ -125,7 +125,7 @@ public class DictController {
     @Post
     @Mapping("/addValue")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictValueVO> addValue(@Body DictValueAddDTO dto) {
+    public Result<DictValueVO> addValue(@Validated @Body DictValueAddDTO dto) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 
@@ -153,7 +153,7 @@ public class DictController {
     @Post
     @Mapping("/updateValue")
     @SaCheckPermission("admin.dict.update")
-    public Result<DictValueVO> updateValue(@Body DictValueAddDTO dto) {
+    public Result<DictValueVO> updateValue(@Validated @Body DictValueUpdateDTO dto) {
         return Result.ok(DictMapper.INSTANCE.toDictValueVO(dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto))));
     }
 

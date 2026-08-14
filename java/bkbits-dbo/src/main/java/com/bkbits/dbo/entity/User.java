@@ -129,7 +129,6 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     }
 
     @JsonIgnore
-    @JsonIgnore
     @Override
     public String getId() {
         return userId;

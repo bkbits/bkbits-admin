@@ -3,30 +3,37 @@ package com.bkbits.admin.pojo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.noear.solon.validation.annotation.NotBlank;
+import org.noear.solon.validation.annotation.NotNull;
 
 /**
- * 系统参数输入参数。
+ * 系统参数新增参数。
+ * {@link com.bkbits.dbo.entity.Param }
+ *
+ * @author lkq
+ * @easy-query-dto schema: request
  */
 @Data
-@ApiModel("系统参数输入参数")
-public class ParamDTO {
-
-    @ApiModelProperty("参数编号；更新时必填")
-    private String id;
+@ApiModel("系统参数新增参数")
+public class ParamAddDTO {
 
     @ApiModelProperty("参数键")
-    private String key;
+    private String paramKey;
 
     @ApiModelProperty("参数名称")
+    @NotBlank
     private String name;
 
     @ApiModelProperty("排序")
+    @NotNull
     private Integer sort;
 
     @ApiModelProperty("参数值")
+    @NotBlank
     private String value;
 
     @ApiModelProperty("参数类型（S=系统参数,U=用户参数）")
+    @NotBlank
     private String type;
 
     @ApiModelProperty("备注")

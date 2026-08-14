@@ -27,6 +27,14 @@ public interface DictMapper {
     Dict toDictEntity(DictAddDTO dto);
 
     /**
+     * 更新参数转实体。
+     *
+     * @param dto 更新参数
+     * @return 字典实体
+     */
+    Dict toDictEntity(DictUpdateDTO dto);
+
+    /**
      * 实体转输出参数（含值列表）。
      *
      * @param entity 字典实体
@@ -43,12 +51,20 @@ public interface DictMapper {
     List<DictVO> toDictVOList(List<Dict> entities);
 
     /**
-     * 字典值输入参数转实体。
+     * 字典值新增参数转实体。
      *
-     * @param dto 输入参数
+     * @param dto 新增参数
      * @return 字典值实体
      */
     DictValue toDictValueEntity(DictValueAddDTO dto);
+
+    /**
+     * 字典值更新参数转实体。
+     *
+     * @param dto 更新参数
+     * @return 字典值实体
+     */
+    DictValue toDictValueEntity(DictValueUpdateDTO dto);
 
     /**
      * 字典值实体转输出参数。
