@@ -125,7 +125,7 @@ public class DictController {
      */
     @ApiOperation("新增字典值")
     @Post
-    @Mapping("/addValue")
+    @Mapping("/value/add")
     @SaCheckPermission("admin.dict.update")
     public Result<Void> addValue(@Validated @Body DictValueAddDTO dto) {
         dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto));
