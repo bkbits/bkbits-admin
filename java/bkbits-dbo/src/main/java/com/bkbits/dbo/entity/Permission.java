@@ -43,6 +43,9 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
     @ApiModelProperty("名称")
     private String name;
 
+    @ApiModelProperty(value = "uri路径", notes = "/开头为绝对路径，否则为基于父级权限的相对路径")
+    private String path;
+
     @ApiModelProperty("排序")
     private Integer sort;
 

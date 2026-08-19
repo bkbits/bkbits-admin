@@ -33,6 +33,9 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
     @ApiModelProperty("关联权限id")
     private String permissionId;
 
+    @ApiModelProperty("权限名")
+    private String name;
+
     @ApiModelProperty("数据域")
     private String dataScope;
 
