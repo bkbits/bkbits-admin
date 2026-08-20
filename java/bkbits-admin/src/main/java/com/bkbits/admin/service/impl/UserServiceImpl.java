@@ -22,12 +22,11 @@ public class UserServiceImpl implements UserService {
     private IPasswordEncrypt passwordEncrypt;
 
     @Override
-    public User add(User user) {
+    public void add(User user) {
         ValidUtil.requireNotNull(user, "用户不能为空");
         if (easyEntityQuery.insertable(user).executeRows() != 1) {
             throw new IllegalStateException("创建用户失败");
         }
-        return user;
     }
 
     @Override
@@ -76,12 +75,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user) {
+    public void update(User user) {
         ValidUtil.requireNotNull(user, "用户不能为空");
         ValidUtil.requireString(user.getUserId(), "用户编号不能为空");
         easyEntityQuery.updatable(user)
                 .executeRows(1, "更新用户失败");
-        return user;
     }
 
     @Override

@@ -14,9 +14,8 @@ public interface NotificationService {
      * 新增通知。
      *
      * @param notification 通知信息
-     * @return 新增后的通知
      */
-    Notification add(Notification notification);
+    void add(Notification notification);
 
     /**
      * 按编号查询通知。
@@ -49,9 +48,8 @@ public interface NotificationService {
      * 更新通知。
      *
      * @param notification 待更新的通知信息
-     * @return 更新后的通知
      */
-    Notification update(Notification notification);
+    void update(Notification notification);
 
     /**
      * 按编号删除通知及其已读记录。

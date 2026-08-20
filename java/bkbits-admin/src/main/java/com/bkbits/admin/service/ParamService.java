@@ -13,9 +13,8 @@ public interface ParamService {
      * 新增系统参数。
      *
      * @param param 参数信息
-     * @return 新增后的参数
      */
-    Param add(Param param);
+    void add(Param param);
 
     /**
      * 按参数键查询系统参数。
@@ -89,9 +88,8 @@ public interface ParamService {
      * 更新系统参数。
      *
      * @param param 待更新的参数信息
-     * @return 更新后的参数
      */
-    Param update(Param param);
+    void update(Param param);
 
     /**
      * 按编号删除系统参数。

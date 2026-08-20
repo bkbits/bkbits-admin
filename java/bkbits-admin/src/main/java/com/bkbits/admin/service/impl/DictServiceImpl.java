@@ -23,13 +23,12 @@ public class DictServiceImpl implements DictService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public Dict add(Dict dict) {
+    public void add(Dict dict) {
         ValidUtil.requireNotNull(dict, "系统字典不能为空");
         ValidUtil.requireEquals(
                 easyEntityQuery.insertable(dict).executeRows(),
                 1,
                 "创建系统字典失败");
-        return dict;
     }
 
     @Override
@@ -42,11 +41,10 @@ public class DictServiceImpl implements DictService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public Dict update(Dict dict) {
+    public void update(Dict dict) {
         ValidUtil.requireNotNull(dict, "系统字典不能为空");
         easyEntityQuery.updatable(dict)
                 .executeRows(1, "更新系统字典失败");
-        return dict;
     }
 
     @Override
@@ -64,10 +62,9 @@ public class DictServiceImpl implements DictService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public DictValue addValue(DictValue dictValue) {
+    public void addValue(DictValue dictValue) {
         ValidUtil.requireNotNull(dictValue, "字典值不能为空");
         easyEntityQuery.insertable(dictValue).executeRows();
-        return dictValue;
     }
 
     @Override
@@ -84,11 +81,10 @@ public class DictServiceImpl implements DictService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public DictValue updateValue(DictValue dictValue) {
+    public void updateValue(DictValue dictValue) {
         ValidUtil.requireNotNull(dictValue, "字典值不能为空");
         easyEntityQuery.updatable(dictValue)
                 .executeRows(1, "更新字典值失败");
-        return dictValue;
     }
 
     @Override

@@ -23,12 +23,11 @@ public class ParamServiceImpl implements ParamService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public Param add(Param param) {
+    public void add(Param param) {
         ValidUtil.requireNotNull(param, "系统参数不能为空");
         if (easyEntityQuery.insertable(param).executeRows() != 1) {
             throw new IllegalStateException("创建系统参数失败");
         }
-        return param;
     }
 
     @Override
@@ -112,12 +111,11 @@ public class ParamServiceImpl implements ParamService {
 
     @Override
     @CacheRemove(tags = CACHE_TAG)
-    public Param update(Param param) {
+    public void update(Param param) {
         ValidUtil.requireNotNull(param, "系统参数不能为空");
         ValidUtil.requireString(param.getId(), "参数编号不能为空");
         easyEntityQuery.updatable(param)
                 .executeRows(1, "更新系统参数失败");
-        return param;
     }
 
     @Override

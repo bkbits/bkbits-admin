@@ -13,9 +13,8 @@ public interface TenantService {
      * 新增租户。
      *
      * @param tenant 租户信息
-     * @return 新增后的租户
      */
-    Tenant add(Tenant tenant);
+    void add(Tenant tenant);
 
     /**
      * 按编号查询租户。
@@ -36,9 +35,8 @@ public interface TenantService {
      * 更新租户。
      *
      * @param tenant 待更新的租户信息
-     * @return 更新后的租户
      */
-    Tenant update(Tenant tenant);
+    void update(Tenant tenant);
 
     /**
      * 按编号删除租户。

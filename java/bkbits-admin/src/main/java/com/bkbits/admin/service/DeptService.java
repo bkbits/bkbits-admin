@@ -13,9 +13,8 @@ public interface DeptService {
      * 新增部门。
      *
      * @param dept 部门信息
-     * @return 新增后的部门
      */
-    Dept add(Dept dept);
+    void add(Dept dept);
 
     /**
      * 按编号查询部门。
@@ -45,9 +44,8 @@ public interface DeptService {
      * 更新部门。
      *
      * @param dept 待更新的部门信息
-     * @return 更新后的部门
      */
-    Dept update(Dept dept);
+    void update(Dept dept);
 
     /**
      * 按编号删除部门。

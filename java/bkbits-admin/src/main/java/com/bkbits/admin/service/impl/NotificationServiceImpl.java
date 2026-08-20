@@ -20,12 +20,11 @@ public class NotificationServiceImpl implements NotificationService {
     EasyEntityQuery easyEntityQuery;
 
     @Override
-    public Notification add(Notification notification) {
+    public void add(Notification notification) {
         ValidUtil.requireNotNull(notification, "通知不能为空");
         if (easyEntityQuery.insertable(notification).executeRows() != 1) {
             throw new IllegalStateException("创建通知失败");
         }
-        return notification;
     }
 
     @Override
@@ -79,12 +78,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification update(Notification notification) {
+    public void update(Notification notification) {
         ValidUtil.requireNotNull(notification, "通知不能为空");
         ValidUtil.requireString(notification.getId(), "通知编号不能为空");
         easyEntityQuery.updatable(notification)
                 .executeRows(1, "更新通知失败");
-        return notification;
     }
 
     @Override

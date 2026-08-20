@@ -16,12 +16,11 @@ public class DeptServiceImpl implements DeptService {
     EasyEntityQuery easyEntityQuery;
 
     @Override
-    public Dept add(Dept dept) {
+    public void add(Dept dept) {
         ValidUtil.requireNotNull(dept, "部门不能为空");
         if (easyEntityQuery.insertable(dept).executeRows() != 1) {
             throw new IllegalStateException("创建部门失败");
         }
-        return dept;
     }
 
     @Override
@@ -61,12 +60,11 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public Dept update(Dept dept) {
+    public void update(Dept dept) {
         ValidUtil.requireNotNull(dept, "部门不能为空");
         ValidUtil.requireString(dept.getDeptId(), "部门编号不能为空");
         easyEntityQuery.updatable(dept)
                 .executeRows(1, "更新部门失败");
-        return dept;
     }
 
     @Override

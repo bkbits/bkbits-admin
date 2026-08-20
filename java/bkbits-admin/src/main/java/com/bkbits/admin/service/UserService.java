@@ -13,9 +13,8 @@ public interface UserService {
      * 新增用户。
      *
      * @param user 用户信息
-     * @return 新增后的用户
      */
-    User add(User user);
+    void add(User user);
 
     /**
      * 按编号查询用户及其角色。
@@ -69,9 +68,8 @@ public interface UserService {
      * 更新用户。
      *
      * @param user 待更新的用户信息
-     * @return 更新后的用户
      */
-    User update(User user);
+    void update(User user);
 
     /**
      * 修改密码

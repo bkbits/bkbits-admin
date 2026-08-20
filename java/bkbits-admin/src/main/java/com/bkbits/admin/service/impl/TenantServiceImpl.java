@@ -16,12 +16,11 @@ public class TenantServiceImpl implements TenantService {
     EasyEntityQuery easyEntityQuery;
 
     @Override
-    public Tenant add(Tenant tenant) {
+    public void add(Tenant tenant) {
         ValidUtil.requireNotNull(tenant, "租户不能为空");
         if (easyEntityQuery.insertable(tenant).executeRows() != 1) {
             throw new IllegalStateException("创建租户失败");
         }
-        return tenant;
     }
 
     @Override
@@ -39,12 +38,11 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public Tenant update(Tenant tenant) {
+    public void update(Tenant tenant) {
         ValidUtil.requireNotNull(tenant, "租户不能为空");
         ValidUtil.requireString(tenant.getId(), "租户编号不能为空");
         easyEntityQuery.updatable(tenant)
                 .executeRows(1, "更新租户失败");
-        return tenant;
     }
 
     @Override

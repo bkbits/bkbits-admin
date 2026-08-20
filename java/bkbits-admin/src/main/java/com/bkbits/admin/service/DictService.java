@@ -14,9 +14,8 @@ public interface DictService {
      * 新增系统字典。
      *
      * @param dict 字典信息
-     * @return 新增后的字典
      */
-    Dict add(Dict dict);
+    void add(Dict dict);
 
     /**
      * 按字典键查询字典及其字典值。
@@ -30,9 +29,8 @@ public interface DictService {
      * 更新系统字典。
      *
      * @param dict 待更新的字典信息
-     * @return 更新后的字典
      */
-    Dict update(Dict dict);
+    void update(Dict dict);
 
     /**
      * 按编号删除字典及其全部字典值。
@@ -45,9 +43,8 @@ public interface DictService {
      * 新增字典值。
      *
      * @param dictValue 字典值信息
-     * @return 新增后的字典值
      */
-    DictValue addValue(DictValue dictValue);
+    void addValue(DictValue dictValue);
 
     /**
      * 查询指定字典下的全部字典值。
@@ -61,9 +58,8 @@ public interface DictService {
      * 更新字典值。
      *
      * @param dictValue 待更新的字典值信息
-     * @return 更新后的字典值
      */
-    DictValue updateValue(DictValue dictValue);
+    void updateValue(DictValue dictValue);
 
     /**
      * 按编号删除字典值。
