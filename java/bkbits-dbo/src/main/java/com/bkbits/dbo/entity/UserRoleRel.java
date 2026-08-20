@@ -4,9 +4,7 @@ import com.bkbits.dbo.entity.proxy.UserRoleRelProxy;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -29,20 +27,4 @@ public class UserRoleRel implements IGenId, ProxyEntityAvailable<UserRoleRel, Us
 
     @ApiModelProperty("关联角色id")
     private String roleId;
-
-    @ApiModelProperty("关联用户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = UserRoleRel.Fields.userId,
-            targetProperty = User.Fields.userId
-    )
-    private User user;
-
-    @ApiModelProperty("关联角色")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = UserRoleRel.Fields.roleId,
-            targetProperty = Role.Fields.id
-    )
-    private Role role;
 }

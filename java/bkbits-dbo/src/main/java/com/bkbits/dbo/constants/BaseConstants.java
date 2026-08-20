@@ -23,6 +23,15 @@ public interface BaseConstants {
     /** 权限类型：按钮 */
     String PERMISSION_BUTTON = "B";
 
+    /** 数据权限：绑定所有 */
+    String DATA_PERMISSION_TARGET_ALL = "A";
+
+    /** 数据权限：角色绑定 */
+    String DATA_PERMISSION_TARGET_ROLE = "R";
+
+    /** 数据权限：权限绑定 */
+    String DATA_PERMISSION_TARGET_PERMISSION = "P";
+
     /** 状态：启用 */
     String STATUS_ENABLED = "E";
 

@@ -4,9 +4,7 @@ import com.bkbits.dbo.entity.proxy.RolePermissionRelProxy;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -29,20 +27,4 @@ public class RolePermissionRel implements IGenId, ProxyEntityAvailable<RolePermi
 
     @ApiModelProperty("关联权限id")
     private String permissionId;
-
-    @ApiModelProperty("关联角色")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = RolePermissionRel.Fields.roleId,
-            targetProperty = Role.Fields.id
-    )
-    private Role role;
-
-    @ApiModelProperty("关联权限")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = RolePermissionRel.Fields.permissionId,
-            targetProperty = Permission.Fields.id
-    )
-    private Permission permission;
 }

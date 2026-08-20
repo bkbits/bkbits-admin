@@ -2,12 +2,14 @@ package com.bkbits.dbo.filter;
 
 import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.Dept;
+import com.bkbits.dbo.entity.Notification;
 import com.bkbits.dbo.entity.Tenant;
 import com.bkbits.dbo.entity.User;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -22,13 +24,22 @@ public class NotificationTargetFilterStrategy implements NavigateExtraFilterStra
     @Override
     public SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
         Class<?> entityClass = builder.getNavigateOption().getEntityMetadata().getEntityClass();
-        if (Objects.equals(Tenant.class, entityClass)) {
+        if (Objects.equals(Notification.class, entityClass)) {
+            Class<?> propClass = builder.getNavigateOption().getNavigatePropertyType();
+            return addCondition(entityClass, propClass);
+        }
+        return addCondition(entityClass, entityClass);
+    }
+
+    @NonNull
+    private SQLActionExpression1<WherePredicate<?>> addCondition(Class<?> entityClass, Class<?> propClass) {
+        if (Objects.equals(Tenant.class, propClass)) {
             return o -> o.eq("type", BaseConstants.NOTIFICATION_TYPE_TENANT);
         }
-        if (Objects.equals(Dept.class, entityClass)) {
+        if (Objects.equals(Dept.class, propClass)) {
             return o -> o.eq("type", BaseConstants.NOTIFICATION_TYPE_DEPT);
         }
-        if (Objects.equals(User.class, entityClass)) {
+        if (Objects.equals(User.class, propClass)) {
             return o -> o.eq("type", BaseConstants.NOTIFICATION_TYPE_USER);
         }
         throw new RuntimeException("不支持的通知目标关联实体: " + entityClass.getName());

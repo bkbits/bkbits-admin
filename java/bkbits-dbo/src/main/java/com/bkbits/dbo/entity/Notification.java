@@ -1,6 +1,7 @@
 package com.bkbits.dbo.entity;
 
 import com.bkbits.dbo.entity.proxy.NotificationProxy;
+import com.bkbits.dbo.filter.NotificationTargetFilterStrategy;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
@@ -59,6 +60,33 @@ public class Notification implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAv
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("通知租户")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Notification.Fields.targetId,
+            targetProperty = Tenant.Fields.id,
+            extraFilter = NotificationTargetFilterStrategy.class
+    )
+    private Tenant tenant;
+
+    @ApiModelProperty("通知部门")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Notification.Fields.targetId,
+            targetProperty = Dept.Fields.deptId,
+            extraFilter = NotificationTargetFilterStrategy.class
+    )
+    private Dept dept;
+
+    @ApiModelProperty("通知用户")
+    @Navigate(
+            value = RelationTypeEnum.ManyToOne,
+            selfProperty = Notification.Fields.targetId,
+            targetProperty = User.Fields.userId,
+            extraFilter = NotificationTargetFilterStrategy.class
+    )
+    private User user;
 
     @ApiModelProperty("阅读列表")
     @Navigate(value = RelationTypeEnum.OneToMany,

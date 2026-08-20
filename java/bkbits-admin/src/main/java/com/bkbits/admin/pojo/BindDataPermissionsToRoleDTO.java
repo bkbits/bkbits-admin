@@ -1,5 +1,6 @@
 package com.bkbits.admin.pojo;
 
+import com.bkbits.dbo.entity.RoleDataPermissionRel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +10,7 @@ import java.util.List;
 
 /**
  * 角色绑定数据权限参数。
- * {@link com.bkbits.dbo.entity.RoleDataPermissionRel }
+ * {@link RoleDataPermissionRel }
  *
  * @author lkq
  * @easy-query-dto schema: request
