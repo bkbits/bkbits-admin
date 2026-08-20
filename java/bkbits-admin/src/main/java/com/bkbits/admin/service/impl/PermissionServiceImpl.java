@@ -23,6 +23,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public Permission getById(String id) {
         return easyEntityQuery.queryable(Permission.class)
+                .include(p -> p.dataPermissionList())
                 .whereById(id)
                 .singleNotNull("权限不存在");
     }

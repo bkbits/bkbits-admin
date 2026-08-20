@@ -114,6 +114,10 @@ public class RoleServiceImpl implements RoleService {
     @Transaction
     @Override
     public void bingRoleDataPermission(String roleId, List<String> dataPermissionIds) {
+        easyEntityQuery.deletable(RoleDataPermissionRel.class)
+                .allowDeleteStatement(true)
+                .where(r -> r.roleId().eq(roleId))
+                .executeRows();
         easyEntityQuery.insertable(
                         dataPermissionIds.stream()
                                 .map(id -> {

@@ -2,6 +2,7 @@ package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.DeptService;
 import com.bkbits.dbo.entity.Dept;
+import com.bkbits.util.CollectionUtil;
 import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
@@ -28,6 +29,15 @@ public class DeptServiceImpl implements DeptService {
         return easyEntityQuery.queryable(Dept.class)
                 .whereById(ValidUtil.requireString(deptId, "部门编号不能为空"))
                 .singleOrNull();
+    }
+
+    @Override
+    public List<Dept> listTree(Object search) {
+        return CollectionUtil.toTree(
+                easyEntityQuery.queryable(Dept.class)
+                        .whereObject(search != null, search)
+                        .toList()
+        );
     }
 
     @Override

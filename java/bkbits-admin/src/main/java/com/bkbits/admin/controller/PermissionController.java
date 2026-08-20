@@ -2,12 +2,16 @@ package com.bkbits.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.PermissionMapper;
-import com.bkbits.admin.pojo.*;
+import com.bkbits.admin.pojo.DataPermissionAddDTO;
+import com.bkbits.admin.pojo.DataPermissionUpdateDTO;
+import com.bkbits.admin.pojo.IdDTO;
+import com.bkbits.admin.pojo.PermissionAddDTO;
+import com.bkbits.admin.pojo.PermissionQueryDTO;
+import com.bkbits.admin.pojo.PermissionUpdateDTO;
 import com.bkbits.admin.service.PermissionService;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
-import com.bkbits.dbo.entity.Role;
 import com.bkbits.util.CollectionUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -25,9 +29,9 @@ import org.noear.solon.validation.annotation.Validated;
 import java.util.List;
 
 /**
- * 角色、权限及数据权限控制器。
+ * 权限及数据权限控制器。
  */
-@Api("角色权限接口")
+@Api("权限接口")
 @Controller
 @Mapping("/api")
 public class PermissionController {
@@ -39,69 +43,10 @@ public class PermissionController {
     private EasyEntityQuery easyEntityQuery;
 
     /**
-     * 新增角色。
-     *
-     * @param dto 角色输入参数
-     * @return 新增后的角色
-     */
-    @ApiOperation("新增角色")
-    @Post
-    @Mapping("/role/add")
-    @SaCheckPermission("admin.role.add")
-    public Result<Void> addRole(@Validated @Body RoleAddDTO dto) {
-        permissionService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
-        return Result.ok();
-    }
-
-    /**
-     * 按编号查询角色及其权限、数据权限关联。
-     *
-     * @param id 角色编号
-     * @return 角色；不存在时返回 null
-     */
-    @ApiOperation("按编号查询角色")
-    @Get
-    @Mapping("/role/getById")
-    @SaCheckPermission("admin.role.query")
-    public Result<Role> getRoleById(@ApiParam("角色编号") @Param("id") String id) {
-        return Result.ok(permissionService.getRoleById(id));
-    }
-
-    /**
-     * 更新角色。
-     *
-     * @param dto 角色输入参数
-     * @return 更新后的角色
-     */
-    @ApiOperation("更新角色")
-    @Post
-    @Mapping("/role/update")
-    @SaCheckPermission("admin.role.update")
-    public Result<Void> updateRole(@Validated @Body RoleUpdateDTO dto) {
-        permissionService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
-        return Result.ok();
-    }
-
-    /**
-     * 删除角色及其用户、权限、数据权限关联。
-     *
-     * @param dto 编号参数
-     * @return 操作结果
-     */
-    @ApiOperation("删除角色")
-    @Post
-    @Mapping("/role/remove")
-    @SaCheckPermission("admin.role.remove")
-    public Result<Void> removeRole(@Validated @Body IdDTO dto) {
-        permissionService.removeRoleById(dto.getId());
-        return Result.ok();
-    }
-
-    /**
      * 新增权限。
      *
      * @param dto 权限输入参数
-     * @return 新增后的权限
+     * @return 操作结果
      */
     @ApiOperation("新增权限")
     @Post
@@ -124,7 +69,7 @@ public class PermissionController {
     @SaCheckPermission("admin.permission.query")
     public Result<Permission> getPermissionById(
             @ApiParam("权限编号") @Param("id") String id) {
-        return Result.ok(permissionService.getPermissionById(id));
+        return Result.ok(permissionService.getById(id));
     }
 
     /**
@@ -155,7 +100,7 @@ public class PermissionController {
      * 更新权限。
      *
      * @param dto 权限输入参数
-     * @return 更新后的权限
+     * @return 操作结果
      */
     @ApiOperation("更新权限")
     @Post
@@ -177,7 +122,7 @@ public class PermissionController {
     @Mapping("/permission/remove")
     @SaCheckPermission("admin.permission.remove")
     public Result<Void> removePermission(@Body IdDTO dto) {
-        permissionService.removePermissionById(dto.getId());
+        permissionService.removePermissions(dto.getId());
         return Result.ok();
     }
 
@@ -185,7 +130,7 @@ public class PermissionController {
      * 为菜单权限添加数据权限。
      *
      * @param dto 数据权限输入参数
-     * @return 新增后的数据权限
+     * @return 操作结果
      */
     @ApiOperation("为菜单权限添加数据权限")
     @Post
@@ -208,14 +153,18 @@ public class PermissionController {
     @SaCheckPermission("admin.permission.query")
     public Result<List<DataPermission>> listDataPermissions(
             @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
-        return Result.ok(permissionService.listDataPermissions(permissionId));
+        return Result.ok(
+                easyEntityQuery.queryable(DataPermission.class)
+                        .where(p -> p.permissionId().eq(permissionId))
+                        .toList()
+        );
     }
 
     /**
      * 更新数据权限。
      *
      * @param dto 数据权限输入参数
-     * @return 更新后的数据权限
+     * @return 操作结果
      */
     @ApiOperation("更新数据权限")
     @Post
@@ -237,70 +186,7 @@ public class PermissionController {
     @Mapping("/dataPermission/remove")
     @SaCheckPermission("admin.permission.remove")
     public Result<Void> removeDataPermission(@Body IdDTO dto) {
-        permissionService.removeDataPermissionById(dto.getId());
+        permissionService.removeDataPermission(dto.getId());
         return Result.ok();
-    }
-
-    /**
-     * 使用给定权限集合替换角色现有的全部权限绑定。
-     *
-     * @param dto 角色绑定权限参数
-     * @return 操作结果
-     */
-    @ApiOperation("绑定权限到角色")
-    @Post
-    @Mapping("/role/bindPermissions")
-    @SaCheckPermission("admin.role.bind")
-    public Result<Void> bindPermissionsToRole(@Validated @Body BindPermissionsToRoleDTO dto) {
-        permissionService.bindPermissionsToRole(dto.getRoleId(), dto.getPermissionIds()); //绑定菜单权限
-        return Result.ok();
-    }
-
-    /**
-     * 使用给定权限集合替换角色现有的全部权限绑定。
-     *
-     * @param dto 角色绑定数据权限参数
-     * @return 操作结果
-     */
-    @ApiOperation("绑定数据权限到角色")
-    @Post
-    @Mapping("/role/bindDataPermissions")
-    @SaCheckPermission("admin.role.bind")
-    public Result<Void> bindDataPermissionsToRole(@Validated @Body BindDataPermissionsToRoleDTO dto) {
-        permissionService.bindDataPermissionsToRole(dto.getRoleId(), dto.getDataPermissionIds(), dto.getPermissionId()); //绑定数据权限
-        return Result.ok();
-    }
-
-    /**
-     * 查询角色绑定的权限。
-     *
-     * @param roleId 角色编号
-     * @return 权限列表
-     */
-    @ApiOperation("查询角色绑定的权限id")
-    @Get
-    @Mapping("/role/listPermissionIds")
-    @SaCheckPermission("admin.role.query")
-    public Result<List<String>> listPermissionIdsByRoleId(@ApiParam("角色编号") @Param("roleId") String roleId) {
-        return Result.ok(permissionService.listPermissionsByRoleId(roleId));
-    }
-
-    /**
-     * 查询角色在指定菜单权限下的数据权限关联。
-     *
-     * @param roleId       角色编号
-     * @param permissionId 菜单权限编号
-     * @return 角色数据权限关联列表
-     */
-    @ApiOperation("查询角色菜单数据权限关联")
-    @Get
-    @Mapping("/role/listDataPermissionIds")
-    @SaCheckPermission("admin.role.query")
-    public Result<List<String>> listRoleDataPermissions(
-            @ApiParam("角色编号") @Param("roleId") String roleId,
-            @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
-        return Result.ok(
-                permissionService.listRoleDataPermissions(roleId, permissionId)
-        );
     }
 }

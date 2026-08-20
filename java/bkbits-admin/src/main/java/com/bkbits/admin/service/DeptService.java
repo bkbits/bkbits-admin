@@ -24,6 +24,8 @@ public interface DeptService {
      */
     Dept getById(String deptId);
 
+    List<Dept> listTree(Object search);
+
     /**
      * 查询指定租户下的部门。
      *

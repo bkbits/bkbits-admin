@@ -3,7 +3,7 @@ package com.bkbits.admin.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.UserMapper;
 import com.bkbits.admin.pojo.*;
-import com.bkbits.admin.service.PermissionService;
+import com.bkbits.admin.service.RoleService;
 import com.bkbits.admin.service.UserService;
 import com.bkbits.auth.LoginUser;
 import com.bkbits.auth.LoginUtil;
@@ -44,7 +44,7 @@ public class UserController {
     private UserService userService;
 
     @Inject
-    private PermissionService permissionService;
+    private RoleService roleService;
 
     @Inject
     private IPasswordEncrypt passwordEncrypt;
@@ -236,7 +236,7 @@ public class UserController {
     @Mapping("/bindRole")
     @SaCheckPermission("admin.user.bind")
     public Result<Void> bindRolesToUser(@Validated @Body BindRolesToUserDTO dto) {
-        permissionService.bindRolesToUser(dto.getUserId(), dto.getRoleIds());
+        roleService.bingUserRole(dto.getUserId(), dto.getRoleIds());
         return Result.ok();
     }
 
@@ -251,6 +251,6 @@ public class UserController {
     @Mapping("/listRoles")
     @SaCheckPermission("admin.user.bind")
     public Result<List<Role>> listRoles(@ApiParam("用户id") @Param("userId") String userId) {
-        return Result.ok(permissionService.listRolesByUserId(userId));
+        return Result.ok(roleService.getRolesByUserId(userId, false));
     }
 }

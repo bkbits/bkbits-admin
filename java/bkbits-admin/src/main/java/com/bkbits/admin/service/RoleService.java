@@ -75,7 +75,7 @@ public interface RoleService {
     void bindRolePermissions(String roleId, List<String> permissionIds);
 
     /**
-     * 为指定角色追加绑定数据权限（不清除原有绑定）。
+     * 为指定角色追加绑定数据权限（替换原有绑定）。
      *
      * @param roleId           角色编号
      * @param dataPermissionIds 数据权限编号集合
