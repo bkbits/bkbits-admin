@@ -20,67 +20,59 @@
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-core</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-auth</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-validation</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-security</artifactId>
-            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-id</artifactId>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-json</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-cache</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-log</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-orm</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-scheduling</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-health</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-upload</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-encrypt</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
+
 </project>
