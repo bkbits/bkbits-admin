@@ -37,8 +37,7 @@
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

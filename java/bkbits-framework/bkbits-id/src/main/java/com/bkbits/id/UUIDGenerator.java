@@ -1,4 +1,4 @@
-package com.bkbits.generator;
+package com.bkbits.id;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ import java.util.UUID;
  * @author lkq
  * @version 2023-10-19
  */
-public class UUIDGenerator implements IdGenerator {
+class UUIDGenerator implements IdGenerator {
 
     /**
      * 生成下一个 ID（UUID 去除横线）。

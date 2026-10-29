@@ -1,9 +1,9 @@
-package com.bkbits.generator;
+package com.bkbits.id;
 
 /**
  * 雪花算法 ID 生成器。
  */
-public class SnowflakeIdGenerator implements IdGenerator {
+class SnowflakeIdGenerator implements IdGenerator {
 
     /**
      * 起始时间戳（2024-01-01 00:00:00）

@@ -27,5 +27,20 @@
             <groupId>com.easy-query</groupId>
             <artifactId>sql-solon-plugin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-auth</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-id</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -11,6 +11,7 @@ import com.bkbits.admin.service.ParamService;
 import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
+import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +53,7 @@ public class ParamController {
                     o.createTime().asc();
                 })
                 .selectAutoInclude(ParamVO.class)
-                .toPageResult(PageQuery.current().toPager(ParamVO.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**

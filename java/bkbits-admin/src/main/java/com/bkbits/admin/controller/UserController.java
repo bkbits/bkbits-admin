@@ -13,6 +13,7 @@ import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Role;
 import com.bkbits.dbo.entity.User;
 import com.bkbits.encrypt.IPasswordEncrypt;
+import com.bkbits.orm.PageUtil;
 import com.bkbits.util.StringUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -78,7 +79,7 @@ public class UserController {
         return easyEntityQuery.queryable(User.class)
                 .whereObject(dto)
                 .orderBy(o -> o.createTime().desc())
-                .toPageResult(PageQuery.current().toPager(User.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**

@@ -18,7 +18,7 @@ public class LoginUser {
     private String token;
 
     @ApiModelProperty("用户id")
-    private Object userId;
+    private String userId;
 
     @ApiModelProperty("用户名")
     private String userName;
@@ -34,9 +34,9 @@ public class LoginUser {
 
     @ApiModelProperty("部门id")
     @Setter
-    private Object deptId;
+    private String deptId;
 
     @ApiModelProperty("租户id")
     @Setter
-    private Object tenantId;
+    private String tenantId;
 }

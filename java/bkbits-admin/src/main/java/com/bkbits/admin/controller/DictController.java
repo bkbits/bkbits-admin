@@ -8,6 +8,7 @@ import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Dict;
+import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,7 +55,7 @@ public class DictController {
                     o.sort().asc();
                     o.createTime().asc();
                 })
-                .toPageResult(PageQuery.current().toPager(Dict.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**

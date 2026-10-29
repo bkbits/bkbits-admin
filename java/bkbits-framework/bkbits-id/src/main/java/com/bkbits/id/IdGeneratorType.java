@@ -1,4 +1,4 @@
-package com.bkbits.generator;
+package com.bkbits.id;
 
 /**
  * ID 生成器类型。

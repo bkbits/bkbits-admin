@@ -1,14 +1,11 @@
 package com.bkbits.tests;
 
-import com.bkbits.core.PageData;
 import com.bkbits.core.PageResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * PageResult 测试。
@@ -20,9 +17,8 @@ public class PageResultTest {
         PageResult<String> result = PageResult.page(100, List.of("a", "b"));
         assertTrue(result.isOk());
         assertEquals(200, result.getCode());
-        PageData<String> data = result.getData();
-        assertEquals(100, data.getTotal());
-        assertEquals(List.of("a", "b"), data.getRows());
+        assertEquals(100, result.getTotal());
+        assertEquals(List.of("a", "b"), result.getData());
     }
 
     @Test

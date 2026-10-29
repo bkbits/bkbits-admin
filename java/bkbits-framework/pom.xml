@@ -38,5 +38,6 @@
         <module>bkbits-upload</module>
         <module>bkbits-base</module>
         <module>bkbits-encrypt</module>
+        <module>bkbits-id</module>
     </modules>
 </project>

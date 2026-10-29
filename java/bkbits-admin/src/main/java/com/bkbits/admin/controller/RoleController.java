@@ -18,6 +18,7 @@ import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Permission;
 import com.bkbits.dbo.entity.Role;
 import com.bkbits.dbo.entity.User;
+import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -125,7 +126,7 @@ public class RoleController {
         return easyEntityQuery.queryable(Role.class)
                 .whereObject(dto)
                 .orderBy(r -> r.sort().asc())
-                .toPageResult(PageQuery.current().toPager(Role.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**
@@ -146,7 +147,7 @@ public class RoleController {
                 .where(u -> u.roleList().any(r -> r.id().eq(roleId)))
                 .whereObject(dto)
                 .orderBy(u -> u.createTime().desc())
-                .toPageResult(PageQuery.current().toPager(User.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**

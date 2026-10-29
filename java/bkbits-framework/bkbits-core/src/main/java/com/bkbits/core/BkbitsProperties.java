@@ -1,6 +1,5 @@
 package com.bkbits.core;
 
-import com.bkbits.generator.IdGeneratorProperties;
 import lombok.Data;
 import org.noear.solon.annotation.BindProps;
 import org.noear.solon.annotation.Configuration;
@@ -21,7 +20,4 @@ import org.noear.solon.annotation.Configuration;
 @Configuration
 @Data
 public class BkbitsProperties {
-
-    /** ID 生成器配置 */
-    private IdGeneratorProperties idGenerator = new IdGeneratorProperties();
 }

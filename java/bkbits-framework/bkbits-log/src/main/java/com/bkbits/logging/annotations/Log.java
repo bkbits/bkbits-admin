@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Log {
-    public static final String UNKNOWN = "未分类";
-    public static final String INSERT = "新增";
-    public static final String UPDATE = "更新";
-    public static final String DELETE = "删除";
-    public static final String LOGIN = "登录";
-    public static final String LOGOUT = "注销";
+    String UNKNOWN = "未分类";
+    String INSERT = "新增";
+    String UPDATE = "更新";
+    String DELETE = "删除";
+    String LOGIN = "登录";
+    String LOGOUT = "注销";
 
     String value();
 

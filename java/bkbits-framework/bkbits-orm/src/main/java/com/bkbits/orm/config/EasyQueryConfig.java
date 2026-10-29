@@ -12,7 +12,6 @@ import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -43,13 +42,14 @@ public class EasyQueryConfig {
      */
     @Bean
     public void dbQueryConfiguration(
-            @Db("db1") QueryConfiguration configuration,
+            @Inject EasyEntityQuery easyEntityQuery,
             @Inject(required = false) List<LogicDeleteStrategy> logicDeleteStrategies,
             @Inject(required = false) List<EncryptionStrategy> encryptionStrategies,
             @Inject(required = false) List<Interceptor> interceptors,
             @Inject(required = false) ShardingInitializer shardingInitializer,
             @Inject(required = false) List<ValueConverter<?, ?>> converters
     ) {
+        QueryConfiguration configuration = easyEntityQuery.getRuntimeContext().getQueryConfiguration();
         logicDeleteStrategies.forEach(configuration::applyLogicDeleteStrategy);
         encryptionStrategies.forEach(configuration::applyEncryptionStrategy);
         interceptors.forEach(configuration::applyInterceptor);

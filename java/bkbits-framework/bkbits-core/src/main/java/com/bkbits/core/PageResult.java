@@ -1,6 +1,9 @@
 package com.bkbits.core;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -9,7 +12,11 @@ import java.util.List;
  *
  * @param <T> 行数据类型
  */
-public class PageResult<T> extends Result<PageData<T>> {
+@Data
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+public class PageResult<T> extends Result<List<T>> {
+    private long total = 0;
 
     /**
      * easyQuery结果构造PageResult
@@ -33,7 +40,8 @@ public class PageResult<T> extends Result<PageData<T>> {
         PageResult<T> result = new PageResult<>();
         result.setOk(true);
         result.setCode(CODE_SUCCESS);
-        result.setData(new PageData<>(total, rows));
+        result.setTotal(total);
+        result.setData(rows);
         return result;
     }
 

@@ -1,24 +1,21 @@
-package com.bkbits.admin.config.easyquery;
+package com.bkbits.orm.interceptor;
 
-import com.bkbits.generator.IdGenerator;
+import com.bkbits.id.IdUtil;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import org.jspecify.annotations.NonNull;
 import org.noear.solon.annotation.Component;
-import org.noear.solon.annotation.Inject;
 
 @Component
 public class GenIdInterceptor implements EntityInterceptor {
-    @Inject
-    private IdGenerator idGenerator;
 
     @Override
     public void configureInsert(Class<?> entityClass, EntityInsertExpressionBuilder entityInsertExpressionBuilder, Object entity) {
         IGenId genId = (IGenId) entity;
-        if (genId.getId() != null) {
-            genId.setId(idGenerator.nextId());
+        if (genId.getId() == null) {
+            genId.setId(IdUtil.nextId());
         }
     }
 
@@ -29,7 +26,7 @@ public class GenIdInterceptor implements EntityInterceptor {
 
     @Override
     public String name() {
-        return "GenId";
+        return getClass().getSimpleName();
     }
 
     @Override

@@ -1,24 +1,18 @@
 package com.bkbits.admin.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.DeptMapper;
 import com.bkbits.admin.pojo.*;
 import com.bkbits.admin.service.DeptService;
-import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Dept;
-import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.noear.solon.annotation.Body;
-import org.noear.solon.annotation.Controller;
-import org.noear.solon.annotation.Get;
-import org.noear.solon.annotation.Inject;
-import org.noear.solon.annotation.Mapping;
-import org.noear.solon.annotation.Param;
-import org.noear.solon.annotation.Post;
+import org.noear.solon.annotation.*;
 import org.noear.solon.validation.annotation.Validated;
 
 /**
@@ -53,7 +47,7 @@ public class DeptController {
                     o.sort().asc();
                     o.deptId().asc();
                 })
-                .toPageResult(PageQuery.current().toPager(Dept.class));
+                .toPageResult(PageUtil.current());
     }
 
     /**
@@ -85,6 +79,7 @@ public class DeptController {
         deptService.add(DeptMapper.INSTANCE.toEntity(dto));
         return Result.ok();
     }
+
     /**
      * 更新部门。
      *

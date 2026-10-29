@@ -5,7 +5,6 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.solon.integration.SaTokenInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import com.bkbits.auth.AuthProperties;
-import com.bkbits.auth.IAuthConfigProvider;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
@@ -26,12 +25,10 @@ public class AuthConfig {
      * 注册 Sa-Token 核心配置。
      *
      * <p>默认值取自 {@link AuthProperties}（{@code bkbits.auth.*}）；
-     * 业务模块实现并注册 {@link IAuthConfigProvider} 时覆盖对应配置项。</p>
      */
     @Bean
     public SaTokenConfig getSaTokenConfigPrimary(
-            @Inject AuthProperties authProperties,
-            @Inject(required = false) IAuthConfigProvider authConfigProvider
+            @Inject AuthProperties authProperties
     ) {
         SaTokenConfig config = new SaTokenConfig();
         // token 名称（同时也是 cookie 名称）
@@ -49,14 +46,6 @@ public class AuthConfig {
         // 是否输出操作日志
         config.setIsLog(authProperties.isLog());
 
-        // 业务模块提供 authConfigProvider 时，覆盖默认配置
-        if (authConfigProvider != null) {
-            config.setTimeout(authConfigProvider.getTimeout());
-            config.setActiveTimeout(authConfigProvider.getTTI());
-            config.setIsConcurrent(authConfigProvider.isConcurrent());
-            config.setIsShare(authConfigProvider.isShare());
-            config.setIsLog(authConfigProvider.isLog());
-        }
         return config;
     }
 

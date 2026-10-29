@@ -1,7 +1,6 @@
 package com.bkbits.core;
 
 import com.bkbits.util.JsonUtil;
-import com.easy.query.core.api.pagination.Pager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -94,26 +93,5 @@ public class PageQuery {
                 page,
                 pageSize
         );
-    }
-
-    /**
-     * 转为easyquery分页器
-     *
-     * @param <T> 类型
-     * @return 分页器
-     */
-    public <T> Pager<T, PageResult<T>> toPager() {
-        return new EasyQueryPager<>(this);
-    }
-
-    /**
-     * 转为easyquery分页器
-     *
-     * @param clazz 类型
-     * @param <T>   类型
-     * @return 分页器
-     */
-    public <T> Pager<T, PageResult<T>> toPager(Class<T> clazz) {
-        return new EasyQueryPager<>(this);
     }
 }

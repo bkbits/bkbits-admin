@@ -1,17 +1,13 @@
 package com.bkbits.upload.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.bkbits.generator.IdGenerator;
+import com.bkbits.id.IdGenerator;
 import com.bkbits.orm.ICreateBy;
-import com.bkbits.upload.BkbitsUploadProperties;
-import com.bkbits.upload.UploadFile;
-import com.bkbits.upload.UploadStatus;
-import com.bkbits.upload.UploadTask;
-import com.bkbits.upload.UploadTaskPiece;
-import com.bkbits.upload.pojo.UploadTaskCreateDTO;
+import com.bkbits.upload.*;
 import com.bkbits.upload.exception.UploadException;
-import com.bkbits.upload.service.UploadService;
+import com.bkbits.upload.pojo.UploadTaskCreateDTO;
 import com.bkbits.upload.pojo.UploadTaskCreateVO;
+import com.bkbits.upload.service.UploadService;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import org.noear.solon.annotation.Component;
@@ -296,7 +292,9 @@ public class UploadServiceImpl implements UploadService {
 
     // ---------- 内部工具 ----------
 
-    /** 读取上传文件内容为字节数组 */
+    /**
+     * 读取上传文件内容为字节数组
+     */
     private byte[] readBytes(UploadedFile file) {
         try {
             return file.getContentAsBytes();
@@ -305,13 +303,17 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
-    /** 填充创建人与创建时间审计字段 */
+    /**
+     * 填充创建人与创建时间审计字段
+     */
     private void fillAudit(ICreateBy entity) {
         entity.setCreateBy(loginId());
         entity.setCreateTime(LocalDateTime.now());
     }
 
-    /** 获取当前登录用户编号，非登录上下文（如测试）时返回 null */
+    /**
+     * 获取当前登录用户编号，非登录上下文（如测试）时返回 null
+     */
     private String loginId() {
         try {
             return StpUtil.getLoginIdAsString();
@@ -321,7 +323,9 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
-    /** 写出到临时目录后移动到上传目录，返回目标文件路径 */
+    /**
+     * 写出到临时目录后移动到上传目录，返回目标文件路径
+     */
     private Path moveToUploadDir(Path source, String fileId, String fileName) {
         Path dir = uploadDir().resolve(LocalDateTime.now().format(DATE_PATH));
         Path target = dir.resolve(fileId + "_" + sanitizeFileName(fileName));
@@ -334,27 +338,37 @@ public class UploadServiceImpl implements UploadService {
         return target;
     }
 
-    /** 上传目录的相对路径（用于落库，便于目录迁移） */
+    /**
+     * 上传目录的相对路径（用于落库，便于目录迁移）
+     */
     private String relativePath(Path target) {
         return uploadDir().relativize(target).toString().replace('\\', '/');
     }
 
-    /** 上传临时目录 */
+    /**
+     * 上传临时目录
+     */
     private Path tempDir() {
         return Path.of(uploadProperties.getTemp());
     }
 
-    /** 上传根目录 */
+    /**
+     * 上传根目录
+     */
     private Path uploadDir() {
         return Path.of(uploadProperties.getUpload());
     }
 
-    /** 上传任务分片临时目录 */
+    /**
+     * 上传任务分片临时目录
+     */
     private Path taskTempDir(String taskId) {
         return tempDir().resolve("upload").resolve(taskId);
     }
 
-    /** 清理文件名中的非法字符，空值或清理后为空时返回 file */
+    /**
+     * 清理文件名中的非法字符，空值或清理后为空时返回 file
+     */
     private static String sanitizeFileName(String name) {
         if (name == null || name.isBlank()) {
             return "file";
@@ -363,7 +377,9 @@ public class UploadServiceImpl implements UploadService {
         return cleaned.isBlank() ? "file" : cleaned;
     }
 
-    /** 计算字节数组的 SHA-256 摘要（十六进制） */
+    /**
+     * 计算字节数组的 SHA-256 摘要（十六进制）
+     */
     private static String sha256Hex(byte[] bytes) {
         try {
             return hex(MessageDigest.getInstance("SHA-256").digest(bytes));
@@ -372,7 +388,9 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
-    /** 流式计算文件的 SHA-256 摘要（十六进制） */
+    /**
+     * 流式计算文件的 SHA-256 摘要（十六进制）
+     */
     private static String sha256Hex(Path file) {
         try (InputStream in = Files.newInputStream(file)) {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -387,7 +405,9 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
-    /** 字节数组转小写十六进制字符串 */
+    /**
+     * 字节数组转小写十六进制字符串
+     */
     private static String hex(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {
@@ -397,7 +417,9 @@ public class UploadServiceImpl implements UploadService {
         return sb.toString();
     }
 
-    /** 静默递归删除文件或目录，失败时忽略异常 */
+    /**
+     * 静默递归删除文件或目录，失败时忽略异常
+     */
     private static void deleteQuietly(Path path) {
         try {
             if (path == null || !Files.exists(path)) {

@@ -1,4 +1,4 @@
-package com.bkbits.generator;
+package com.bkbits.id;
 
 /**
  * 梨花算法
@@ -6,7 +6,7 @@ package com.bkbits.generator;
  * @author lkq
  * @version 2023-10-19
  */
-public class PearIdGenerator
+class PearIdGenerator
         implements IdGenerator {
     private static final long MAX_SEQUENCE = 0x7FFFF;
     private static final long SEQUENCE_MASK = MAX_SEQUENCE;
