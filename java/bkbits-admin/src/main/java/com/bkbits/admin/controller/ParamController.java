@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Api("系统参数接口")
 @Controller
-@Mapping("/api/param")
+@Mapping("/api/sys/param")
 public class ParamController {
 
     @Inject

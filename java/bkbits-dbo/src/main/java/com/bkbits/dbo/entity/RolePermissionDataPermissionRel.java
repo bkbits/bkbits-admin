@@ -1,6 +1,6 @@
 package com.bkbits.dbo.entity;
 
-import com.bkbits.dbo.entity.proxy.RoleDataPermissionRelProxy;
+import com.bkbits.dbo.entity.proxy.RolePermissionDataPermissionRelProxy;
 import com.bkbits.orm.IGenId;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
@@ -16,7 +16,7 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 @Table
 @EntityProxy
-public class RoleDataPermissionRel implements IGenId, ProxyEntityAvailable<RoleDataPermissionRel, RoleDataPermissionRelProxy> {
+public class RolePermissionDataPermissionRel implements IGenId, ProxyEntityAvailable<RolePermissionDataPermissionRel, RolePermissionDataPermissionRelProxy> {
 
     @Column(primaryKey = true)
     @ApiModelProperty("主键id")

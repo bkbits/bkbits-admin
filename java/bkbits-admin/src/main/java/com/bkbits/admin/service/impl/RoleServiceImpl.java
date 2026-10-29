@@ -114,14 +114,14 @@ public class RoleServiceImpl implements RoleService {
     @Transaction
     @Override
     public void bingRoleDataPermission(String roleId, List<String> dataPermissionIds) {
-        easyEntityQuery.deletable(RoleDataPermissionRel.class)
+        easyEntityQuery.deletable(RolePermissionDataPermissionRel.class)
                 .allowDeleteStatement(true)
                 .where(r -> r.roleId().eq(roleId))
                 .executeRows();
         easyEntityQuery.insertable(
                         dataPermissionIds.stream()
                                 .map(id -> {
-                                    RoleDataPermissionRel rel = new RoleDataPermissionRel();
+                                    RolePermissionDataPermissionRel rel = new RolePermissionDataPermissionRel();
                                     rel.setRoleId(roleId);
                                     rel.setDataPermissionId(id);
                                     return rel;
@@ -134,7 +134,7 @@ public class RoleServiceImpl implements RoleService {
     @Transaction
     @Override
     public void bindRoleDataScopes(String roleId, List<String> dataScopeList) {
-        easyEntityQuery.deletable(RoleDataPermissionRel.class)
+        easyEntityQuery.deletable(RolePermissionDataPermissionRel.class)
                 .allowDeleteStatement(true)
                 .where(r -> r.roleId().eq(roleId))
                 .executeRows();

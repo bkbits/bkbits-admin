@@ -34,7 +34,7 @@ import java.util.List;
  */
 @Api("租户接口")
 @Controller
-@Mapping("/api/tenant")
+@Mapping("/api/sys/tenant")
 public class TenantController {
 
     @Inject

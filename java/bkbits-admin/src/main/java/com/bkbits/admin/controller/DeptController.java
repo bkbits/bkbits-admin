@@ -20,7 +20,7 @@ import org.noear.solon.validation.annotation.Validated;
  */
 @Api("部门管理接口")
 @Controller
-@Mapping("/api/dept")
+@Mapping("/api/sys/dept")
 public class DeptController {
 
     @Inject

@@ -35,7 +35,7 @@ import java.util.List;
  */
 @Api("用户接口")
 @Controller
-@Mapping("/api/user")
+@Mapping("/api/sys/user")
 public class UserController {
 
     @Inject

@@ -66,10 +66,10 @@ public class DataPermission implements IGenId, ICreateBy, IUpdateBy, ProxyEntity
     @Navigate(
             value = RelationTypeEnum.ManyToMany,
             selfProperty = DataPermission.Fields.id,
-            selfMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId,
-            mappingClass = RoleDataPermissionRel.class,
+            selfMappingProperty = RolePermissionDataPermissionRel.Fields.dataPermissionId,
+            mappingClass = RolePermissionDataPermissionRel.class,
             targetProperty = Role.Fields.id,
-            targetMappingProperty = RoleDataPermissionRel.Fields.roleId
+            targetMappingProperty = RolePermissionDataPermissionRel.Fields.roleId
     )
     private List<Role> roleList;
 }

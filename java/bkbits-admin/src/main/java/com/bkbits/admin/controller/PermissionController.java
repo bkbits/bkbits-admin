@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Api("权限接口")
 @Controller
-@Mapping("/api")
+@Mapping("/api/sys")
 public class PermissionController {
 
     @Inject

@@ -93,10 +93,10 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Navigate(
             value = RelationTypeEnum.ManyToMany,
             selfProperty = Role.Fields.id,
-            selfMappingProperty = RoleDataPermissionRel.Fields.roleId,
-            mappingClass = RoleDataPermissionRel.class,
+            selfMappingProperty = RolePermissionDataPermissionRel.Fields.roleId,
+            mappingClass = RolePermissionDataPermissionRel.class,
             targetProperty = DataPermission.Fields.id,
-            targetMappingProperty = RoleDataPermissionRel.Fields.dataPermissionId,
+            targetMappingProperty = RolePermissionDataPermissionRel.Fields.dataPermissionId,
             cascade = CascadeTypeEnum.DELETE
     )
     private List<DataPermission> dataPermissionList;

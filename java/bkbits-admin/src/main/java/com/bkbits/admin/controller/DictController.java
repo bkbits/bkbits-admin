@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Api("系统字典接口")
 @Controller
-@Mapping("/api/dict")
+@Mapping("/api/sys/dict")
 public class DictController {
 
     @Inject
