@@ -26,9 +26,5 @@
             <version>${revision}</version>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-web</artifactId>
-        </dependency>
     </dependencies>
 </project>

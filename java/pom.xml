@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.noear</groupId>
         <artifactId>solon-parent</artifactId>
-        <version>3.10.7</version>
+        <version>4.1.1</version>
         <relativePath/>
     </parent>
 
@@ -42,33 +42,33 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- solon 3.x 最新版本 -->
-        <solon.version>3.10.7</solon.version>
+        <solon.version>4.1.1</solon.version>
         <!-- 全局最新 lombok -->
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.48</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
-        <easy-query.version>3.2.14</easy-query.version>
-        <sa-token.version>1.45.0</sa-token.version>
+        <easy-query.version>3.3.1</easy-query.version>
+        <sa-token.version>1.46.0</sa-token.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <bcrypt.version>0.10.2</bcrypt.version>
-        <mysql.version>26.7.0</mysql.version>
+        <mysql.version>26.10.0</mysql.version>
     </properties>
 
-    <!-- 腾讯仓库 -->
+    <!-- 阿里云仓库 -->
     <repositories>
         <repository>
-            <id>tencent</id>
-            <name>Tencent Cloud Maven Repository</name>
-            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+            <id>aliyun</id>
+            <name>Aliyun Maven Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>tencent</id>
-            <name>Tencent Cloud Maven Repository</name>
-            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+            <id>aliyun</id>
+            <name>Aliyun Maven Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
         </pluginRepository>
     </pluginRepositories>
 
