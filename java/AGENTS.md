@@ -79,11 +79,11 @@
 
 ## 子模块
 
-包前缀为 com.bkbits，根据模块名添加包路径，比如bkbits-core为 com.bkbits.core
+包前缀为 com.bkbits，包路径与模块名基本一致，比如 bkbits-orm 为 com.bkbits.orm
 
 - bkbits-framework 基础框架聚合（parent），不包含任何代码，只聚合子模块
-  - bkbits-base 基础框架依赖聚合（pom），不包含任何代码，供其他工程一键引入全部基础模块
-  - bkbits-core 核心基础库，包含一些自定义配置等
+  - bkbits-all 基础框架依赖聚合（pom），不包含任何代码，供其他工程一键引入全部基础模块
+  - bkbits-base 核心基础库，包含一些自定义配置等
   - bkbits-utils 工具类实现
   - bkbits-auth 认证配置，依赖 `sa-token-solon-plugin`
   - bkbits-validation 验证配置，依赖 `solon-security-validation`
@@ -151,8 +151,8 @@
 
 | 模块 | groupId:artifactId | 版本 | 备注 |
 | --- | --- | --- | --- |
-| bkbits-core | org.noear:solon | 3.10.7 | |
-| bkbits-core | org.noear:solon-configuration-processor | 3.10.7 | provided，为 @BindProps 生成配置元信息 |
+| bkbits-base | org.noear:solon | 3.10.7 | |
+| bkbits-base | org.noear:solon-configuration-processor | 3.10.7 | provided，为 @BindProps 生成配置元信息 |
 | bkbits-auth | org.noear:solon | 3.10.7 | |
 | bkbits-auth | cn.dev33:sa-token-solon-plugin | 1.45.0 | |
 | bkbits-auth | org.noear:solon-configuration-processor | 3.10.7 | provided，为 @BindProps 生成配置元信息 |
@@ -170,7 +170,7 @@
 | bkbits-scheduling | org.noear:solon-scheduling-quartz | 3.10.7 | |
 | bkbits-health | org.noear:solon-health-detector | 3.10.7 | |
 | bkbits-upload | org.noear:solon-web | 3.10.7 | |
-| bkbits-upload | com.bkbits:bkbits-core | 0.0.1-SNAPSHOT | |
+| bkbits-upload | com.bkbits:bkbits-base | 0.0.1-SNAPSHOT | |
 | bkbits-upload | com.bkbits:bkbits-auth | 0.0.1-SNAPSHOT | 取登录用户作 createBy |
 | bkbits-upload | com.bkbits:bkbits-orm | 0.0.1-SNAPSHOT | easy-query 操作 |
 | bkbits-upload | org.noear:solon-docs-openapi2 | 3.10.7 | swagger2 文档注解 |

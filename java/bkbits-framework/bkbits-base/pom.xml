@@ -11,68 +11,19 @@
     </parent>
 
     <artifactId>bkbits-base</artifactId>
-    <packaging>pom</packaging>
-
     <name>bkbits-base</name>
-    <description>基础框架依赖聚合，供其他工程一键引入，不包含任何代码</description>
+    <description>核心基础库，包含一些自定义配置等</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-core</artifactId>
+            <groupId>org.noear</groupId>
+            <artifactId>solon</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-auth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-id</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-log</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-orm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-scheduling</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-health</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-upload</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-encrypt</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
-
 </project>

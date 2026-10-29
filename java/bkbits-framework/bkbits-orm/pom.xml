@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-core</artifactId>
+            <artifactId>bkbits-base</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

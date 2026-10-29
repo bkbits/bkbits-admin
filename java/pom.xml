@@ -61,12 +61,6 @@
             <id>tencent</id>
             <name>Tencent Cloud Maven Repository</name>
             <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
     </repositories>
 
@@ -75,12 +69,6 @@
             <id>tencent</id>
             <name>Tencent Cloud Maven Repository</name>
             <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 

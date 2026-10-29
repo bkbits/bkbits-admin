@@ -24,7 +24,7 @@
     </dependencies>
 
     <modules>
-        <module>bkbits-core</module>
+        <module>bkbits-base</module>
         <module>bkbits-utils</module>
         <module>bkbits-auth</module>
         <module>bkbits-validation</module>
@@ -36,7 +36,7 @@
         <module>bkbits-scheduling</module>
         <module>bkbits-health</module>
         <module>bkbits-upload</module>
-        <module>bkbits-base</module>
+        <module>bkbits-all</module>
         <module>bkbits-encrypt</module>
         <module>bkbits-id</module>
     </modules>
@@ -46,7 +46,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.bkbits</groupId>
-                <artifactId>bkbits-core</artifactId>
+                <artifactId>bkbits-base</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

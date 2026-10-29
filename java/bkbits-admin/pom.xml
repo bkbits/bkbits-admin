@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-base</artifactId>
+            <artifactId>bkbits-all</artifactId>
             <version>${revision}</version>
             <type>pom</type>
         </dependency>
