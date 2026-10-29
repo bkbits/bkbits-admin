@@ -33,11 +33,5 @@
             <artifactId>bkbits-core</artifactId>
             <version>${revision}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.bkbits</groupId>
-            <artifactId>bkbits-cache</artifactId>
-            <version>${revision}</version>
-        </dependency>
     </dependencies>
 </project>
