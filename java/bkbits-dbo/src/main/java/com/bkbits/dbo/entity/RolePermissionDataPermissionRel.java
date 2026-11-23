@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +17,8 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 @Table
 @EntityProxy
-public class RolePermissionDataPermissionRel implements IGenId, ProxyEntityAvailable<RolePermissionDataPermissionRel, RolePermissionDataPermissionRelProxy> {
+public class RolePermissionDataPermissionRel
+        implements IGenId, ProxyEntityAvailable<RolePermissionDataPermissionRel, RolePermissionDataPermissionRelProxy> {
 
     @Column(primaryKey = true)
     @ApiModelProperty("主键id")

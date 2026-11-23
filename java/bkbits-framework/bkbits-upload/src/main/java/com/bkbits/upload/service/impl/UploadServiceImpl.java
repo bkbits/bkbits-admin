@@ -1,7 +1,7 @@
 package com.bkbits.upload.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.bkbits.id.IdGenerator;
+import com.bkbits.id.IdUtil;
 import com.bkbits.orm.ICreateBy;
 import com.bkbits.upload.*;
 import com.bkbits.upload.exception.UploadException;
@@ -42,9 +42,6 @@ public class UploadServiceImpl implements UploadService {
     private EasyEntityQuery easyEntityQuery;
 
     @Inject
-    private IdGenerator idGenerator;
-
-    @Inject
     private BkbitsUploadProperties uploadProperties;
 
     /**
@@ -69,7 +66,7 @@ public class UploadServiceImpl implements UploadService {
             throw new UploadException("文件哈希校验失败");
         }
 
-        String fileId = idGenerator.nextId();
+        String fileId = IdUtil.nextId();
         String fileName = sanitizeFileName(file.getName());
 
         // 写出到临时目录，再移动到上传目录
@@ -114,7 +111,7 @@ public class UploadServiceImpl implements UploadService {
             throw new UploadException("分片哈希数量与分片数不一致");
         }
 
-        String taskId = idGenerator.nextId();
+        String taskId = IdUtil.nextId();
         String createBy = loginId();
         LocalDateTime now = LocalDateTime.now();
 
@@ -132,7 +129,7 @@ public class UploadServiceImpl implements UploadService {
 
             for (int i = 0; i < pieceCount; i++) {
                 UploadTaskPiece piece = new UploadTaskPiece();
-                piece.setId(idGenerator.nextId());
+                piece.setId(IdUtil.nextId());
                 piece.setUploadId(taskId);
                 piece.setFileIndex((long) i);
                 piece.setUploadStatus(UploadStatus.WAITING);
@@ -261,7 +258,7 @@ public class UploadServiceImpl implements UploadService {
         String relPath = relativePath(target);
 
         UploadFile uploadFile = new UploadFile();
-        uploadFile.setId(idGenerator.nextId());
+        uploadFile.setId(IdUtil.nextId());
         uploadFile.setPath(relPath);
         uploadFile.setContentType(task.getContentType());
         uploadFile.setFileSize(task.getFileSize());

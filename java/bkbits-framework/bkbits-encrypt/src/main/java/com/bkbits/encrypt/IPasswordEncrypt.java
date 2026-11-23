@@ -50,4 +50,12 @@ public interface IPasswordEncrypt {
      * @return 公钥字符串；未启用或未加载时返回 {@code null}
      */
     @Nullable String getPublicKey();
+
+    /**
+     * 检查密码是否合规
+     *
+     * @param password 密码
+     * @return 检查结果
+     */
+    @NotNull PasswordCheckResult checkPassword(@NotNull String password);
 }

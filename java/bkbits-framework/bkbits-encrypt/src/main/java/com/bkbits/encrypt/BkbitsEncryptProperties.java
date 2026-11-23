@@ -20,7 +20,6 @@ import org.noear.solon.annotation.Configuration;
 @BindProps(prefix = "bkbits.encrypt")
 @Configuration
 public class BkbitsEncryptProperties {
-
     /** 密码加密复杂度 */
     private int cost = 6;
 

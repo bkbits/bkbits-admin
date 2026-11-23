@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.noear.solon.annotation.Component;
+import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.core.exception.StatusException;
 
@@ -31,6 +32,7 @@ import java.security.spec.X509EncodedKeySpec;
  */
 @Slf4j
 @Component
+@Condition(onMissingBean = IPasswordEncrypt.class)
 public class BCryptPasswordEncrypt implements IPasswordEncrypt {
     private static final String X509_PUBLIC_PEM_HEADER = "-----BEGIN PUBLIC KEY-----";
     private static final String X509_PUBLIC_PEM_FOOTER = "-----END PUBLIC KEY-----";
@@ -153,6 +155,12 @@ public class BCryptPasswordEncrypt implements IPasswordEncrypt {
     @Override
     public @Nullable String getPublicKey() {
         return publicKeyStr;
+    }
+
+    @Override
+    public @NonNull PasswordCheckResult checkPassword(@NonNull String password) {
+
+        return null;
     }
 
     /**
