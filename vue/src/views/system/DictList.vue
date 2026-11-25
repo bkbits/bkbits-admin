@@ -6,13 +6,12 @@ import { dictApi } from "../../api";
 import type { Dict, DictValueVO } from "../../api/types";
 import { SYSTEM_BUSINESS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
 
-/** 字典值类型（与 mock 种子数据一致，对应 antd Tag 颜色） */
+/** 字典值类型（对应 BaseConstants 标签类型 S/I/W/E） */
 const VALUE_TYPE_OPTIONS = [
-  { value: "success", label: "成功" },
-  { value: "error", label: "错误" },
-  { value: "warning", label: "警告" },
-  { value: "primary", label: "主要" },
-  { value: "default", label: "默认" },
+  { value: "S", label: "成功", color: "success" },
+  { value: "I", label: "信息", color: "blue" },
+  { value: "W", label: "警告", color: "warning" },
+  { value: "E", label: "错误", color: "error" },
 ];
 
 /* ------------------------------ 列表 ------------------------------ */
@@ -64,14 +63,14 @@ const form = reactive({
   id: "",
   dictKey: "",
   name: "",
-  type: "SYSTEM",
+  type: "S",
   sort: 0,
   remark: "",
 });
 
 function openAdd() {
   modalMode.value = "add";
-  Object.assign(form, { id: "", dictKey: "", name: "", type: "SYSTEM", sort: 0, remark: "" });
+  Object.assign(form, { id: "", dictKey: "", name: "", type: "S", sort: 0, remark: "" });
   modalVisible.value = true;
 }
 
@@ -81,7 +80,7 @@ function openEdit(record: Dict) {
     id: record.id ?? "",
     dictKey: record.dictKey ?? "",
     name: record.name ?? "",
-    type: record.type ?? "SYSTEM",
+    type: record.type ?? "S",
     sort: record.sort ?? 0,
     remark: record.remark ?? "",
   });
@@ -186,7 +185,7 @@ const valueForm = reactive({
   name: "",
   value: "",
   sort: 0,
-  type: "success",
+  type: "S",
   color: "#1677ff",
   remark: "",
 });
@@ -199,7 +198,7 @@ function openValueAdd() {
     name: "",
     value: "",
     sort: 0,
-    type: "success",
+    type: "S",
     color: "#1677ff",
     remark: "",
   });
@@ -214,7 +213,7 @@ function openValueEdit(record: DictValueVO) {
     name: record.name ?? "",
     value: record.value ?? "",
     sort: record.sort ?? 0,
-    type: record.type ?? "success",
+    type: record.type ?? "S",
     color: record.color ?? "#1677ff",
     remark: record.remark ?? "",
   });
@@ -418,7 +417,7 @@ function handleValueRemove(record: DictValueVO) {
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'type'">
-            <a-tag :color="record.type || 'default'">
+            <a-tag :color="dictColor(VALUE_TYPE_OPTIONS, record.type) || 'default'">
               {{ dictLabel(VALUE_TYPE_OPTIONS, record.type) }}
             </a-tag>
           </template>

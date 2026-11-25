@@ -70,8 +70,9 @@ public class DictServiceImpl implements DictService {
     @Override
     @Cache(key = "admin:dict:values:${dictKey}", tags = CACHE_TAG, seconds = 3600)
     public List<DictValue> listValues(String dictKey) {
+        String checkedKey = ValidUtil.requireString(dictKey, "字典键不能为空");
         return easyEntityQuery.queryable(DictValue.class)
-                .where(o -> o.valueKey().eq(ValidUtil.requireString(dictKey, "字典编号不能为空")))
+                .where(o -> o.dict().dictKey().eq(checkedKey))
                 .orderBy(o -> {
                     o.sort().asc();
                     o.id().asc();

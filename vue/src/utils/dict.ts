@@ -19,6 +19,7 @@ export const STATUS_OPTIONS: DictOption[] = [
 export const SEX_OPTIONS: DictOption[] = [
   { value: "M", label: "男", color: "blue" },
   { value: "F", label: "女", color: "magenta" },
+  { value: "U", label: "未知", color: "default" },
 ];
 
 /** 权限类型 */
@@ -30,8 +31,8 @@ export const PERMISSION_TYPE_OPTIONS: DictOption[] = [
 
 /** 字典/参数类型 */
 export const SYSTEM_BUSINESS_OPTIONS: DictOption[] = [
-  { value: "SYSTEM", label: "系统内置", color: "gold" },
-  { value: "BUSINESS", label: "业务自定义" },
+  { value: "S", label: "系统", color: "gold" },
+  { value: "U", label: "用户" },
 ];
 
 /** 按 value 取 label */

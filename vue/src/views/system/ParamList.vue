@@ -56,7 +56,7 @@ const form = reactive({
   paramKey: "",
   name: "",
   value: "",
-  type: "SYSTEM",
+  type: "S",
   sort: 0,
   remark: "",
 });
@@ -68,7 +68,7 @@ function openAdd() {
     paramKey: "",
     name: "",
     value: "",
-    type: "SYSTEM",
+    type: "S",
     sort: 0,
     remark: "",
   });
@@ -82,7 +82,7 @@ function openEdit(record: ParamVO) {
     paramKey: record.paramKey ?? "",
     name: record.name ?? "",
     value: record.value ?? "",
-    type: record.type ?? "SYSTEM",
+    type: record.type ?? "S",
     sort: record.sort ?? 0,
     remark: record.remark ?? "",
   });
