@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
+import { KeyRound, Pencil, Trash2, UserRoundCog } from "@lucide/vue";
+import RowAction from "../../components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { deptApi } from "../../api";
 import { roleApi } from "../../api";
@@ -275,28 +277,27 @@ function handleRemove(record: User) {
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="用户名">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="userName" label="用户名">
           <a-input v-model:value="query.userName" placeholder="请输入用户名" allow-clear />
         </a-form-item>
-        <a-form-item label="姓名">
+        <a-form-item name="realName" label="姓名">
           <a-input v-model:value="query.realName" placeholder="请输入姓名" allow-clear />
         </a-form-item>
-        <a-form-item label="手机号">
+        <a-form-item name="phone" label="手机号">
           <a-input v-model:value="query.phone" placeholder="请输入手机号" allow-clear />
         </a-form-item>
-        <a-form-item label="状态">
+        <a-form-item name="status" label="状态">
           <a-select
             v-model:value="query.status"
             :options="STATUS_OPTIONS"
             placeholder="全部"
             allow-clear
-            style="width: 140px"
           />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
           </a-space>
         </a-form-item>
@@ -305,6 +306,7 @@ function handleRemove(record: User) {
 
     <a-card variant="borderless">
       <div class="table-toolbar">
+        <h2 class="table-heading">用户列表</h2>
         <a-button type="primary" @click="openAdd">
           <template #icon><PlusOutlined /></template>
           新增用户
@@ -313,14 +315,14 @@ function handleRemove(record: User) {
       <a-table
         :columns="[
           { title: '用户名', dataIndex: 'userName', key: 'userName' },
-          { title: '姓名', dataIndex: 'realName', key: 'realName', width: 120 },
-          { title: '性别', dataIndex: 'sex', key: 'sex', width: 90 },
-          { title: '手机号', dataIndex: 'phone', key: 'phone', width: 130 },
-          { title: '邮箱', dataIndex: 'email', key: 'email', width: 180 },
-          { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
-          { title: '所属部门', key: 'deptName', width: 140 },
-          { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 200 },
+          { title: '姓名', dataIndex: 'realName', key: 'realName', width: 96 },
+          { title: '性别', dataIndex: 'sex', key: 'sex', width: 68 },
+          { title: '手机号', dataIndex: 'phone', key: 'phone', width: 118 },
+          { title: '邮箱', dataIndex: 'email', key: 'email', width: 156 },
+          { title: '状态', dataIndex: 'status', key: 'status', width: 72 },
+          { title: '所属部门', key: 'deptName', width: 108 },
+          { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 168 },
+          { title: '操作', key: 'action', width: 218 },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -355,12 +357,12 @@ function handleRemove(record: User) {
             {{ deptOptions.find((d) => d.value === record.deptId)?.label ?? "-" }}
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openBindRole(record)">绑定角色</a>
-              <a @click="openEdit(record)">修改</a>
-              <a @click="openResetPwd(record)">重置密码</a>
-              <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
-            </a-space>
+            <div class="table-actions">
+              <RowAction :icon="UserRoundCog" @click="openBindRole(record)">绑定角色</RowAction>
+              <RowAction :icon="Pencil" @click="openEdit(record)">修改</RowAction>
+              <RowAction :icon="KeyRound" @click="openResetPwd(record)">重置密码</RowAction>
+              <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
+            </div>
           </template>
         </template>
       </a-table>

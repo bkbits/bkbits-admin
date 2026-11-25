@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
+import { ListPlus, Pencil, Trash2 } from "@lucide/vue";
+import RowAction from "../../components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { permissionApi } from "../../api";
 import type { Permission } from "../../api/types";
@@ -180,22 +182,21 @@ function handleRemove(record: Permission) {
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="权限名称">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="name" label="权限名称">
           <a-input v-model:value="query.name" placeholder="请输入权限名称" allow-clear />
         </a-form-item>
-        <a-form-item label="状态">
+        <a-form-item name="status" label="状态">
           <a-select
             v-model:value="query.status"
             :options="STATUS_OPTIONS"
             placeholder="全部"
             allow-clear
-            style="width: 140px"
           />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
           </a-space>
         </a-form-item>
@@ -204,6 +205,7 @@ function handleRemove(record: Permission) {
 
     <a-card variant="borderless">
       <div class="table-toolbar">
+        <h2 class="table-heading">权限树</h2>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增权限
@@ -237,11 +239,11 @@ function handleRemove(record: Permission) {
             </a-tag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openAdd(record.id)">新增子项</a>
-              <a @click="openEdit(record)">修改</a>
-              <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
-            </a-space>
+            <div class="table-actions">
+              <RowAction :icon="ListPlus" @click="openAdd(record.id)">新增子项</RowAction>
+              <RowAction :icon="Pencil" @click="openEdit(record)">修改</RowAction>
+              <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
+            </div>
           </template>
         </template>
       </a-table>

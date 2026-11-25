@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, h, onMounted, ref, watch } from "vue";
+import { computed, h, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   Bell,
   BookMarked,
   Building2,
+  ChevronDown,
+  Gauge,
   IdCard,
   KeyRound,
   LogIn,
@@ -12,6 +14,8 @@ import {
   Menu as MenuIcon,
   Moon,
   MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
   ScrollText,
   Search,
   Settings,
@@ -19,7 +23,8 @@ import {
   SlidersHorizontal,
   Sun,
   Users,
-} from "lucide-vue-next";
+  Wifi,
+} from "@lucide/vue";
 import { message, type MenuProps } from "antdv-next";
 import { permissionApi } from "../api";
 import { notificationApi } from "../api";
@@ -34,6 +39,38 @@ const route = useRoute();
 const router = useRouter();
 const appStore = useAppStore();
 const authStore = useAuthStore();
+const mobileQuery = window.matchMedia("(max-width: 760px)");
+const isMobile = ref(mobileQuery.matches);
+const mobileMenuOpen = ref(false);
+const sidebarCollapsed = computed(() => !isMobile.value && appStore.collapsed);
+const menuButton = ref<HTMLButtonElement>();
+
+function closeMobileMenu(restoreFocus = false) {
+  mobileMenuOpen.value = false;
+  if (restoreFocus) menuButton.value?.focus();
+}
+
+function syncViewport(event: MediaQueryListEvent) {
+  isMobile.value = event.matches;
+  closeMobileMenu();
+}
+
+async function toggleSidebar() {
+  if (!isMobile.value) {
+    appStore.toggleCollapsed();
+    return;
+  }
+  if (mobileMenuOpen.value) {
+    closeMobileMenu(true);
+    return;
+  }
+  mobileMenuOpen.value = true;
+  await nextTick();
+  document.querySelector<HTMLAnchorElement>("#admin-sidebar .sider-logo")?.focus();
+}
+
+onMounted(() => mobileQuery.addEventListener("change", syncViewport));
+onUnmounted(() => mobileQuery.removeEventListener("change", syncViewport));
 
 /* ------------------------------ 菜单 ------------------------------ */
 
@@ -50,6 +87,12 @@ const ICONS: Record<string, typeof Settings> = {
   "admin.notification": Bell,
 };
 
+const ROUTE_ICONS: Record<string, typeof Settings> = {
+  "/dashboard": Gauge,
+  "/profile": IdCard,
+  "/system/online-user": Wifi,
+};
+
 const flatPermissions = ref<Permission[]>([]);
 
 /** 菜单树（D 目录 → 子菜单，M 菜单 → 菜单项，过滤 B 按钮） */
@@ -60,7 +103,8 @@ const menuItems = computed<MenuProps["items"]>(() => {
       .filter((n) => (n.parentId ?? "0") === parentId)
       .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
       .map((n) => {
-        const icon = ICONS[n.permission ?? ""] ?? Settings;
+        const path = MENU_ROUTE_MAP[n.component ?? ""] ?? "";
+        const icon = ICONS[n.permission ?? ""] ?? ROUTE_ICONS[path] ?? Settings;
         if (n.type === "D") {
           return {
             key: `catalog-${n.id}`,
@@ -69,9 +113,8 @@ const menuItems = computed<MenuProps["items"]>(() => {
             children: build(n.id ?? ""),
           };
         }
-        const path = MENU_ROUTE_MAP[n.component ?? ""] ?? "";
         return {
-          key: path,
+          key: path || `menu-${n.id}`,
           icon: () => h(icon),
           label: n.name,
           disabled: !path,
@@ -102,6 +145,12 @@ const breadcrumbs = computed<string[]>(() => {
   return chain.map((c) => c.name ?? "");
 });
 
+const pageTitle = computed(() => breadcrumbs.value.at(-1) || String(route.meta.title ?? ""));
+const pageIcon = computed(() => {
+  const permission = findMenuChain(route.path).at(-1)?.permission ?? "";
+  return ICONS[permission] ?? ROUTE_ICONS[route.path] ?? Settings;
+});
+
 /** 侧边栏当前展开的目录 key */
 const openKeys = ref<string[]>([]);
 
@@ -119,27 +168,36 @@ function onOpenChange(keys: string[]) {
 }
 
 // 路由变化（含浏览器前进/后退、刷新后首次进入）时自动展开上级目录
-watch(() => route.path, syncOpenKeys);
+watch(
+  () => route.path,
+  () => {
+    syncOpenKeys();
+    closeMobileMenu();
+  },
+);
 
-/** 菜单搜索候选（目录 + 菜单） */
+/** 菜单搜索候选 */
+const searchValue = ref("");
 const searchOptions = computed(() =>
-  flatPermissions.value
-    .filter((p) => p.status === "E" && p.type !== "B")
-    .map((p) => ({
-      value: p.type === "M" ? (MENU_ROUTE_MAP[p.component ?? ""] ?? p.name ?? "") : (p.name ?? ""),
-      label: p.name ?? "",
-      path: p.type === "M" ? MENU_ROUTE_MAP[p.component ?? ""] : undefined,
-    })),
+  flatPermissions.value.flatMap((permission) => {
+    const path = MENU_ROUTE_MAP[permission.component ?? ""];
+    return permission.status === "E" && permission.type === "M" && path
+      ? [{ value: path, label: permission.name ?? path }]
+      : [];
+  }),
 );
 
 function onMenuClick({ key }: { key: string | number }) {
-  const k = String(key);
-  if (k.startsWith("/")) router.push(k);
+  const path = String(key);
+  if (!path.startsWith("/")) return;
+  closeMobileMenu(isMobile.value);
+  router.push(path);
 }
 
-function onSearchSelect(value: string) {
-  const item = searchOptions.value.find((o) => o.value === value);
-  if (item?.path) router.push(item.path);
+function onSearchSelect(path: string) {
+  void router.push(path).then(() => {
+    searchValue.value = "";
+  });
 }
 
 /* ------------------------------ 通知 ------------------------------ */
@@ -282,23 +340,33 @@ onMounted(async () => {
   void loadNotifications();
 });
 
-const copyright = ref("© 2025 bkbits-admin");
+const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
 </script>
 
 <template>
-  <a-layout class="admin-layout">
+  <a-layout class="admin-layout" @keydown.esc="mobileMenuOpen && closeMobileMenu(true)">
+    <div v-if="mobileMenuOpen" class="sidebar-backdrop" @click="closeMobileMenu(true)" />
     <!-- 左侧边栏 -->
     <a-layout-sider
-      v-model:collapsed="appStore.collapsed"
+      id="admin-sidebar"
+      aria-label="主导航"
+      :collapsed="sidebarCollapsed"
       :trigger="null"
-      collapsible
-      :width="224"
+      :width="228"
+      :collapsed-width="72"
+      :inert="isMobile && !mobileMenuOpen"
+      :class="{ 'is-open': mobileMenuOpen }"
       class="admin-sider"
     >
-      <div class="sider-logo" @click="router.push('/dashboard')">
-        <img src="/favicon.svg" alt="logo" class="sider-logo-img" />
-        <span v-if="!appStore.collapsed" class="sider-logo-title">bkbits-admin</span>
-      </div>
+      <router-link
+        to="/dashboard"
+        class="sider-logo"
+        aria-label="bkbits-admin 首页"
+        @click="closeMobileMenu(isMobile)"
+      >
+        <span class="sider-logo-mark"><img src="/favicon.svg" alt="" /></span>
+        <span v-if="!sidebarCollapsed" class="sider-logo-title">bkbits<span>-admin</span></span>
+      </router-link>
       <a-menu
         theme="dark"
         mode="inline"
@@ -315,9 +383,19 @@ const copyright = ref("© 2025 bkbits-admin");
       <!-- 顶部标题栏 -->
       <a-layout-header class="admin-header">
         <div class="header-left">
-          <a-button type="text" class="header-icon-btn" @click="appStore.toggleCollapsed()">
-            <MenuIcon :size="18" />
-          </a-button>
+          <button
+            ref="menuButton"
+            type="button"
+            class="header-icon-btn sidebar-trigger"
+            :aria-label="(isMobile ? mobileMenuOpen : !sidebarCollapsed) ? '收起导航' : '展开导航'"
+            :aria-expanded="isMobile ? mobileMenuOpen : !sidebarCollapsed"
+            aria-controls="admin-sidebar"
+            @click="toggleSidebar"
+          >
+            <MenuIcon v-if="isMobile" :size="19" aria-hidden="true" />
+            <PanelLeftOpen v-else-if="sidebarCollapsed" :size="19" aria-hidden="true" />
+            <PanelLeftClose v-else :size="19" aria-hidden="true" />
+          </button>
           <a-breadcrumb class="header-breadcrumb">
             <a-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="index">
               {{ item }}
@@ -328,20 +406,28 @@ const copyright = ref("© 2025 bkbits-admin");
         <div class="header-right">
           <!-- 搜索栏 -->
           <a-auto-complete
+            v-model:value="searchValue"
             class="header-search"
             :options="searchOptions"
-            placeholder="搜索菜单"
-            allow-clear
+            default-active-first-option
+            :show-search="{
+              filterOption: (input, option) => String(option?.label ?? '').includes(input.trim()),
+            }"
             @select="onSearchSelect"
           >
-            <template #suffixIcon>
-              <Search :size="15" />
-            </template>
+            <a-input placeholder="搜索菜单" aria-label="搜索菜单" allow-clear>
+              <template #prefix><Search :size="16" aria-hidden="true" /></template>
+            </a-input>
           </a-auto-complete>
 
           <!-- 主题切换 -->
           <a-tooltip :title="appStore.isDark ? '切换为亮色主题' : '切换为暗色主题'">
-            <a-button type="text" class="header-icon-btn" @click="appStore.toggleTheme()">
+            <a-button
+              type="text"
+              class="header-icon-btn"
+              :aria-label="appStore.isDark ? '切换为亮色主题' : '切换为暗色主题'"
+              @click="appStore.toggleTheme()"
+            >
               <Sun v-if="appStore.isDark" :size="18" />
               <Moon v-else :size="18" />
             </a-button>
@@ -350,7 +436,7 @@ const copyright = ref("© 2025 bkbits-admin");
           <!-- 通知下拉 -->
           <a-popover placement="bottomRight" trigger="click">
             <a-badge :count="notifications.length" :offset="[-4, 4]">
-              <a-button type="text" class="header-icon-btn">
+              <a-button type="text" class="header-icon-btn" aria-label="通知公告">
                 <Bell :size="18" />
               </a-button>
             </a-badge>
@@ -373,16 +459,17 @@ const copyright = ref("© 2025 bkbits-admin");
             :trigger="['click']"
             :menu="{ items: userMenuItems, onClick: onUserMenuClick }"
           >
-            <div class="header-user">
-              <a-avatar class="header-avatar" :size="30">{{ userInitial }}</a-avatar>
+            <button type="button" class="header-user" aria-label="账号菜单">
+              <a-avatar class="header-avatar" :size="32">{{ userInitial }}</a-avatar>
               <span class="header-username">{{ userName }}</span>
-            </div>
+              <ChevronDown :size="14" aria-hidden="true" />
+            </button>
           </a-dropdown>
         </div>
       </a-layout-header>
 
       <!-- 标签页栏 -->
-      <div class="admin-tabs-bar">
+      <div class="admin-tabs-bar" :inert="mobileMenuOpen">
         <a-tabs
           type="editable-card"
           hide-add
@@ -400,19 +487,25 @@ const copyright = ref("© 2025 bkbits-admin");
           />
         </a-tabs>
         <a-dropdown :trigger="['click']" :menu="{ items: tabsActionItems, onClick: onTabsAction }">
-          <a-button type="text" size="small" class="tabs-action-btn" title="标签页操作">
+          <a-button type="text" size="small" class="tabs-action-btn" aria-label="标签页操作">
             <MoreHorizontal :size="14" />
           </a-button>
         </a-dropdown>
       </div>
 
       <!-- 内容区域 -->
-      <a-layout-content class="admin-content">
-        <router-view />
+      <a-layout-content class="admin-content" :inert="mobileMenuOpen">
+        <div class="admin-page">
+          <header class="page-heading">
+            <span class="page-heading-icon">
+              <component :is="pageIcon" :size="23" aria-hidden="true" />
+            </span>
+            <h1>{{ pageTitle }}</h1>
+          </header>
+          <router-view />
+          <footer class="admin-footer">{{ copyright }}</footer>
+        </div>
       </a-layout-content>
-
-      <!-- 脚注 -->
-      <a-layout-footer class="admin-footer">{{ copyright }}</a-layout-footer>
     </a-layout>
   </a-layout>
 
@@ -445,198 +538,369 @@ const copyright = ref("© 2025 bkbits-admin");
 <style lang="scss" scoped>
 .admin-layout {
   height: 100vh;
+  height: 100dvh;
+  background: var(--ui-canvas);
 }
 
 .admin-sider {
-  box-shadow: 2px 0 8px rgb(0 0 0 / 6%);
   z-index: 10;
+  background: #161b2d;
+  border-inline-end: 1px solid #252b43;
+
+  :deep(.ant-layout-sider-children) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .sider-logo {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 10px;
-  height: 56px;
-  padding: 0 18px;
-  cursor: pointer;
-  overflow: hidden;
+  height: 64px;
+  margin: 0 12px 12px;
+  padding: 0 6px;
+  border-bottom: 1px solid #30374e;
   white-space: nowrap;
+  text-decoration: none;
 }
 
-.sider-logo-img {
-  width: 26px;
-  height: 26px;
-  flex-shrink: 0;
+.sider-logo-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  place-items: center;
+  border: 1px solid #746ce9;
+  border-radius: 10px;
+  background: #35316a;
+
+  img {
+    width: 21px;
+    height: 21px;
+  }
 }
 
 .sider-logo-title {
   color: #fff;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 730;
+
+  span {
+    color: #a2acc7;
+    font-weight: 500;
+  }
 }
 
 .sider-menu {
-  border-inline-end: none;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: transparent;
+  border-inline-end: 0;
+
+  :deep(.ant-menu-sub) {
+    background: #121626;
+  }
+  :deep(.ant-menu-item),
+  :deep(.ant-menu-submenu-title) {
+    width: calc(100% - 16px);
+    height: 38px;
+    margin: 3px 8px;
+    color: #c3cce0;
+  }
+  :deep(.ant-menu-item-disabled) {
+    color: #929bb0 !important;
+  }
+  :deep(.ant-menu-item-selected) {
+    color: #fff;
+    background: #48418b;
+    font-weight: 650;
+  }
 }
 
 .admin-main {
   min-width: 0;
+  background: var(--ui-canvas);
 }
 
-.admin-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  padding: 0 16px;
-  background: var(--ant-color-bg-container, #fff);
-  border-bottom: 1px solid var(--ant-color-border-secondary, #f0f0f0);
-  line-height: 56px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.header-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ant-color-text, rgb(0 0 0 / 88%));
-}
-
-.header-breadcrumb {
-  white-space: nowrap;
-}
-
-.header-search {
-  width: 220px;
-}
-
-.header-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 8px;
-  cursor: pointer;
-  border-radius: 6px;
-
-  &:hover {
-    background: var(--ant-color-fill-quaternary, rgb(0 0 0 / 4%));
-  }
-}
-
-.header-avatar {
-  background: #1677ff;
-  color: #fff;
-}
-
-.header-username {
-  font-size: 14px;
-  color: var(--ant-color-text, rgb(0 0 0 / 88%));
-}
-
-.menu-item-icon {
-  vertical-align: -3px;
-  margin-right: 6px;
-}
-
-.notification-menu {
-  width: 320px;
-  max-height: 420px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-
-.notification-head {
-  padding: 10px 16px;
-  font-weight: 600;
-  border-bottom: 1px solid var(--ant-color-border-secondary, #f0f0f0);
-}
-
-.notification-item {
-  height: auto !important;
-  padding: 10px 16px !important;
-  white-space: normal;
-}
-
-.notification-title {
-  font-weight: 500;
-}
-
-.notification-content {
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 65%));
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.notification-time {
-  margin-top: 4px;
-  font-size: 11px;
-  color: var(--ant-color-text-tertiary, rgb(0 0 0 / 45%));
-}
-
-.notification-empty {
-  padding: 24px 16px;
-  text-align: center;
-  color: var(--ant-color-text-tertiary, rgb(0 0 0 / 45%));
-}
-
+.admin-header,
 .admin-tabs-bar {
   display: flex;
   align-items: center;
-  background: var(--ant-color-bg-container, #fff);
-  border-bottom: 1px solid var(--ant-color-border-secondary, #f0f0f0);
-  padding: 4px 8px 0;
+  flex: none;
+  background: var(--ui-surface);
+  border-bottom: 1px solid var(--ui-border);
 }
 
+.admin-header {
+  justify-content: space-between;
+  height: 60px;
+  gap: 12px;
+  padding: 0 24px;
+  line-height: normal;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.header-breadcrumb {
+  margin-inline-start: 4px;
+  white-space: nowrap;
+}
+
+.header-icon-btn,
+.header-user {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  flex: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--ui-muted);
+  background: transparent;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--ui-accent);
+    background: var(--ui-accent-soft);
+  }
+}
+
+.header-icon-btn {
+  width: 36px;
+  padding: 0;
+}
+.header-search {
+  width: 214px;
+  margin-inline-end: 2px;
+}
+.header-search :deep(.ant-input-affix-wrapper) {
+  background: var(--ui-canvas);
+  border-color: var(--ui-border);
+}
+
+.header-user {
+  gap: 7px;
+  margin-inline-start: 3px;
+  padding: 3px 7px;
+}
+
+.header-avatar {
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
+  font-weight: 700;
+}
+
+.header-username {
+  max-width: 112px;
+  overflow: hidden;
+  color: var(--ui-text);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notification-menu {
+  width: min(320px, calc(100vw - 48px));
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.notification-head,
+.notification-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ui-border);
+}
+.notification-head,
+.notification-title {
+  font-weight: 650;
+}
+.notification-content,
+.notification-time,
+.notification-empty {
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+.notification-content {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+.notification-time {
+  margin-top: 4px;
+}
+.notification-empty {
+  padding: 24px 12px;
+  text-align: center;
+}
+
+.admin-tabs-bar {
+  gap: 6px;
+  padding: 6px 24px;
+}
 .admin-tabs {
   flex: 1;
   min-width: 0;
 
   :deep(.ant-tabs-nav) {
-    margin-bottom: 4px;
+    margin: 0;
   }
-
+  :deep(.ant-tabs-nav::before) {
+    border-bottom: 0;
+  }
   :deep(.ant-tabs-tab) {
-    border-radius: 6px 6px 0 0;
+    margin-inline: 0 5px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 4px 10px;
+    background: var(--ui-canvas);
+    color: var(--ui-muted);
+  }
+  :deep(.ant-tabs-tab-active) {
+    background: var(--ui-accent-soft);
+    font-weight: 600;
+  }
+  :deep(.ant-tabs-tab-remove) {
+    color: var(--ui-muted);
   }
 }
 
 .tabs-action-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  margin-left: 4px;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 65%));
+  color: var(--ui-muted);
 }
 
 .admin-content {
-  padding: 16px;
+  min-height: 0;
   overflow: auto;
+}
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1760px;
+  min-height: 100%;
+  margin-inline: auto;
+  padding: 22px 24px 0;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+    color: var(--ui-text);
+    font-size: 25px;
+    font-weight: 720;
+    line-height: 1.35;
+  }
+}
+
+.page-heading-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
 }
 
 .admin-footer {
-  padding: 10px 16px;
+  margin-top: auto;
+  padding: 4px 0 16px;
+  color: var(--ui-muted);
+  font-size: 12px;
   text-align: center;
-  color: var(--ant-color-text-tertiary, rgb(0 0 0 / 45%));
-  font-size: 13px;
 }
 
 .password-form {
   padding-top: 12px;
+}
+
+@media (max-width: 1000px) {
+  .header-search {
+    width: 150px;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-header,
+  .admin-tabs-bar {
+    padding-inline: 12px;
+  }
+  .admin-header {
+    gap: 4px;
+  }
+  .header-right {
+    gap: 2px;
+  }
+  .header-search {
+    width: min(28vw, 170px);
+  }
+  .admin-page {
+    gap: 14px;
+    padding: 14px 12px 0;
+  }
+  .page-heading h1 {
+    font-size: 22px;
+  }
+  .admin-sider {
+    position: fixed;
+    inset: 60px auto 0 0;
+    z-index: 21;
+    transform: translateX(-100%);
+    transition: transform 180ms ease;
+
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 60px 0 0;
+    z-index: 20;
+    background: rgb(8 12 24 / 52%);
+  }
+}
+
+@media (max-width: 580px) {
+  .header-breadcrumb {
+    display: none;
+  }
+}
+
+@media (max-width: 460px) {
+  .header-search {
+    width: min(34vw, 135px);
+  }
+  .header-username {
+    display: none;
+  }
+  .header-user {
+    gap: 3px;
+    padding-inline: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sider {
+    transition: none;
+  }
 }
 </style>

@@ -72,24 +72,27 @@ async function loadOptions() {
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="用户名">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="userName" label="用户名">
           <a-input v-model:value="query.userName" placeholder="请输入用户名" allow-clear />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
-            <a-button @click="handleRefresh">
-              <template #icon><ReloadOutlined /></template>
-              刷新
-            </a-button>
           </a-space>
         </a-form-item>
       </a-form>
     </a-card>
 
     <a-card variant="borderless">
+      <div class="table-toolbar">
+        <h2 class="table-heading">在线会话</h2>
+        <a-button @click="handleRefresh">
+          <template #icon><ReloadOutlined /></template>
+          刷新
+        </a-button>
+      </div>
       <a-table
         :columns="[
           { title: '用户名', dataIndex: 'userName', key: 'userName' },

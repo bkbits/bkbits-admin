@@ -1,46 +1,146 @@
 /* 全局样式 */
+:root {
+  --ui-accent: #4b45d4;
+  --ui-accent-soft: #eeedff;
+  --ui-canvas: #f5f6fa;
+  --ui-surface: #fff;
+  --ui-text: #182033;
+  --ui-muted: #626b80;
+  --ui-border: #e7e9f1;
+  --ui-shadow: 0 2px 5px rgb(24 32 51 / 4%);
+  --ui-danger: #c53544;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --ui-accent: #a6a0ff;
+  --ui-accent-soft: #303056;
+  --ui-canvas: #141722;
+  --ui-surface: #1e2230;
+  --ui-text: #edf0fc;
+  --ui-muted: #aeb7cd;
+  --ui-border: #333a4e;
+  --ui-shadow: 0 2px 5px rgb(0 0 0 / 14%);
+  --ui-danger: #ff9aa5;
+  color-scheme: dark;
+}
+
 html,
 body,
 #app {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
+  background: var(--ui-canvas);
+  color: var(--ui-text);
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   -webkit-font-smoothing: antialiased;
+  scrollbar-color: color-mix(in srgb, var(--ui-muted) 40%, transparent) transparent;
+  scrollbar-width: thin;
 }
 
-/* 滚动条美化 */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+:where(button, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 3px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgb(0 0 0 / 18%);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* 页面通用间距 */
+/* 系统管理列表 */
 .page-container {
-  padding: 16px;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.page-container > .ant-card {
+  min-width: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 14px;
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow);
+}
+
+.page-container > .ant-card > .ant-card-body {
+  padding: 18px;
+}
+
+.search-card .filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  align-items: end;
+  gap: 12px;
+}
+
+.search-card .filter-form .ant-form-item {
+  margin: 0;
+}
+
+.search-card :is(.ant-select, .ant-picker) {
+  width: 100%;
 }
 
 .table-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.search-card {
-  margin-bottom: 12px;
+.table-heading {
+  margin: 0;
+  color: var(--ui-text);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.page-container .ant-table-container {
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.page-container .ant-table-thead th {
+  white-space: nowrap;
+}
+
+.page-container :is(.ant-table-cell, .ant-pagination) {
+  font-variant-numeric: tabular-nums;
+}
+
+.page-container .ant-table-cell {
+  overflow-wrap: anywhere;
+}
+
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+}
+
+.page-container .ant-table-pagination {
+  margin-bottom: 0;
+}
+
+.page-container .ant-table-pagination .ant-pagination-total-text {
+  margin-inline-end: auto;
+  color: var(--ui-muted);
+}
+
+@media (max-width: 600px) {
+  .search-card .filter-form {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 146px), 1fr));
+  }
+
+  .search-card .filter-form .ant-form-item:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .page-container > .ant-card > .ant-card-body {
+    padding: 12px;
+  }
 }

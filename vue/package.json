@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@lucide/vue": "^1.80.0",
     "antdv-next": "^1.5.1",
     "axios": "^1.19.0",
     "jsencrypt": "^3.5.4",
-    "lucide-vue-next": "^1.0.0",
     "pinia": "^4.0.3",
     "sass": "^1.102.0",
     "vue": "^3.5.41",

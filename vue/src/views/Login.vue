@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "antdv-next";
+import AuthLayout from "../layouts/AuthLayout.vue";
 import { useAuthStore } from "../stores/auth";
 import { encryptPassword } from "../utils/password";
 
@@ -47,93 +48,42 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="login-page">
-    <div class="login-card">
-      <div class="login-head">
-        <img src="/favicon.svg" alt="logo" class="login-logo" />
-        <h1 class="login-title">bkbits-admin</h1>
-        <p class="login-subtitle">后台管理系统</p>
+  <AuthLayout title="登录">
+    <a-form name="login" :model="form" layout="vertical" @finish="handleLogin">
+      <a-form-item label="用户名" name="username">
+        <a-input
+          v-model:value="form.username"
+          size="large"
+          autocomplete="username"
+          placeholder="用户名 / 手机号 / 邮箱"
+        />
+      </a-form-item>
+      <a-form-item label="密码" name="password">
+        <a-input-password
+          v-model:value="form.password"
+          size="large"
+          autocomplete="current-password"
+          placeholder="请输入密码"
+        />
+      </a-form-item>
+      <div class="login-options">
+        <a-checkbox v-model:checked="form.remember">记住我</a-checkbox>
+        <router-link to="/register" class="auth-link">注册账号</router-link>
       </div>
-      <a-form :model="form" layout="vertical" @finish="handleLogin">
-        <a-form-item label="用户名" name="username">
-          <a-input
-            v-model:value="form.username"
-            size="large"
-            placeholder="用户名 / 手机号 / 邮箱"
-          />
-        </a-form-item>
-        <a-form-item label="密码" name="password">
-          <a-input-password v-model:value="form.password" size="large" placeholder="请输入密码" />
-        </a-form-item>
-        <a-form-item>
-          <div class="login-options">
-            <a-checkbox v-model:checked="form.remember">记住我</a-checkbox>
-            <router-link to="/register" class="login-link">注册账号</router-link>
-          </div>
-        </a-form-item>
-        <a-button type="primary" size="large" block html-type="submit" :loading="loading">
-          登录
-        </a-button>
-      </a-form>
-      <div class="login-tip">默认账号：admin / admin@123</div>
-    </div>
-  </div>
+      <a-button type="primary" size="large" block html-type="submit" :loading="loading">
+        登录
+      </a-button>
+    </a-form>
+  </AuthLayout>
 </template>
 
-<style lang="scss" scoped>
-.login-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #1677ff 0%, #0958d9 45%, #002c8c 100%);
-}
-
-.login-card {
-  width: 380px;
-  padding: 40px 36px 28px;
-  background: var(--ant-color-bg-container, #fff);
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
-}
-
-.login-head {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.login-logo {
-  width: 48px;
-  height: 48px;
-}
-
-.login-title {
-  margin: 12px 0 4px;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ant-color-text, rgb(0 0 0 / 88%));
-}
-
-.login-subtitle {
-  margin: 0;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 55%));
-}
-
+<style scoped>
 .login-options {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-}
-
-.login-link {
-  color: #1677ff;
-}
-
-.login-tip {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--ant-color-text-tertiary, rgb(0 0 0 / 45%));
+  gap: 8px;
+  margin: 4px 0 24px;
 }
 </style>

@@ -36,7 +36,7 @@
 - **typescript**（6）— 类型系统
 - **scss** — 样式预处理器
 - **antdv-next**（1.5）— UI 组件库（Ant Design Vue 下一代，ant-design-vue v4 同款 API）
-- **lucide-vue-next** + **@ant-design/icons-vue** — 图标库
+- **@lucide/vue** + **@ant-design/icons-vue** — 图标库
 - **axios** — HTTP 客户端
 
 ## 接口与 mock

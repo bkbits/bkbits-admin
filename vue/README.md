@@ -6,7 +6,7 @@
 
 - bun（运行时与包管理）、viteplus（统一工具链）
 - vue3 + typescript + scss
-- antdv-next（UI）、lucide-vue-next / @ant-design/icons-vue（图标）
+- antdv-next（UI）、@lucide/vue / @ant-design/icons-vue（图标）
 - axios + pinia + vue-router
 
 ## 接口说明

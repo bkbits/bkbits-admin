@@ -1,63 +1,28 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
-import { useRouter } from "vue-router";
 import {
-  Users,
-  UserRound,
-  ShieldCheck,
-  Building2,
-  SlidersHorizontal,
+  ArrowRight,
   BookMarked,
+  Building2,
+  CalendarDays,
+  ChevronRight,
+  ClipboardList,
+  KeyRound,
+  ShieldCheck,
+  SlidersHorizontal,
+  Users,
   Wifi,
-} from "lucide-vue-next";
-import { userApi } from "../api";
-import { roleApi } from "../api";
-import { deptApi } from "../api";
-import { paramApi } from "../api";
-import { dictApi } from "../api";
-import { logApi } from "../api";
+} from "@lucide/vue";
+import { deptApi, dictApi, logApi, paramApi, roleApi, userApi } from "../api";
 import type { LoginLogVO } from "../api/modules/log";
 import { useAuthStore } from "../stores/auth";
 
-const router = useRouter();
 const authStore = useAuthStore();
-
-const stats = reactive({
-  user: 0,
-  role: 0,
-  dept: 0,
-  param: 0,
-  dict: 0,
-  online: 0,
-});
-
-const recentLogs = ref<LoginLogVO[]>([]);
-const loading = ref(true);
-
-async function loadStats() {
-  const [users, roles, depts, params, dicts, online, logs] = await Promise.all([
-    userApi.queryUser({ page: 1, pageSize: 1 }),
-    roleApi.queryRole({ page: 1, pageSize: 1 }),
-    deptApi.queryDept({ page: 1, pageSize: 1 }),
-    paramApi.queryParam({ page: 1, pageSize: 1 }),
-    dictApi.queryDict({ page: 1, pageSize: 1 }),
-    userApi.queryOnlineUser({ page: 1, pageSize: 1 }),
-    logApi.queryLoginLog({ page: 1, pageSize: 5 }),
-  ]);
-  stats.user = users.data?.total ?? 0;
-  stats.role = roles.data?.total ?? 0;
-  stats.dept = depts.data?.total ?? 0;
-  stats.param = params.data?.total ?? 0;
-  stats.dict = dicts.data?.total ?? 0;
-  stats.online = online.data?.total ?? 0;
-  recentLogs.value = logs.data?.rows ?? [];
-  loading.value = false;
-}
-
-onMounted(loadStats);
+const today = new Date();
+const dateLabel = new Intl.DateTimeFormat("zh-CN", { dateStyle: "full" }).format(today);
 
 const greeting = (() => {
-  const hour = new Date().getHours();
+  const hour = today.getHours();
   if (hour < 6) return "夜深了";
   if (hour < 12) return "早上好";
   if (hour < 14) return "中午好";
@@ -66,196 +31,483 @@ const greeting = (() => {
 })();
 
 const cards = [
-  { key: "user", title: "用户总数", icon: Users, color: "#1677ff", path: "/system/user" },
-  { key: "role", title: "角色总数", icon: ShieldCheck, color: "#722ed1", path: "/system/role" },
-  { key: "dept", title: "部门总数", icon: Building2, color: "#13c2c2", path: "/system/dept" },
-
+  { key: "user", title: "用户总数", icon: Users, path: "/system/user", query: userApi.queryUser },
+  {
+    key: "role",
+    title: "角色总数",
+    icon: ShieldCheck,
+    path: "/system/role",
+    query: roleApi.queryRole,
+  },
+  {
+    key: "dept",
+    title: "部门总数",
+    icon: Building2,
+    path: "/system/dept",
+    query: deptApi.queryDept,
+  },
+  {
+    key: "online",
+    title: "在线用户",
+    icon: Wifi,
+    path: "/system/online-user",
+    query: userApi.queryOnlineUser,
+  },
   {
     key: "param",
     title: "系统参数",
     icon: SlidersHorizontal,
-    color: "#eb2f96",
     path: "/system/param",
+    query: paramApi.queryParam,
   },
-  { key: "dict", title: "系统字典", icon: BookMarked, color: "#52c41a", path: "/system/dict" },
-  { key: "online", title: "在线用户", icon: Wifi, color: "#faad14", path: "/system/online-user" },
+  {
+    key: "dict",
+    title: "系统字典",
+    icon: BookMarked,
+    path: "/system/dict",
+    query: dictApi.queryDict,
+  },
 ];
+
+const quickLinks = [
+  { title: "用户管理", icon: Users, path: "/system/user" },
+  { title: "部门管理", icon: Building2, path: "/system/dept" },
+  { title: "菜单管理", icon: KeyRound, path: "/system/permission" },
+  { title: "操作日志", icon: ClipboardList, path: "/system/operation-log" },
+];
+
+const stats = reactive<Partial<Record<string, number>>>({});
+const recentLogs = ref<LoginLogVO[]>([]);
+const loading = ref(true);
+const logsUnavailable = ref(false);
+
+onMounted(async () => {
+  const [logs] = await Promise.allSettled([
+    logApi.queryLoginLog({ page: 1, pageSize: 5 }),
+    ...cards.map(async ({ key, query }) => {
+      const result = await query({ page: 1, pageSize: 1 });
+      if (result.ok) stats[key] = result.data?.total;
+    }),
+  ]);
+  if (logs.status === "fulfilled" && logs.value.ok) {
+    recentLogs.value = logs.value.data?.rows ?? [];
+  } else {
+    logsUnavailable.value = true;
+  }
+  loading.value = false;
+});
 </script>
 
 <template>
   <div class="dashboard">
-    <a-card variant="borderless" class="welcome-card">
-      <div class="welcome">
-        <a-avatar :size="56" class="welcome-avatar">
-          {{ (authStore.loginUser?.userName || authStore.loginUser?.userId || "U").charAt(0) }}
-        </a-avatar>
-        <div>
-          <div class="welcome-title">
-            {{ greeting }}，{{ authStore.loginUser?.userName || authStore.loginUser?.userId }}
-          </div>
-          <div class="welcome-sub">欢迎使用 bkbits-admin 后台管理系统。</div>
-        </div>
-      </div>
-    </a-card>
-
-    <a-row :gutter="[16, 16]" class="stats-row">
-      <a-col v-for="card in cards" :key="card.key" :xs="12" :sm="12" :md="8" :lg="6" :xl="6">
-        <a-card variant="borderless" hoverable class="stat-card" @click="router.push(card.path)">
-          <a-skeleton :loading="loading" active>
-            <div class="stat">
-              <div class="stat-icon" :style="{ background: `${card.color}1a`, color: card.color }">
-                <component :is="card.icon" :size="22" />
-              </div>
-              <div class="stat-info">
-                <div class="stat-title">{{ card.title }}</div>
-                <div class="stat-value">{{ stats[card.key as keyof typeof stats] }}</div>
-              </div>
-            </div>
-          </a-skeleton>
-        </a-card>
-      </a-col>
-    </a-row>
-
-    <a-row :gutter="[16, 16]">
-      <a-col :xs="24" :lg="12">
-        <a-card variant="borderless" title="最近登录日志" class="panel-card">
-          <template #extra>
-            <a @click="router.push('/system/login-log')">查看全部</a>
-          </template>
-          <a-table
-            :data-source="recentLogs"
-            :columns="[
-              { title: '登录者', dataIndex: 'createBy', key: 'createBy' },
-              { title: 'IP', dataIndex: 'ip', key: 'ip' },
-              { title: '登录时间', dataIndex: 'createTime', key: 'createTime' },
-              { title: '结果', dataIndex: 'succeed', key: 'succeed' },
-            ]"
-            :pagination="false"
-            size="small"
-            row-key="id"
+    <section class="welcome" aria-labelledby="welcome-title">
+      <div class="welcome-content">
+        <p class="welcome-date">
+          <CalendarDays :size="16" aria-hidden="true" />
+          {{ dateLabel }}
+        </p>
+        <h2 id="welcome-title">
+          {{ greeting
+          }}<template v-if="authStore.loginUser"
+            >，{{ authStore.loginUser.userName || authStore.loginUser.userId }}</template
           >
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'succeed'">
-                <a-tag :color="record.succeed ? 'success' : 'error'">
-                  {{ record.succeed ? "成功" : "失败" }}
-                </a-tag>
-              </template>
-            </template>
-          </a-table>
-        </a-card>
-      </a-col>
-      <a-col :xs="24" :lg="12">
-        <a-card variant="borderless" title="快捷入口" class="panel-card">
-          <div class="quick-links">
-            <div
-              v-for="card in cards.slice(0, 6)"
-              :key="card.key"
-              class="quick-link"
-              @click="router.push(card.path)"
-            >
-              <component :is="card.icon" :size="18" :color="card.color" />
-              <span>{{ card.title }}</span>
-            </div>
-          </div>
-          <a-divider style="margin: 12px 0" />
-          <div class="tips">
-            <UserRound :size="14" />
-            提示：登录后可体验用户、角色、权限、部门、参数、字典、日志等完整功能。
-          </div>
-        </a-card>
-      </a-col>
-    </a-row>
+        </h2>
+      </div>
+      <router-link class="welcome-link" to="/profile">
+        个人信息
+        <ArrowRight :size="16" aria-hidden="true" />
+      </router-link>
+    </section>
+
+    <div class="stats-grid" :aria-busy="loading">
+      <router-link v-for="card in cards" :key="card.key" :to="card.path" class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon">
+            <component :is="card.icon" :size="19" aria-hidden="true" />
+          </span>
+          <ChevronRight class="link-arrow" :size="16" aria-hidden="true" />
+        </div>
+        <div class="stat-title">{{ card.title }}</div>
+        <div class="stat-value">{{ stats[card.key]?.toLocaleString("zh-CN") ?? "—" }}</div>
+      </router-link>
+    </div>
+
+    <div class="dashboard-panels">
+      <section class="panel" aria-labelledby="recent-log-title">
+        <div class="panel-header">
+          <h2 id="recent-log-title">最近登录日志</h2>
+          <router-link class="panel-link" to="/system/login-log">
+            查看全部<span class="visually-hidden">登录日志</span>
+            <ChevronRight :size="15" aria-hidden="true" />
+          </router-link>
+        </div>
+        <div class="log-scroll" tabindex="0" role="region" aria-labelledby="recent-log-title">
+          <table class="log-table" :aria-busy="loading">
+            <thead>
+              <tr>
+                <th scope="col">登录者</th>
+                <th scope="col">IP</th>
+                <th scope="col">登录时间</th>
+                <th scope="col">结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="log in recentLogs" :key="log.id">
+                <td>{{ log.createBy || "—" }}</td>
+                <td>{{ log.ip || "—" }}</td>
+                <td>{{ log.createTime || "—" }}</td>
+                <td>
+                  <a-tag
+                    :color="
+                      log.succeed === true ? 'success' : log.succeed === false ? 'error' : undefined
+                    "
+                  >
+                    {{ log.succeed === true ? "成功" : log.succeed === false ? "失败" : "未知" }}
+                  </a-tag>
+                </td>
+              </tr>
+              <tr v-if="!recentLogs.length">
+                <td class="log-empty" colspan="4">
+                  {{ loading ? "加载中…" : logsUnavailable ? "登录日志暂不可用" : "暂无登录记录" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <nav class="panel" aria-labelledby="quick-links-title">
+        <div class="panel-header">
+          <h2 id="quick-links-title">快捷入口</h2>
+        </div>
+        <div class="quick-links">
+          <router-link
+            v-for="link in quickLinks"
+            :key="link.path"
+            :to="link.path"
+            class="quick-link"
+          >
+            <span class="quick-icon">
+              <component :is="link.icon" :size="18" aria-hidden="true" />
+            </span>
+            <span>{{ link.title }}</span>
+            <ChevronRight class="link-arrow" :size="16" aria-hidden="true" />
+          </router-link>
+        </div>
+      </nav>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.welcome-card {
-  margin-bottom: 16px;
+.dashboard {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  container-type: inline-size;
+  color: var(--ui-text, #182033);
 }
 
 .welcome {
+  position: relative;
+  isolation: isolate;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-}
-
-.welcome-avatar {
-  background: linear-gradient(135deg, #1677ff, #0958d9);
+  justify-content: space-between;
+  gap: 16px 24px;
+  overflow: hidden;
+  padding: 23px clamp(18px, 3cqi, 30px);
+  border-radius: 14px;
+  background: linear-gradient(110deg, #3933b5, #4b45d4 72%, #5650de);
   color: #fff;
-  font-size: 22px;
+
+  &::before,
+  &::after {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+  }
+
+  &::before {
+    inset: -90px 7% auto auto;
+    width: 220px;
+    aspect-ratio: 1;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 26px rgb(255 255 255 / 6%),
+      0 0 0 52px rgb(255 255 255 / 4%);
+  }
+
+  &::after {
+    inset: 13px 16px auto auto;
+    width: 84px;
+    height: 70px;
+    background: radial-gradient(circle, rgb(255 255 255 / 24%) 1px, transparent 1.3px) 0 0 / 12px
+      12px;
+  }
+
+  h2 {
+    margin: 0;
+    color: inherit;
+    font-size: clamp(22px, 3cqi, 28px);
+    font-weight: 650;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
 }
 
-.welcome-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ant-color-text, rgb(0 0 0 / 88%));
+.welcome-content {
+  min-width: 0;
 }
 
-.welcome-sub {
-  margin-top: 4px;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 55%));
-}
-
-.stats-row {
-  margin-bottom: 16px;
-}
-
-.stat {
-  display: flex;
+.welcome-date,
+.welcome-link,
+.panel-link {
+  display: inline-flex;
   align-items: center;
+  gap: 7px;
+}
+
+.welcome-date {
+  margin: 0 0 8px;
+  color: #eeedff;
+  font-size: 13px;
+}
+
+.welcome-link {
+  padding: 8px 12px;
+  border: 1px solid rgb(255 255 255 / 32%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 9%);
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgb(255 255 255 / 20%);
+    color: #fff;
+  }
+}
+
+.stats-grid,
+.dashboard-panels {
+  display: grid;
   gap: 14px;
 }
 
-.stat-icon {
+.stats-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.stat-card,
+.panel {
+  min-width: 0;
+  border: 1px solid var(--ui-border, #e7e9f1);
+  border-radius: 12px;
+  background: var(--ui-surface, #fff);
+  box-shadow: var(--ui-shadow, 0 1px 3px rgb(24 32 51 / 5%));
+}
+
+.stat-card {
+  display: block;
+  padding: 14px;
+  color: inherit;
+
+  &:hover {
+    border-color: var(--ui-accent, #4b45d4);
+    color: inherit;
+  }
+}
+
+.stat-top {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 10px;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.stat-icon,
+.quick-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--ui-accent-soft, #eeedff);
+  color: var(--ui-accent, #4b45d4);
+}
+
+.link-arrow,
+.stat-title {
+  color: var(--ui-muted, #626b80);
 }
 
 .stat-title {
   font-size: 13px;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 55%));
 }
 
 .stat-value {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ant-color-text, rgb(0 0 0 / 88%));
+  margin-top: 1px;
+  font-size: 24px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.panel-card {
-  height: 100%;
+.dashboard-panels {
+  align-items: start;
+  grid-template-columns: minmax(0, 2.2fr) minmax(230px, 1fr);
+}
+
+.panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 14px 16px;
+
+  h2 {
+    margin: 0;
+    color: inherit;
+    font-size: 16px;
+    font-weight: 650;
+  }
+}
+
+.panel-link {
+  color: var(--ui-accent, #4b45d4);
+  font-size: 13px;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--ui-accent, #4b45d4);
+    text-decoration: underline;
+  }
+}
+
+.log-scroll {
+  margin: 0 16px 12px;
+  overflow-x: auto;
+}
+
+.log-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    padding: 9px 10px;
+    overflow-wrap: anywhere;
+  }
+
+  th {
+    background: var(--ui-canvas, #f5f6fa);
+    color: var(--ui-muted, #626b80);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  th:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+
+  th:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+
+  tr + tr {
+    border-top: 1px solid var(--ui-border, #e7e9f1);
+  }
+
+  td:last-child {
+    white-space: nowrap;
+  }
+
+  :deep(.ant-tag) {
+    margin-inline-end: 0;
+  }
+}
+
+.log-table .log-empty {
+  padding: 26px 10px;
+  color: var(--ui-muted, #626b80);
+  text-align: center;
 }
 
 .quick-links {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 7px;
+  padding: 0 12px 12px;
 }
 
 .quick-link {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--ant-color-border-secondary, #f0f0f0);
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid var(--ui-border, #e7e9f1);
   border-radius: 8px;
-  cursor: pointer;
+  color: inherit;
+  font-weight: 500;
 
   &:hover {
-    border-color: #1677ff;
-    color: #1677ff;
+    border-color: var(--ui-accent, #4b45d4);
+    color: var(--ui-accent, #4b45d4);
   }
 }
 
-.tips {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--ant-color-text-secondary, rgb(0 0 0 / 55%));
-  font-size: 13px;
+.quick-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+}
+
+.dashboard a:focus-visible,
+.log-scroll:focus-visible {
+  outline: 2px solid var(--ui-accent, #4b45d4);
+  outline-offset: 2px;
+}
+
+.dashboard .welcome-link:focus-visible {
+  outline-color: #fff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@container (max-width: 940px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (max-width: 720px) {
+  .dashboard-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 </style>

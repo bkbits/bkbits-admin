@@ -25,7 +25,11 @@ function loadTabs(): TabItem[] {
     const list = JSON.parse(raw) as TabItem[];
     if (!Array.isArray(list)) return [];
     return list.filter(
-      (t) => typeof t.path === "string" && typeof t.title === "string" && !!t.path,
+      (t) =>
+        typeof t.path === "string" &&
+        typeof t.title === "string" &&
+        !!t.path &&
+        t.path !== HOME_PATH,
     );
   } catch {
     return [];
@@ -35,8 +39,8 @@ function loadTabs(): TabItem[] {
 /** 顶部标签页栏状态（会话内持久化） */
 export const useTabsStore = defineStore("tabs", () => {
   const tabs = ref<TabItem[]>([
-    ...loadTabs(),
     { path: HOME_PATH, title: HOME_TITLE, closable: false },
+    ...loadTabs(),
   ]);
 
   // 持久化（首页不落盘，恢复时自动补上）
@@ -48,12 +52,12 @@ export const useTabsStore = defineStore("tabs", () => {
     { deep: true },
   );
 
-  /** 打开标签页（已存在则忽略） */
+  /** 打开标签页，或同步已有标签页的标题 */
   function openTab(path: string, title: string) {
     if (!path) return;
-    if (!tabs.value.some((t) => t.path === path)) {
-      tabs.value.push({ path, title, closable: path !== HOME_PATH });
-    }
+    const existing = tabs.value.find((tab) => tab.path === path);
+    if (existing) existing.title = title;
+    else tabs.value.push({ path, title, closable: path !== HOME_PATH });
   }
 
   /** 关闭标签页，返回关闭后应激活的路径 */

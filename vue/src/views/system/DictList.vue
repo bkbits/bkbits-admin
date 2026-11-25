@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
+import { List, Pencil, Trash2 } from "@lucide/vue";
+import RowAction from "../../components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { dictApi } from "../../api";
 import type { Dict, DictValueVO } from "../../api/types";
@@ -281,25 +283,24 @@ function handleValueRemove(record: DictValueVO) {
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="字典键">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="dictKey" label="字典键">
           <a-input v-model:value="query.dictKey" placeholder="请输入字典键" allow-clear />
         </a-form-item>
-        <a-form-item label="字典名">
+        <a-form-item name="name" label="字典名">
           <a-input v-model:value="query.name" placeholder="请输入字典名" allow-clear />
         </a-form-item>
-        <a-form-item label="类型">
+        <a-form-item name="type" label="类型">
           <a-select
             v-model:value="query.type"
             :options="SYSTEM_BUSINESS_OPTIONS"
             placeholder="全部"
             allow-clear
-            style="width: 140px"
           />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
           </a-space>
         </a-form-item>
@@ -308,6 +309,7 @@ function handleValueRemove(record: DictValueVO) {
 
     <a-card variant="borderless">
       <div class="table-toolbar">
+        <h2 class="table-heading">字典列表</h2>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增字典
@@ -347,11 +349,11 @@ function handleValueRemove(record: DictValueVO) {
             </a-tag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openValue(record)">字典值</a>
-              <a @click="openEdit(record)">修改</a>
-              <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
-            </a-space>
+            <div class="table-actions">
+              <RowAction :icon="List" @click="openValue(record)">字典值</RowAction>
+              <RowAction :icon="Pencil" @click="openEdit(record)">修改</RowAction>
+              <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
+            </div>
           </template>
         </template>
       </a-table>
@@ -391,7 +393,7 @@ function handleValueRemove(record: DictValueVO) {
     <a-drawer
       v-model:open="drawerVisible"
       :title="`字典值管理 - ${currentDict?.name ?? ''}`"
-      width="640"
+      size="min(1040px, 100vw)"
     >
       <div class="table-toolbar">
         <a-button type="primary" @click="openValueAdd()">
@@ -428,10 +430,10 @@ function handleValueRemove(record: DictValueVO) {
             </span>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openValueEdit(record)">修改</a>
-              <a style="color: #ff4d4f" @click="handleValueRemove(record)">删除</a>
-            </a-space>
+            <div class="table-actions">
+              <RowAction :icon="Pencil" @click="openValueEdit(record)">修改</RowAction>
+              <RowAction :icon="Trash2" danger @click="handleValueRemove(record)">删除</RowAction>
+            </div>
           </template>
         </template>
       </a-table>

@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
         path: "profile",
         name: "profile",
         component: () => import("../views/Profile.vue"),
-        meta: { title: "个人信息" },
+        meta: { title: "我的信息" },
       },
       {
         path: "system/user",
@@ -68,7 +68,7 @@ const routes: RouteRecordRaw[] = [
         path: "system/permission",
         name: "permission-list",
         component: () => import("../views/system/PermissionList.vue"),
-        meta: { title: "权限管理" },
+        meta: { title: "菜单管理" },
       },
       {
         path: "system/dept",
@@ -81,13 +81,13 @@ const routes: RouteRecordRaw[] = [
         path: "system/param",
         name: "param-list",
         component: () => import("../views/system/ParamList.vue"),
-        meta: { title: "系统参数" },
+        meta: { title: "参数管理" },
       },
       {
         path: "system/dict",
         name: "dict-list",
         component: () => import("../views/system/DictList.vue"),
-        meta: { title: "系统字典" },
+        meta: { title: "字典管理" },
       },
       {
         path: "system/login-log",

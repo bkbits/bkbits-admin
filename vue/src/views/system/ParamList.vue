@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
+import { Pencil, Trash2 } from "@lucide/vue";
+import RowAction from "../../components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { paramApi } from "../../api";
 import type { ParamVO } from "../../api/types";
@@ -156,25 +158,24 @@ function handleRemove(record: ParamVO) {
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="参数键">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="paramKey" label="参数键">
           <a-input v-model:value="query.paramKey" placeholder="请输入参数键" allow-clear />
         </a-form-item>
-        <a-form-item label="参数名">
+        <a-form-item name="name" label="参数名">
           <a-input v-model:value="query.name" placeholder="请输入参数名" allow-clear />
         </a-form-item>
-        <a-form-item label="类型">
+        <a-form-item name="type" label="类型">
           <a-select
             v-model:value="query.type"
             :options="SYSTEM_BUSINESS_OPTIONS"
             placeholder="全部"
             allow-clear
-            style="width: 140px"
           />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
           </a-space>
         </a-form-item>
@@ -183,6 +184,7 @@ function handleRemove(record: ParamVO) {
 
     <a-card variant="borderless">
       <div class="table-toolbar">
+        <h2 class="table-heading">参数列表</h2>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增参数
@@ -224,10 +226,10 @@ function handleRemove(record: ParamVO) {
             </a-tag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a @click="openEdit(record)">修改</a>
-              <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
-            </a-space>
+            <div class="table-actions">
+              <RowAction :icon="Pencil" @click="openEdit(record)">修改</RowAction>
+              <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
+            </div>
           </template>
         </template>
       </a-table>

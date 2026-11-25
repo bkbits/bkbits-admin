@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
+import { Trash2 } from "@lucide/vue";
+import RowAction from "../../components/RowAction.vue";
 import { queryOperationLog, removeOperationLog } from "../../api/modules/log";
 import type { OperationLogVO } from "../../api/modules/log";
 
@@ -82,46 +84,43 @@ onMounted(loadList);
 <template>
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
-      <a-form layout="inline" :model="query">
-        <a-form-item label="名称">
+      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+        <a-form-item name="name" label="名称">
           <a-input v-model:value="query.name" placeholder="请输入日志名称" allow-clear />
         </a-form-item>
-        <a-form-item label="模块">
+        <a-form-item name="module" label="模块">
           <a-select
             v-model:value="query.module"
             :options="MODULE_OPTIONS"
             placeholder="全部"
             allow-clear
-            style="width: 140px"
           />
         </a-form-item>
-        <a-form-item label="类型">
+        <a-form-item name="type" label="类型">
           <a-input v-model:value="query.type" placeholder="请输入类型" allow-clear />
         </a-form-item>
-        <a-form-item label="操作人">
+        <a-form-item name="createBy" label="操作人">
           <a-input v-model:value="query.createBy" placeholder="请输入操作人" allow-clear />
         </a-form-item>
-        <a-form-item label="开始时间">
+        <a-form-item name="createTimeBegin" label="开始时间">
           <a-date-picker
             v-model:value="query.createTimeBegin"
             show-time
             value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="开始时间"
-            style="width: 200px"
           />
         </a-form-item>
-        <a-form-item label="结束时间">
+        <a-form-item name="createTimeEnd" label="结束时间">
           <a-date-picker
             v-model:value="query.createTimeEnd"
             show-time
             value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="结束时间"
-            style="width: 200px"
           />
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button type="primary" @click="handleSearch">查询</a-button>
+            <a-button type="primary" html-type="submit">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
           </a-space>
         </a-form-item>
@@ -129,6 +128,9 @@ onMounted(loadList);
     </a-card>
 
     <a-card variant="borderless">
+      <div class="table-toolbar">
+        <h2 class="table-heading">操作记录</h2>
+      </div>
       <a-table
         :columns="[
           { title: '名称', dataIndex: 'name', key: 'name', width: 160 },
@@ -163,7 +165,7 @@ onMounted(loadList);
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
+            <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
           </template>
         </template>
       </a-table>
