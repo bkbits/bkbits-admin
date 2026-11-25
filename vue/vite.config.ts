@@ -2,8 +2,11 @@ import { defineConfig } from "vite-plus";
 import vue from "@vitejs/plugin-vue";
 import { mockServer } from "./src/mock";
 
+/** 仅当 VITE_USE_MOCK=true 时启用 mock，默认由 /api 代理到 8088 真实后端 */
+const useMock = process.env.VITE_USE_MOCK === "true";
+
 export default defineConfig({
-  plugins: [vue(), mockServer()],
+  plugins: [vue(), ...(useMock ? [mockServer()] : [])],
   resolve: {
     alias: {
       "@": new URL("./src", import.meta.url).pathname,
@@ -12,7 +15,6 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // 后端启动后取消 mockServer 插件即可切换为真实接口
       "/api": {
         target: "http://localhost:8088",
         changeOrigin: true,

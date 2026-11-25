@@ -50,7 +50,8 @@ public class UtilsTest {
         String str = DateUtil.now(DateUtil.PATTERN_DATETIME);
         LocalDateTime dateTime = DateUtil.parseLocalDateTime(str, DateUtil.PATTERN_DATETIME);
         assertEquals(str, DateUtil.format(dateTime, DateUtil.PATTERN_DATETIME));
-        assertEquals("2024-01-02", DateUtil.format(DateUtil.parseLocalDate("2024-01-02", DateUtil.PATTERN_DATE), DateUtil.PATTERN_DATE));
+        assertEquals("2024-01-02",
+                DateUtil.format(DateUtil.parseLocalDate("2024-01-02", DateUtil.PATTERN_DATE), DateUtil.PATTERN_DATE));
         assertTrue(DateUtil.betweenDays(
                 DateUtil.parseLocalDateTime("2024-01-01 00:00:00", DateUtil.PATTERN_DATETIME),
                 DateUtil.parseLocalDateTime("2024-01-10 00:00:00", DateUtil.PATTERN_DATETIME)) == 9);

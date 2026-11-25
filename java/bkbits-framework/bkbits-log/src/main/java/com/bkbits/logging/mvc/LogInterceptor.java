@@ -3,9 +3,8 @@ package com.bkbits.logging.mvc;
 import com.bkbits.auth.LoginUtil;
 import com.bkbits.logging.annotations.Log;
 import com.bkbits.logging.dbo.LogOperation;
-import com.bkbits.util.AsyncUtil;
+import com.bkbits.logging.util.LogUtil;
 import com.bkbits.util.StringUtil;
-import com.easy.query.api.proxy.client.EasyEntityQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.Solon;
 import org.noear.solon.core.aspect.Invocation;
@@ -19,11 +18,6 @@ import java.io.IOException;
 @Slf4j
 public class LogInterceptor implements MethodInterceptor {
     private final Serializer<String> serializer = Solon.app().serializers().get(SerializerNames.AT_JSON);
-    private final EasyEntityQuery easyEntityQuery;
-
-    public LogInterceptor(EasyEntityQuery easyEntityQuery) {
-        this.easyEntityQuery = easyEntityQuery;
-    }
 
     @Override
     public Object doIntercept(Invocation inv) throws Throwable {
@@ -55,7 +49,7 @@ public class LogInterceptor implements MethodInterceptor {
         }
 
         try {
-            logOperation.setCreateBy(LoginUtil.getLoginUserName());
+            logOperation.setCreateBy(LoginUtil.isLogin() ? LoginUtil.getLoginUserId() : LoginUtil.getSystemLoginUserId());
         } catch (Throwable e) {
             log.error("获取createBy失败", e);
         }
@@ -78,9 +72,7 @@ public class LogInterceptor implements MethodInterceptor {
             logOperation.setCostTime(Math.toIntExact(System.currentTimeMillis() - recordTime));
             logOperation.setResult(throwable.getMessage());
 
-            AsyncUtil.submit(() -> {
-                easyEntityQuery.insertable(logOperation).executeRows();
-            });
+            LogUtil.log(logOperation);
 
             throw throwable;
         }
@@ -93,9 +85,7 @@ public class LogInterceptor implements MethodInterceptor {
             log.error("Log返回值序列化失败", e);
         }
 
-        AsyncUtil.submit(() -> {
-            easyEntityQuery.insertable(logOperation).executeRows();
-        });
+        LogUtil.log(logOperation);
         return result;
     }
 }

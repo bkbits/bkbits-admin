@@ -15,10 +15,6 @@ import lombok.Data;
 @ApiModel("用户查询参数")
 @Data
 public class UserQueryDTO {
-    @ApiModelProperty("租户id")
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
-    private String tenantId;
-
     @ApiModelProperty("部门id")
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String deptId;

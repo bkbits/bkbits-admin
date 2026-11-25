@@ -5,6 +5,7 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.solon.annotation.Db;
@@ -47,13 +48,15 @@ public class EasyQueryConfig {
             @Inject(required = false) List<EncryptionStrategy> encryptionStrategies,
             @Inject(required = false) List<Interceptor> interceptors,
             @Inject(required = false) ShardingInitializer shardingInitializer,
-            @Inject(required = false) List<ValueConverter<?, ?>> converters
+            @Inject(required = false) List<ValueConverter<?, ?>> converters,
+            @Inject(required = false) List<NavigateExtraFilterStrategy> navigateExtraFilterStrategies
     ) {
         QueryConfiguration configuration = easyEntityQuery.getRuntimeContext().getQueryConfiguration();
         logicDeleteStrategies.forEach(configuration::applyLogicDeleteStrategy);
         encryptionStrategies.forEach(configuration::applyEncryptionStrategy);
         interceptors.forEach(configuration::applyInterceptor);
         converters.forEach(configuration::applyValueConverter);
+        navigateExtraFilterStrategies.forEach(configuration::applyNavigateExtraFilterStrategy);
         if (shardingInitializer != null) {
             configuration.applyShardingInitializer(shardingInitializer);
         }

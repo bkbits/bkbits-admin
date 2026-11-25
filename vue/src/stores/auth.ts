@@ -12,8 +12,15 @@ export const useAuthStore = defineStore("auth", () => {
   /** 登录 */
   async function login(form: LoginDTO) {
     const result = await authApi.login(form);
-    token.value = result.data.token ?? "";
-    loginUser.value = result.data;
+    if (!result.ok) {
+      throw new Error(result.message || "登录失败");
+    }
+    const data = result.data;
+    if (!data?.token) {
+      throw new Error("登录失败：未返回令牌");
+    }
+    token.value = data.token;
+    loginUser.value = data;
     localStorage.setItem(TOKEN_KEY, token.value);
   }
 

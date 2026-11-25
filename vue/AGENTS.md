@@ -25,7 +25,7 @@
 
 # bkbits-admin 项目说明
 
-基于 Bun + Vite+ + Vue 3 的后台管理系统前端项目（bkbits-admin）。已实现用户、角色、权限、部门、租户、系统参数、系统字典、日志等系统管理功能的完整页面。后端接口暂无数据，全部接口由内置 mock 服务器提供数据。
+基于 Bun + Vite+ + Vue 3 的后台管理系统前端项目（bkbits-admin）。已实现用户、角色、权限、部门、系统参数、系统字典、日志等系统管理功能的完整页面。后端接口暂无数据，全部接口由内置 mock 服务器提供数据。
 
 ## 技术栈
 
@@ -69,7 +69,7 @@
   - `definePost(url)` — POST JSON 提交（新增/修改/删除）
   - `defineMultipart(url)` — POST multipart/form-data（文件上传）
 - `types.ts` — 由 Swagger 自动生成的类型（`Result<T>` / `PageResult<T>` / 全部实体与 DTO）
-- `modules/` — 按业务模块组织的接口定义（auth/user/role/permission/dept/tenant/param/dict/dataPermission/file/log/notification）
+- `modules/` — 按业务模块组织的接口定义（auth/user/role/permission/dept/param/dict/dataScope/file/log/notification）
 
 统一响应包装：
 
@@ -130,7 +130,6 @@ src/
   - 角色管理（含绑定权限、绑定数据权限）
   - 权限管理
   - 部门管理
-  - 租户管理
   - 系统参数
   - 系统字典（含字典值管理）
   - 登录日志

@@ -4,10 +4,10 @@ import { message, Modal } from "antdv-next";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { deptApi } from "../../api";
 import { roleApi } from "../../api";
-import { tenantApi } from "../../api";
 import { userApi } from "../../api";
 import type { User } from "../../api/types";
 import { SEX_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { encryptPassword } from "../../utils/password";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -53,23 +53,15 @@ onMounted(() => {
   void loadList();
 });
 
-/* ------------------------------ 部门/租户选项 ------------------------------ */
+/* ------------------------------ 部门选项 ------------------------------ */
 
 const deptOptions = ref<{ label: string; value: string }[]>([]);
-const tenantOptions = ref<{ label: string; value: string }[]>([]);
 
 async function loadOptions() {
-  const [deptResult, tenantResult] = await Promise.all([
-    deptApi.queryDept({ page: 1, pageSize: 100 }),
-    tenantApi.queryTenant({ page: 1, pageSize: 100 }),
-  ]);
+  const deptResult = await deptApi.queryDept({ page: 1, pageSize: 100 });
   deptOptions.value = (deptResult.data?.rows ?? []).map((d) => ({
     label: d.name ?? "",
     value: d.deptId ?? "",
-  }));
-  tenantOptions.value = (tenantResult.data?.rows ?? []).map((t) => ({
-    label: t.name ?? "",
-    value: t.id ?? "",
   }));
 }
 
@@ -88,7 +80,6 @@ const form = reactive({
   phone: "",
   sex: "M",
   status: "E",
-  tenantId: undefined as string | undefined,
   deptId: undefined as string | undefined,
 });
 
@@ -103,7 +94,6 @@ function openAdd() {
     phone: "",
     sex: "M",
     status: "E",
-    tenantId: undefined,
     deptId: undefined,
   });
   modalVisible.value = true;
@@ -120,7 +110,6 @@ function openEdit(record: User) {
     phone: record.phone ?? "",
     sex: record.sex ?? "M",
     status: record.status ?? "E",
-    tenantId: record.tenantId,
     deptId: record.deptId,
   });
   modalVisible.value = true;
@@ -137,17 +126,25 @@ async function handleSubmit() {
   }
   submitting.value = true;
   try {
+    let password = form.password;
+    if (modalMode.value === "add") {
+      try {
+        password = await encryptPassword(form.password);
+      } catch (error) {
+        message.error(error instanceof Error ? error.message : "密码加密失败，请重试");
+        return;
+      }
+    }
     const result =
       modalMode.value === "add"
         ? await userApi.addUser({
             userName: form.userName,
-            password: form.password,
+            password,
             email: form.email,
             phone: form.phone,
             realName: form.realName,
             sex: form.sex,
             status: form.status,
-            tenantId: form.tenantId,
             deptId: form.deptId,
           })
         : await userApi.updateUser({
@@ -158,7 +155,6 @@ async function handleSubmit() {
             realName: form.realName,
             sex: form.sex,
             status: form.status,
-            tenantId: form.tenantId,
             deptId: form.deptId,
           });
     if (result.ok) {
@@ -323,7 +319,6 @@ function handleRemove(record: User) {
           { title: '邮箱', dataIndex: 'email', key: 'email', width: 180 },
           { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
           { title: '所属部门', key: 'deptName', width: 140 },
-          { title: '所属租户', key: 'tenantName', width: 140 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
           { title: '操作', key: 'action', width: 200 },
         ]"
@@ -358,9 +353,6 @@ function handleRemove(record: User) {
           </template>
           <template v-else-if="column.key === 'deptName'">
             {{ deptOptions.find((d) => d.value === record.deptId)?.label ?? "-" }}
-          </template>
-          <template v-else-if="column.key === 'tenantName'">
-            {{ tenantOptions.find((t) => t.value === record.tenantId)?.label ?? "-" }}
           </template>
           <template v-else-if="column.key === 'action'">
             <a-space>
@@ -407,14 +399,6 @@ function handleRemove(record: User) {
         </a-form-item>
         <a-form-item label="状态">
           <a-radio-group v-model:value="form.status" :options="STATUS_OPTIONS" />
-        </a-form-item>
-        <a-form-item label="所属租户">
-          <a-select
-            v-model:value="form.tenantId"
-            :options="tenantOptions"
-            placeholder="请选择租户"
-            allow-clear
-          />
         </a-form-item>
         <a-form-item label="所属部门">
           <a-select

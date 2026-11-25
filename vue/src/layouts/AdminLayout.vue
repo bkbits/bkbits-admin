@@ -5,10 +5,8 @@ import {
   Bell,
   BookMarked,
   Building2,
-  Globe,
   IdCard,
   KeyRound,
-  LayoutDashboard,
   LogIn,
   LogOut,
   Menu as MenuIcon,
@@ -20,9 +18,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sun,
-  UserRound,
   Users,
-  Wifi,
 } from "lucide-vue-next";
 import { message, type MenuProps } from "antdv-next";
 import { permissionApi } from "../api";
@@ -41,36 +37,31 @@ const authStore = useAuthStore();
 
 /* ------------------------------ 菜单 ------------------------------ */
 
-/** permission 标识 → 图标 */
+/** 权限码 → 图标（后端权限码为 admin.xxx；目录无权限码时回退 Settings） */
 const ICONS: Record<string, typeof Settings> = {
-  personal: UserRound,
-  dashboard: LayoutDashboard,
-  profile: IdCard,
-  system: Settings,
-  "system:user": Users,
-  "system:onlineUser": Wifi,
-  "system:role": ShieldCheck,
-  "system:permission": KeyRound,
-  "system:dept": Building2,
-  "system:tenant": Globe,
-  "system:param": SlidersHorizontal,
-  "system:dict": BookMarked,
-  "system:loginLog": LogIn,
-  "system:operationLog": ScrollText,
+  "admin.dept": Building2,
+  "admin.user": Users,
+  "admin.role": ShieldCheck,
+  "admin.permission": KeyRound,
+  "admin.dict": BookMarked,
+  "admin.param": SlidersHorizontal,
+  "admin.loginLog": LogIn,
+  "admin.operLog": ScrollText,
+  "admin.notification": Bell,
 };
 
 const flatPermissions = ref<Permission[]>([]);
 
-/** 菜单树（CATALOG → 子菜单，MENU → 菜单项，过滤 BUTTON） */
+/** 菜单树（D 目录 → 子菜单，M 菜单 → 菜单项，过滤 B 按钮） */
 const menuItems = computed<MenuProps["items"]>(() => {
-  const nodes = flatPermissions.value.filter((p) => p.status === "E" && p.type !== "BUTTON");
+  const nodes = flatPermissions.value.filter((p) => p.status === "E" && p.type !== "B");
   const build = (parentId: string): NonNullable<MenuProps["items"]> =>
     nodes
       .filter((n) => (n.parentId ?? "0") === parentId)
       .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
       .map((n) => {
         const icon = ICONS[n.permission ?? ""] ?? Settings;
-        if (n.type === "CATALOG") {
+        if (n.type === "D") {
           return {
             key: `catalog-${n.id}`,
             icon: () => h(icon),
@@ -117,7 +108,7 @@ const openKeys = ref<string[]>([]);
 /** 根据当前路由自动展开上级目录（保留用户手动展开的其它目录） */
 function syncOpenKeys() {
   const keys = findMenuChain(route.path)
-    .filter((p) => p.type === "CATALOG")
+    .filter((p) => p.type === "D")
     .map((p) => `catalog-${p.id ?? ""}`);
   openKeys.value = [...new Set([...openKeys.value, ...keys])];
 }
@@ -133,12 +124,11 @@ watch(() => route.path, syncOpenKeys);
 /** 菜单搜索候选（目录 + 菜单） */
 const searchOptions = computed(() =>
   flatPermissions.value
-    .filter((p) => p.status === "E" && p.type !== "BUTTON")
+    .filter((p) => p.status === "E" && p.type !== "B")
     .map((p) => ({
-      value:
-        p.type === "MENU" ? (MENU_ROUTE_MAP[p.component ?? ""] ?? p.name ?? "") : (p.name ?? ""),
+      value: p.type === "M" ? (MENU_ROUTE_MAP[p.component ?? ""] ?? p.name ?? "") : (p.name ?? ""),
       label: p.name ?? "",
-      path: p.type === "MENU" ? MENU_ROUTE_MAP[p.component ?? ""] : undefined,
+      path: p.type === "M" ? MENU_ROUTE_MAP[p.component ?? ""] : undefined,
     })),
 );
 
@@ -164,7 +154,7 @@ async function loadNotifications() {
 /* ------------------------------ 用户 ------------------------------ */
 
 const userName = computed(
-  () => authStore.loginUser?.realName || authStore.loginUser?.userName || "用户",
+  () => authStore.loginUser?.userName || authStore.loginUser?.userId || "用户",
 );
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
 

@@ -16,22 +16,34 @@ public class Result<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 默认成功状态码 */
+    /**
+     * 默认成功状态码
+     */
     public static final int CODE_SUCCESS = 0;
 
-    /** 默认失败状态码 */
+    /**
+     * 默认失败状态码
+     */
     public static final int CODE_FAILURE = 699;
 
-    /** 是否成功 */
+    /**
+     * 是否成功
+     */
     private boolean ok = false;
 
-    /** 状态码 */
+    /**
+     * 状态码
+     */
     private int code = CODE_FAILURE;
 
-    /** 提示信息 */
+    /**
+     * 提示信息
+     */
     private String message;
 
-    /** 业务数据 */
+    /**
+     * 业务数据
+     */
     private T data;
 
     /**

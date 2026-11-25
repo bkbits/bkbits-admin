@@ -6,10 +6,8 @@ import com.bkbits.orm.ICreateBy;
 import com.bkbits.orm.IGenId;
 import com.bkbits.orm.IUpdateBy;
 import com.bkbits.util.CollectionUtil;
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Navigate;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -26,16 +24,14 @@ import java.util.List;
 @FieldNameConstants
 @Table
 @EntityProxy
-public class Dept implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<Dept, String>, ProxyEntityAvailable<Dept, DeptProxy> {
+public class Dept implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<Dept, String>,
+        ProxyEntityAvailable<Dept, DeptProxy> {
     @ApiModelProperty("部门编号")
     @Column(primaryKey = true)
     private String deptId;
 
     @ApiModelProperty(value = "父级部门编号", notes = "为空表示顶级部门")
     private String parentId;
-
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
 
     @ApiModelProperty("部门名称")
     private String name;
@@ -58,47 +54,39 @@ public class Dept implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.ITree<
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
 
+    @ApiModelProperty("删除时间")
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.LOCAL_DATE_TIME)
+    private LocalDateTime deleteTime;
+
     @ApiModelProperty("子部门列表")
-    @Navigate(
-            value = RelationTypeEnum.OneToMany,
+    @Navigate(value = RelationTypeEnum.OneToMany,
             selfProperty = Dept.Fields.deptId,
-            targetProperty = Dept.Fields.parentId
-    )
+            targetProperty = Dept.Fields.parentId)
     private List<Dept> children;
 
     @ApiModelProperty("父级部门")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
+    @Navigate(value = RelationTypeEnum.ManyToOne,
             selfProperty = Dept.Fields.parentId,
-            targetProperty = Dept.Fields.deptId
-    )
+            targetProperty = Dept.Fields.deptId)
     private Dept parent;
 
-    @ApiModelProperty("所属租户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = Dept.Fields.tenantId,
-            targetProperty = Tenant.Fields.id
-    )
-    private Tenant tenant;
-
     @ApiModelProperty("部门用户列表")
-    @Navigate(
-            value = RelationTypeEnum.OneToMany,
+    @Navigate(value = RelationTypeEnum.ManyToMany,
+            mappingClass = UserDeptRel.class,
             selfProperty = Dept.Fields.deptId,
-            targetProperty = User.Fields.deptId,
-            cascade = CascadeTypeEnum.SET_NULL
+            selfMappingProperty = UserDeptRel.Fields.deptId,
+            targetProperty = User.Fields.userId,
+            targetMappingProperty = UserDeptRel.Fields.userId,
+            cascade = CascadeTypeEnum.DELETE
     )
     private List<User> userList;
 
     @ApiModelProperty("部门通知列表")
-    @Navigate(
-            value = RelationTypeEnum.OneToMany,
+    @Navigate(value = RelationTypeEnum.OneToMany,
             selfProperty = Dept.Fields.deptId,
             targetProperty = Notification.Fields.targetId,
             extraFilter = NotificationTargetFilterStrategy.class,
-            cascade = CascadeTypeEnum.DELETE
-    )
+            cascade = CascadeTypeEnum.DELETE)
     private List<Notification> notificationList;
 
     @Override

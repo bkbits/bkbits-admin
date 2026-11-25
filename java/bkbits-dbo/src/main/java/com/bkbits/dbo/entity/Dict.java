@@ -55,14 +55,10 @@ public class Dict implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     private LocalDateTime updateTime;
 
     @ApiModelProperty("值列表")
-    @Navigate(
-            value = RelationTypeEnum.OneToMany,
+    @Navigate(value = RelationTypeEnum.OneToMany,
             selfProperty = Dict.Fields.id,
             targetProperty = DictValue.Fields.dictId,
-            orderByProps = @OrderByProperty(
-                    property = DictValue.Fields.sort
-            ),
-            cascade = CascadeTypeEnum.DELETE
-    )
+            orderByProps = @OrderByProperty(property = DictValue.Fields.sort),
+            cascade = CascadeTypeEnum.DELETE)
     private List<DictValue> valueList;
 }

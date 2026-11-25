@@ -42,7 +42,9 @@ public class JsonUtil {
     /**
      * 容器中的 JSON typed 序列化器（输出附带 {@code @type} 类信息）
      */
-    private static final Serializer<String> serializerTyped = Solon.app().serializers().get(SerializerNames.AT_JSON_TYPED);
+    private static final Serializer<String> serializerTyped = Solon.app()
+            .serializers()
+            .get(SerializerNames.AT_JSON_TYPED);
 
     /**
      * 反序列化附带类信息的 JSON 字符串，按 {@code @type} 还原为原始具体类型。

@@ -1,7 +1,6 @@
 import { defineGet, definePost, defineQuery } from "../define";
 import type {
   IdDTO,
-  PageData,
   PageParams,
   ParamAddDTO,
   ParamQueryDTO,
@@ -10,21 +9,19 @@ import type {
 } from "../types";
 
 /** 分页查询系统参数 */
-export const queryParam = defineQuery<ParamQueryDTO & PageParams, PageData<ParamVO>>(
-  "/api/param/query",
-);
+export const queryParam = defineQuery<ParamQueryDTO & PageParams, ParamVO>("/api/sys/param/query");
 
 /** 按编号查询系统参数 */
-export const getParamById = defineGet<{ id: string }, ParamVO>("/api/param/getById");
+export const getParamById = defineGet<{ id: string }, ParamVO>("/api/sys/param/getById");
 
 /** 按参数键查询系统参数 */
-export const getParamByKey = defineGet<{ paramKey: string }, ParamVO>("/api/param/getByKey");
+export const getParamByKey = defineGet<{ paramKey: string }, ParamVO>("/api/sys/param/getByKey");
 
 /** 新增系统参数 */
-export const addParam = definePost<ParamAddDTO, unknown>("/api/param/add");
+export const addParam = definePost<ParamAddDTO, unknown>("/api/sys/param/add");
 
 /** 更新系统参数 */
-export const updateParam = definePost<ParamUpdateDTO, unknown>("/api/param/update");
+export const updateParam = definePost<ParamUpdateDTO, unknown>("/api/sys/param/update");
 
 /** 删除系统参数 */
-export const removeParam = definePost<IdDTO, unknown>("/api/param/remove");
+export const removeParam = definePost<IdDTO, unknown>("/api/sys/param/remove");

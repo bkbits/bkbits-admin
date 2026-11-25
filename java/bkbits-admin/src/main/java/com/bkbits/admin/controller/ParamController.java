@@ -11,6 +11,7 @@ import com.bkbits.admin.service.ParamService;
 import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -94,6 +95,7 @@ public class ParamController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.param.add")
+    @Log(value = "新增参数", module = "参数管理", type = Log.INSERT, args = true)
     public Result<Void> add(@Validated @Body ParamAddDTO dto) {
         paramService.add(ParamMapper.INSTANCE.toEntity(dto));
         return Result.ok();
@@ -109,6 +111,7 @@ public class ParamController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.param.update")
+    @Log(value = "编辑参数", module = "参数管理", type = Log.UPDATE, args = true)
     public Result<Void> update(@Validated @Body ParamUpdateDTO dto) {
         paramService.update(ParamMapper.INSTANCE.toEntity(dto));
         return Result.ok();
@@ -124,6 +127,7 @@ public class ParamController {
     @Post
     @Mapping("/remove")
     @SaCheckPermission("admin.param.remove")
+    @Log(value = "删除参数", module = "参数管理", type = Log.DELETE, args = true)
     public Result<Void> remove(@Body IdDTO dto) {
         paramService.removeById(dto.getId());
         return Result.ok();

@@ -27,14 +27,6 @@ public interface DeptService {
     List<Dept> listTree(Object search);
 
     /**
-     * 查询指定租户下的部门。
-     *
-     * @param tenantId 租户编号
-     * @return 部门列表
-     */
-    List<Dept> listByTenantId(String tenantId);
-
-    /**
      * 查询指定父部门下的直属子部门。
      *
      * @param parentId 父部门编号；为空时查询顶级部门

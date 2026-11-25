@@ -1,6 +1,6 @@
 # bkbits-admin 前端
 
-基于 Bun + Vite+ + Vue 3 + antdv-next 的后台管理系统前端，实现用户、角色、权限、部门、租户、参数、字典、日志等系统管理功能。
+基于 Bun + Vite+ + Vue 3 + antdv-next 的后台管理系统前端，实现用户、角色、权限、部门、参数、字典、日志等系统管理功能。
 
 ## 技术栈
 
@@ -36,7 +36,7 @@
   - `definePost(url)` —— POST JSON 提交（新增/修改/删除）
   - `defineMultipart(url)` —— POST multipart/form-data（文件上传）
 - `types.ts`：由 Swagger 自动生成的类型（`Result<T>` / `PageResult<T>` / 全部实体与 DTO）
-- `modules/`：按业务模块组织的接口（auth/user/role/permission/dept/tenant/param/dict/dataPermission/file/log/notification）
+- `modules/`：按业务模块组织的接口（auth/user/role/permission/dept/param/dict/dataScope/file/log/notification）
 
 统一响应包装：
 
@@ -55,7 +55,7 @@ type PageResult<T> = Result<{ total: number; rows: T[] }>;
 - 布局：左侧边栏（logo + 动态菜单，菜单数据来自 `/api/permission/list`）、顶栏（折叠/面包屑/菜单搜索/主题切换/通知/用户下拉）、内容区、脚注
 - 登录 / 注册
 - 个人中心：仪表盘、个人信息
-- 系统管理：用户管理、在线用户、角色管理（含绑定权限/数据权限）、权限管理、部门管理、租户管理、系统参数、系统字典（含字典值）、登录日志、操作日志
+- 系统管理：用户管理、在线用户、角色管理（含绑定权限/数据权限）、权限管理、部门管理、系统参数、系统字典（含字典值）、登录日志、操作日志
 
 ## 命令
 

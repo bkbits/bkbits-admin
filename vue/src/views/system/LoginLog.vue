@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
-import { queryLoginLog } from "../../api/modules/log";
+import { message, Modal } from "antdv-next";
+import { queryLoginLog, removeLoginLog } from "../../api/modules/log";
 import type { LoginLogVO } from "../../api/modules/log";
 
 /* ------------------------------ 列表 ------------------------------ */
@@ -12,8 +13,18 @@ const total = ref(0);
 const query = reactive({
   page: 1,
   pageSize: 10,
-  userName: "",
+  createBy: "",
+  ip: "",
+  device: "",
+  succeed: undefined as boolean | undefined,
+  createTimeBegin: undefined as string | undefined,
+  createTimeEnd: undefined as string | undefined,
 });
+
+const RESULT_OPTIONS = [
+  { label: "成功", value: true },
+  { label: "失败", value: false },
+];
 
 async function loadList() {
   loading.value = true;
@@ -32,8 +43,32 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.userName = "";
+  query.createBy = "";
+  query.ip = "";
+  query.device = "";
+  query.succeed = undefined;
+  query.createTimeBegin = undefined;
+  query.createTimeEnd = undefined;
   handleSearch();
+}
+
+function handleRemove(record: LoginLogVO) {
+  Modal.confirm({
+    title: "删除登录日志",
+    content: "确定删除该登录日志吗？",
+    okText: "删除",
+    okType: "danger",
+    cancelText: "取消",
+    onOk: async () => {
+      const result = await removeLoginLog({ id: record.id });
+      if (result.ok) {
+        message.success(result.message);
+        void loadList();
+      } else {
+        message.error(result.message);
+      }
+    },
+  });
 }
 
 onMounted(loadList);
@@ -43,8 +78,41 @@ onMounted(loadList);
   <div class="page-container">
     <a-card variant="borderless" class="search-card">
       <a-form layout="inline" :model="query">
-        <a-form-item label="用户名">
-          <a-input v-model:value="query.userName" placeholder="请输入用户名" allow-clear />
+        <a-form-item label="登录者">
+          <a-input v-model:value="query.createBy" placeholder="请输入登录者" allow-clear />
+        </a-form-item>
+        <a-form-item label="IP">
+          <a-input v-model:value="query.ip" placeholder="请输入IP" allow-clear />
+        </a-form-item>
+        <a-form-item label="设备">
+          <a-input v-model:value="query.device" placeholder="请输入设备" allow-clear />
+        </a-form-item>
+        <a-form-item label="结果">
+          <a-select
+            v-model:value="query.succeed"
+            :options="RESULT_OPTIONS"
+            placeholder="全部"
+            allow-clear
+            style="width: 120px"
+          />
+        </a-form-item>
+        <a-form-item label="开始时间">
+          <a-date-picker
+            v-model:value="query.createTimeBegin"
+            show-time
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="开始时间"
+            style="width: 200px"
+          />
+        </a-form-item>
+        <a-form-item label="结束时间">
+          <a-date-picker
+            v-model:value="query.createTimeEnd"
+            show-time
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="结束时间"
+            style="width: 200px"
+          />
         </a-form-item>
         <a-form-item>
           <a-space>
@@ -58,12 +126,13 @@ onMounted(loadList);
     <a-card variant="borderless">
       <a-table
         :columns="[
-          { title: '用户名', dataIndex: 'userName', key: 'userName' },
-          { title: 'IP', dataIndex: 'ip', key: 'ip' },
-          { title: '设备', dataIndex: 'device', key: 'device' },
-          { title: '登录时间', dataIndex: 'loginTime', key: 'loginTime', width: 180 },
-          { title: '结果', dataIndex: 'success', key: 'success', width: 100 },
-          { title: '消息', dataIndex: 'message', key: 'message', ellipsis: true },
+          { title: '登录者', dataIndex: 'createBy', key: 'createBy', width: 120 },
+          { title: 'IP', dataIndex: 'ip', key: 'ip', width: 140 },
+          { title: '设备', dataIndex: 'device', key: 'device', width: 140 },
+          { title: '登录时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
+          { title: '结果', dataIndex: 'succeed', key: 'succeed', width: 90 },
+          { title: '失败原因', dataIndex: 'failReason', key: 'failReason', ellipsis: true },
+          { title: '操作', key: 'action', width: 90 },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -84,9 +153,12 @@ onMounted(loadList);
         "
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'success'">
-            <a-tag v-if="record.success" color="success">成功</a-tag>
+          <template v-if="column.key === 'succeed'">
+            <a-tag v-if="record.succeed" color="success">成功</a-tag>
             <a-tag v-else color="error">失败</a-tag>
+          </template>
+          <template v-else-if="column.key === 'action'">
+            <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
           </template>
         </template>
       </a-table>

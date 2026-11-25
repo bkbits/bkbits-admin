@@ -1,13 +1,13 @@
 package com.bkbits.auth;
 
+import java.time.LocalDateTime;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @ApiModel("登录用户")
 @Getter
@@ -35,8 +35,4 @@ public class LoginUser {
     @ApiModelProperty("部门id")
     @Setter
     private String deptId;
-
-    @ApiModelProperty("租户id")
-    @Setter
-    private String tenantId;
 }

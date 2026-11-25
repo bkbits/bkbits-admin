@@ -23,10 +23,6 @@ public class RoleQueryDTO {
     @EasyWhereCondition
     private String name;
 
-    @ApiModelProperty("所属租户id")
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
-    private String tenantId;
-
     @ApiModelProperty("状态（E=启用,D=禁用）")
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String status;

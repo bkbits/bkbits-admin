@@ -4,9 +4,9 @@ import { message, Modal } from "antdv-next";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { roleApi } from "../../api";
 import { permissionApi } from "../../api";
-import { dataPermissionApi } from "../../api";
-import type { DataPermission, Permission, Role } from "../../api/types";
-import { DATA_SCOPE_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { dataScopeApi } from "../../api";
+import type { DataScopeVO, Permission, Role } from "../../api/types";
+import { STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -208,75 +208,75 @@ async function handlePermissionSubmit() {
 
 /* ------------------------------ 绑定数据权限 ------------------------------ */
 
-const dataPermissionVisible = ref(false);
-const dataPermissionLoading = ref(false);
-const dataPermissionSubmitting = ref(false);
-const dataPermissionRoleId = ref("");
+const dataScopeVisible = ref(false);
+const dataScopeLoading = ref(false);
+const dataScopeSubmitting = ref(false);
+const dataScopeRoleId = ref("");
 const menuPermissions = ref<Permission[]>([]);
 const currentMenuId = ref("");
-const dataPermissions = ref<DataPermission[]>([]);
-const checkedDataPermissionIds = ref<string[]>([]);
+const dataScopes = ref<DataScopeVO[]>([]);
+const checkedDataScopes = ref<string[]>([]);
 
-const dataPermissionOptions = computed(() =>
-  dataPermissions.value.map((d) => ({
-    label: `${dictLabel(DATA_SCOPE_OPTIONS, d.dataScope)} - ${dictLabel(STATUS_OPTIONS, d.status)}`,
-    value: d.id ?? "",
+const dataScopeOptions = computed(() =>
+  dataScopes.value.map((d) => ({
+    label: d.name ?? d.dataScope ?? "",
+    value: d.dataScope ?? "",
   })),
 );
 
-async function openDataPermission(record: Role) {
-  dataPermissionRoleId.value = record.id ?? "";
+async function openDataScope(record: Role) {
+  dataScopeRoleId.value = record.id ?? "";
   currentMenuId.value = "";
-  checkedDataPermissionIds.value = [];
-  dataPermissions.value = [];
-  dataPermissionVisible.value = true;
-  dataPermissionLoading.value = true;
+  checkedDataScopes.value = [];
+  dataScopes.value = [];
+  dataScopeVisible.value = true;
+  dataScopeLoading.value = true;
   try {
     const result = await permissionApi.listPermission({});
-    menuPermissions.value = (result.data ?? []).filter((p) => p.type === "MENU");
+    menuPermissions.value = (result.data ?? []).filter((p) => p.type === "M");
     if (menuPermissions.value.length > 0) {
       await selectMenuPermission(menuPermissions.value[0].id ?? "");
     }
   } finally {
-    dataPermissionLoading.value = false;
+    dataScopeLoading.value = false;
   }
 }
 
 async function selectMenuPermission(permissionId: string) {
   currentMenuId.value = permissionId;
-  dataPermissionLoading.value = true;
+  dataScopeLoading.value = true;
   try {
-    const [dpResult, boundResult] = await Promise.all([
-      dataPermissionApi.listDataPermission({ permissionId }),
-      roleApi.listRoleDataPermissionIds({ roleId: dataPermissionRoleId.value, permissionId }),
+    const [scopeResult, boundResult] = await Promise.all([
+      dataScopeApi.listDataScopes({ permissionId }),
+      roleApi.listRoleDataScopes({ roleId: dataScopeRoleId.value, permissionId }),
     ]);
-    dataPermissions.value = dpResult.data ?? [];
-    checkedDataPermissionIds.value = boundResult.data ?? [];
+    dataScopes.value = scopeResult.data ?? [];
+    checkedDataScopes.value = boundResult.data ?? [];
   } finally {
-    dataPermissionLoading.value = false;
+    dataScopeLoading.value = false;
   }
 }
 
-async function handleDataPermissionSubmit() {
+async function handleDataScopeSubmit() {
   if (!currentMenuId.value) {
     message.warning("请选择菜单权限");
     return;
   }
-  dataPermissionSubmitting.value = true;
+  dataScopeSubmitting.value = true;
   try {
     const result = await roleApi.bindRoleDataPermissions({
-      roleId: dataPermissionRoleId.value,
+      roleId: dataScopeRoleId.value,
       permissionId: currentMenuId.value,
-      dataPermissionIds: checkedDataPermissionIds.value,
+      dataScopes: checkedDataScopes.value,
     });
     if (result.ok) {
       message.success(result.message);
-      dataPermissionVisible.value = false;
+      dataScopeVisible.value = false;
     } else {
       message.error(result.message);
     }
   } finally {
-    dataPermissionSubmitting.value = false;
+    dataScopeSubmitting.value = false;
   }
 }
 </script>
@@ -352,7 +352,7 @@ async function handleDataPermissionSubmit() {
           <template v-else-if="column.key === 'action'">
             <a-space wrap>
               <a @click="openPermission(record)">绑定权限</a>
-              <a @click="openDataPermission(record)">绑定数据权限</a>
+              <a @click="openDataScope(record)">绑定数据权限</a>
               <a @click="openEdit(record)">修改</a>
               <a style="color: #ff4d4f" @click="handleRemove(record)">删除</a>
             </a-space>
@@ -407,15 +407,15 @@ async function handleDataPermissionSubmit() {
     </a-modal>
 
     <a-modal
-      v-model:open="dataPermissionVisible"
+      v-model:open="dataScopeVisible"
       title="绑定数据权限"
-      :confirm-loading="dataPermissionSubmitting"
+      :confirm-loading="dataScopeSubmitting"
       ok-text="确定"
       cancel-text="取消"
       width="640px"
-      @ok="handleDataPermissionSubmit"
+      @ok="handleDataScopeSubmit"
     >
-      <div v-if="dataPermissionLoading" class="modal-loading">加载中...</div>
+      <div v-if="dataScopeLoading" class="modal-loading">加载中...</div>
       <div v-else class="data-permission-body">
         <div class="menu-list">
           <div
@@ -429,12 +429,8 @@ async function handleDataPermissionSubmit() {
           </div>
         </div>
         <div class="scope-list">
-          <a-empty v-if="dataPermissions.length === 0" description="该菜单暂无数据权限" />
-          <a-checkbox-group
-            v-else
-            v-model:value="checkedDataPermissionIds"
-            :options="dataPermissionOptions"
-          />
+          <a-empty v-if="dataScopes.length === 0" description="该菜单暂无数据权限" />
+          <a-checkbox-group v-else v-model:value="checkedDataScopes" :options="dataScopeOptions" />
         </div>
       </div>
     </a-modal>

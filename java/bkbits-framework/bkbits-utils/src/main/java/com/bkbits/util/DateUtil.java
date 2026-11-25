@@ -18,24 +18,40 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class DateUtil {
 
-    /** yyyy-MM-dd */
+    /**
+     * yyyy-MM-dd
+     */
     public static final String PATTERN_DATE = "yyyy-MM-dd";
-    /** yyyy-MM-dd HH:mm:ss */
+    /**
+     * yyyy-MM-dd HH:mm:ss
+     */
     public static final String PATTERN_DATETIME = "yyyy-MM-dd HH:mm:ss";
-    /** HH:mm:ss */
+    /**
+     * HH:mm:ss
+     */
     public static final String PATTERN_TIME = "HH:mm:ss";
 
-    /** 预编译格式化器：yyyy-MM-dd */
+    /**
+     * 预编译格式化器：yyyy-MM-dd
+     */
     private static final DateTimeFormatter FORMATTER_DATE = DateTimeFormatter.ofPattern(PATTERN_DATE);
-    /** 预编译格式化器：yyyy-MM-dd HH:mm:ss */
+    /**
+     * 预编译格式化器：yyyy-MM-dd HH:mm:ss
+     */
     private static final DateTimeFormatter FORMATTER_DATETIME = DateTimeFormatter.ofPattern(PATTERN_DATETIME);
-    /** 预编译格式化器：HH:mm:ss */
+    /**
+     * 预编译格式化器：HH:mm:ss
+     */
     private static final DateTimeFormatter FORMATTER_TIME = DateTimeFormatter.ofPattern(PATTERN_TIME);
 
-    /** 格式化器缓存最大容量 */
+    /**
+     * 格式化器缓存最大容量
+     */
     private static final int MAX_CACHE_SIZE = 64;
 
-    /** 格式化器缓存（pattern -&gt; formatter，最多 64 条） */
+    /**
+     * 格式化器缓存（pattern -&gt; formatter，最多 64 条）
+     */
     private static final Map<String, DateTimeFormatter> FORMATTER_CACHE = new ConcurrentHashMap<>();
 
     /**

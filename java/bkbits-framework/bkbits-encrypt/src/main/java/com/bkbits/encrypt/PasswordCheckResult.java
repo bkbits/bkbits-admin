@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter 
+@Getter
 @AllArgsConstructor
 @Builder
 public class PasswordCheckResult {

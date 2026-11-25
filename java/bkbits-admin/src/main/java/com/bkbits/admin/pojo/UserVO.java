@@ -38,9 +38,6 @@ public class UserVO {
     @ApiModelProperty("状态（E=启用,D=禁用）")
     private String status;
 
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
-
     @ApiModelProperty("所属部门id")
     private String deptId;
 

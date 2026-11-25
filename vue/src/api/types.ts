@@ -10,6 +10,8 @@ export interface Result<T = unknown> {
   message: string;
   /** 业务数据 */
   data: T;
+  /** 分页总条数（后端 PageResult 在根级返回） */
+  total?: number;
 }
 
 /** 分页数据体 */
@@ -38,8 +40,8 @@ export interface IdDTO {
 
 /** BindDataPermissionsToRoleDTO */
 export interface BindDataPermissionsToRoleDTO {
-  /** 数据权限编号集合；为空时清空绑定 */
-  dataPermissionIds?: string[];
+  /** 数据域集合；为空时清空绑定 */
+  dataScopes?: string[];
   /** 菜单权限编号 */
   permissionId?: string;
   /** 角色编号 */
@@ -62,48 +64,12 @@ export interface BindRolesToUserDTO {
   userId?: string;
 }
 
-/** DataPermission */
-export interface DataPermission {
-  /** 创建人 */
-  createBy?: string;
-  /** 创建时间 */
-  createTime?: string;
-  /** 数据域 */
+/** DataScopeVO */
+export interface DataScopeVO {
+  /** 数据域标识 */
   dataScope?: string;
-  /** 主键id */
-  id?: string;
-  /** 所属菜单权限 */
-  permission?: Permission;
-  /** 关联权限id */
-  permissionId?: string;
-  /** 角色列表 */
-  roleList?: Role[];
-  /** 状态 */
-  status?: string;
-  /** 更新人 */
-  updateBy?: string;
-  /** 更新时间 */
-  updateTime?: string;
-}
-
-/** DataPermissionAddDTO */
-export interface DataPermissionAddDTO {
-  /** 数据域 */
-  dataScope?: string;
-  /** 菜单权限编号 */
-  permissionId?: string;
-  /** 状态 */
-  status?: string;
-}
-
-/** DataPermissionUpdateDTO */
-export interface DataPermissionUpdateDTO {
-  /** 数据域 */
-  dataScope?: string;
-  /** 数据权限编号；更新时必填 */
-  id?: string;
-  /** 状态 */
-  status?: string;
+  /** 数据域名称 */
+  name?: string;
 }
 
 /** Dept */
@@ -128,10 +94,6 @@ export interface Dept {
   sort?: number;
   /** 状态 */
   status?: string;
-  /** 所属租户 */
-  tenant?: Tenant;
-  /** 所属租户id */
-  tenantId?: string;
   /** 更新人 */
   updateBy?: string;
   /** 更新时间 */
@@ -162,8 +124,6 @@ export interface DeptQueryDTO {
   parentId?: string;
   /** 状态 */
   status?: string;
-  /** 所属租户id */
-  tenantId?: string;
 }
 
 /** DeptUpdateDTO */
@@ -198,8 +158,6 @@ export interface DeptVO {
   sort?: number;
   /** 状态（E=启用,D=禁用） */
   status?: string;
-  /** 所属租户id */
-  tenantId?: string;
   /** 更新人 */
   updateBy?: string;
   /** 更新时间 */
@@ -410,8 +368,6 @@ export interface LoginUser {
   ip?: string;
   /** 登录时间 */
   loginTime?: string;
-  /** 租户id */
-  tenantId?: string;
   /** 令牌 */
   token?: string;
   /** 用户id */
@@ -544,8 +500,6 @@ export interface Permission {
   createBy?: string;
   /** 创建时间 */
   createTime?: string;
-  /** 数据权限列表 */
-  dataPermissionList?: DataPermission[];
   /** 主键id */
   id?: string;
   /** 名称 */
@@ -633,8 +587,6 @@ export interface Role {
   createBy?: string;
   /** 创建时间 */
   createTime?: string;
-  /** 数据权限列表 */
-  dataPermissionList?: DataPermission[];
   /** 主键id */
   id?: string;
   /** 角色名 */
@@ -645,10 +597,6 @@ export interface Role {
   sort?: number;
   /** 状态 */
   status?: string;
-  /** 所属租户 */
-  tenant?: Tenant;
-  /** 所属租户id */
-  tenantId?: string;
   /** 更新人 */
   updateBy?: string;
   /** 更新时间 */
@@ -681,88 +629,6 @@ export interface RoleUpdateDTO {
   sort?: number;
   /** 状态（E=启用,D=禁用） */
   status?: string;
-}
-
-/** Tenant */
-export interface Tenant {
-  /** 创建人 */
-  createBy?: string;
-  /** 创建时间 */
-  createTime?: string;
-  /** 删除时间 */
-  deleteTime?: string;
-  /** 租户部门列表 */
-  deptList?: Dept[];
-  /** 租户编号 */
-  id?: string;
-  /** 租户名称 */
-  name?: string;
-  /** 租户通知列表 */
-  notificationList?: Notification[];
-  /** 租户角色列表 */
-  roleList?: Role[];
-  /** 状态 */
-  status?: string;
-  /** 租户类型 */
-  type?: string;
-  /** 更新人 */
-  updateBy?: string;
-  /** 更新时间 */
-  updateTime?: string;
-  /** 租户用户列表 */
-  userList?: User[];
-}
-
-/** TenantAddDTO */
-export interface TenantAddDTO {
-  /** 租户名称 */
-  name?: string;
-  /** 状态（E=启用,D=禁用） */
-  status?: string;
-  /** 租户类型（S=系统租户,U=用户租户,T=租户模板） */
-  type?: string;
-}
-
-/** TenantQueryDTO */
-export interface TenantQueryDTO {
-  /** 租户名称 */
-  name?: string;
-  /** 状态 */
-  status?: string;
-  /** 租户类型 */
-  type?: string;
-}
-
-/** TenantUpdateDTO */
-export interface TenantUpdateDTO {
-  /** 租户编号；更新时必填 */
-  id?: string;
-  /** 租户名称 */
-  name?: string;
-  /** 状态（E=启用,D=禁用） */
-  status?: string;
-  /** 租户类型（S=系统租户,U=用户租户,T=租户模板） */
-  type?: string;
-}
-
-/** TenantVO */
-export interface TenantVO {
-  /** 创建人 */
-  createBy?: string;
-  /** 创建时间 */
-  createTime?: string;
-  /** 租户编号 */
-  id?: string;
-  /** 租户名称 */
-  name?: string;
-  /** 状态（E=启用,D=禁用） */
-  status?: string;
-  /** 租户类型（S=系统租户,U=用户租户,T=租户模板） */
-  type?: string;
-  /** 更新人 */
-  updateBy?: string;
-  /** 更新时间 */
-  updateTime?: string;
 }
 
 /** UploadFile */
@@ -837,10 +703,6 @@ export interface User {
   sex?: string;
   /** 状态 */
   status?: string;
-  /** 所属租户 */
-  tenant?: Tenant;
-  /** 所属租户id */
-  tenantId?: string;
   /** 更新人 */
   updateBy?: string;
   /** 更新时间 */
@@ -867,8 +729,6 @@ export interface UserAddDTO {
   sex?: string;
   /** 状态（E=启用,D=禁用） */
   status?: string;
-  /** 所属租户id */
-  tenantId?: string;
   /** 用户名 */
   userName?: string;
 }
@@ -887,8 +747,6 @@ export interface UserQueryDTO {
   sex?: string;
   /** 状态 */
   status?: string;
-  /** 租户id */
-  tenantId?: string;
   /** 用户id */
   userId?: string;
   /** 用户名 */
@@ -919,8 +777,6 @@ export interface UserUpdateDTO {
   sex?: string;
   /** 状态（E=启用,D=禁用） */
   status?: string;
-  /** 所属租户id */
-  tenantId?: string;
   /** 用户编号 */
   userId?: string;
   /** 用户名 */
@@ -953,8 +809,6 @@ export interface UserVO {
   sex?: string;
   /** 状态（E=启用,D=禁用） */
   status?: string;
-  /** 所属租户id */
-  tenantId?: string;
   /** 更新人 */
   updateBy?: string;
   /** 更新时间 */

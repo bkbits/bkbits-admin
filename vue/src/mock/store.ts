@@ -2,7 +2,7 @@
  * mock 内存数据库与种子数据（仅运行于 Vite dev/preview 服务的 Node 环境）。
  */
 import type {
-  DataPermission,
+  DataScopeVO,
   Dept,
   Dict,
   DictValue,
@@ -11,7 +11,6 @@ import type {
   ParamVO,
   Permission,
   Role,
-  Tenant,
   UploadFile,
   User,
 } from "../api/types";
@@ -19,6 +18,14 @@ import type { LoginLogVO, OperationLogVO } from "../api/modules/log";
 
 /** mock 内部用户类型：在 User 基础上附加密码字段 */
 export type MockUser = User & { password: string };
+
+/** 菜单可选数据域（与后端 AdminBootstrap 声明一致） */
+export const DATA_SCOPE_DEFS: DataScopeVO[] = [
+  { name: "仅自身部门", dataScope: "OnlySelfDept" },
+  { name: "子部门", dataScope: "ChildDept" },
+  { name: "父部门", dataScope: "ParentDept" },
+  { name: "仅自身", dataScope: "OnlySelf" },
+];
 
 /* ------------------------------ 全局自增 id ------------------------------ */
 let seq = 90000;
@@ -29,12 +36,10 @@ export function nextId(prefix: number): string {
 
 /* ------------------------------ 表 ------------------------------ */
 export const db = {
-  tenants: [] as Tenant[],
   depts: [] as Dept[],
   users: [] as MockUser[],
   roles: [] as Role[],
   permissions: [] as Permission[],
-  dataPermissions: [] as DataPermission[],
   params: [] as ParamVO[],
   dicts: [] as Dict[],
   dictValues: [] as DictValue[],
@@ -56,8 +61,8 @@ export const db = {
   roleBindings: new Map<string, string[]>(),
   /** roleId -> permissionIds（角色-权限绑定） */
   permissionBindings: new Map<string, string[]>(),
-  /** `${roleId}::${permissionId}` -> dataPermissionIds（角色-菜单数据权限绑定） */
-  dataPermissionBindings: new Map<string, string[]>(),
+  /** `${roleId}::${permissionId}` -> dataScopes（角色-菜单数据域绑定） */
+  dataScopeBindings: new Map<string, string[]>(),
 };
 
 /* ------------------------------ 工具 ------------------------------ */
@@ -70,44 +75,10 @@ function daysAgo(n: number, hour = 9, minute = 30): string {
 
 /* ------------------------------ 种子数据 ------------------------------ */
 function seed() {
-  db.tenants = [
-    {
-      id: "1",
-      type: "SYSTEM",
-      name: "总部租户",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(60),
-      updateBy: "admin",
-      updateTime: daysAgo(30),
-    },
-    {
-      id: "2",
-      type: "NORMAL",
-      name: "华东分公司",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(45),
-      updateBy: "admin",
-      updateTime: daysAgo(20),
-    },
-    {
-      id: "3",
-      type: "NORMAL",
-      name: "华南分公司",
-      status: "D",
-      createBy: "admin",
-      createTime: daysAgo(40),
-      updateBy: "admin",
-      updateTime: daysAgo(10),
-    },
-  ];
-
   db.depts = [
     {
       deptId: "101",
       parentId: "0",
-      tenantId: "1",
       name: "总公司",
       sort: 1,
       status: "E",
@@ -119,7 +90,6 @@ function seed() {
     {
       deptId: "102",
       parentId: "101",
-      tenantId: "1",
       name: "研发部",
       sort: 1,
       status: "E",
@@ -131,7 +101,6 @@ function seed() {
     {
       deptId: "103",
       parentId: "102",
-      tenantId: "1",
       name: "前端组",
       sort: 1,
       status: "E",
@@ -143,7 +112,6 @@ function seed() {
     {
       deptId: "104",
       parentId: "102",
-      tenantId: "1",
       name: "后端组",
       sort: 2,
       status: "E",
@@ -155,7 +123,6 @@ function seed() {
     {
       deptId: "105",
       parentId: "101",
-      tenantId: "1",
       name: "市场部",
       sort: 2,
       status: "E",
@@ -167,7 +134,6 @@ function seed() {
     {
       deptId: "106",
       parentId: "101",
-      tenantId: "1",
       name: "人事部",
       sort: 3,
       status: "D",
@@ -179,7 +145,6 @@ function seed() {
     {
       deptId: "201",
       parentId: "0",
-      tenantId: "2",
       name: "华东分公司总部",
       sort: 1,
       status: "E",
@@ -193,7 +158,6 @@ function seed() {
   db.roles = [
     {
       id: "20001",
-      tenantId: "1",
       code: "ADMIN",
       name: "管理员",
       sort: 1,
@@ -205,7 +169,6 @@ function seed() {
     },
     {
       id: "20002",
-      tenantId: "1",
       code: "DEVELOPER",
       name: "开发者",
       sort: 2,
@@ -217,7 +180,6 @@ function seed() {
     },
     {
       id: "20003",
-      tenantId: "2",
       code: "OPERATOR",
       name: "运营人员",
       sort: 3,
@@ -229,7 +191,6 @@ function seed() {
     },
     {
       id: "20004",
-      tenantId: "1",
       code: "VIEWER",
       name: "访客",
       sort: 4,
@@ -251,7 +212,6 @@ function seed() {
       realName: "管理员",
       sex: "M",
       status: "E",
-      tenantId: "1",
       deptId: "101",
       createBy: "admin",
       createTime: daysAgo(60),
@@ -267,7 +227,6 @@ function seed() {
       realName: "张三",
       sex: "M",
       status: "E",
-      tenantId: "1",
       deptId: "103",
       createBy: "admin",
       createTime: daysAgo(50),
@@ -283,7 +242,6 @@ function seed() {
       realName: "李四",
       sex: "F",
       status: "E",
-      tenantId: "1",
       deptId: "104",
       createBy: "admin",
       createTime: daysAgo(49),
@@ -299,7 +257,6 @@ function seed() {
       realName: "王五",
       sex: "M",
       status: "E",
-      tenantId: "2",
       deptId: "201",
       createBy: "admin",
       createTime: daysAgo(44),
@@ -315,7 +272,6 @@ function seed() {
       realName: "赵六",
       sex: "F",
       status: "E",
-      tenantId: "1",
       deptId: "105",
       createBy: "admin",
       createTime: daysAgo(40),
@@ -331,7 +287,6 @@ function seed() {
       realName: "孙七",
       sex: "M",
       status: "D",
-      tenantId: "2",
       deptId: "201",
       createBy: "admin",
       createTime: daysAgo(38),
@@ -347,7 +302,6 @@ function seed() {
       realName: "周八",
       sex: "F",
       status: "E",
-      tenantId: "1",
       deptId: "106",
       createBy: "admin",
       createTime: daysAgo(35),
@@ -363,7 +317,6 @@ function seed() {
       realName: "吴九",
       sex: "M",
       status: "E",
-      tenantId: "1",
       deptId: "102",
       createBy: "admin",
       createTime: daysAgo(30),
@@ -376,8 +329,8 @@ function seed() {
     {
       id: "1000",
       parentId: "0",
-      type: "CATALOG",
-      permission: "personal",
+      type: "D",
+      permission: "",
       name: "个人中心",
       sort: 1,
       component: "",
@@ -390,11 +343,11 @@ function seed() {
     {
       id: "1100",
       parentId: "1000",
-      type: "MENU",
+      type: "M",
       permission: "dashboard",
       name: "仪表盘",
       sort: 1,
-      component: "Dashboard",
+      component: "My/DashBoard",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(60),
@@ -404,11 +357,11 @@ function seed() {
     {
       id: "1200",
       parentId: "1000",
-      type: "MENU",
+      type: "M",
       permission: "profile",
       name: "个人信息",
       sort: 2,
-      component: "Profile",
+      component: "My/UserInfo",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(60),
@@ -418,8 +371,8 @@ function seed() {
     {
       id: "2000",
       parentId: "0",
-      type: "CATALOG",
-      permission: "system",
+      type: "D",
+      permission: "",
       name: "系统管理",
       sort: 2,
       component: "",
@@ -432,11 +385,11 @@ function seed() {
     {
       id: "2100",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:user",
+      type: "M",
+      permission: "admin.user",
       name: "用户管理",
       sort: 1,
-      component: "UserList",
+      component: "System/User",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(59),
@@ -446,8 +399,8 @@ function seed() {
     {
       id: "2101",
       parentId: "2100",
-      type: "BUTTON",
-      permission: "system:user:add",
+      type: "B",
+      permission: "admin.user.add",
       name: "新增用户",
       sort: 1,
       component: "",
@@ -460,8 +413,8 @@ function seed() {
     {
       id: "2102",
       parentId: "2100",
-      type: "BUTTON",
-      permission: "system:user:update",
+      type: "B",
+      permission: "admin.user.update",
       name: "修改用户",
       sort: 2,
       component: "",
@@ -474,8 +427,8 @@ function seed() {
     {
       id: "2103",
       parentId: "2100",
-      type: "BUTTON",
-      permission: "system:user:remove",
+      type: "B",
+      permission: "admin.user.remove",
       name: "删除用户",
       sort: 3,
       component: "",
@@ -488,8 +441,8 @@ function seed() {
     {
       id: "2104",
       parentId: "2100",
-      type: "BUTTON",
-      permission: "system:user:resetPassword",
+      type: "B",
+      permission: "admin.user.resetPassword",
       name: "重置密码",
       sort: 4,
       component: "",
@@ -502,8 +455,8 @@ function seed() {
     {
       id: "2105",
       parentId: "2100",
-      type: "BUTTON",
-      permission: "system:user:bindRole",
+      type: "B",
+      permission: "admin.user.bindRole",
       name: "绑定角色",
       sort: 5,
       component: "",
@@ -515,12 +468,12 @@ function seed() {
     },
     {
       id: "2200",
-      parentId: "2000",
-      type: "MENU",
-      permission: "system:onlineUser",
-      name: "在线用户",
-      sort: 2,
-      component: "OnlineUser",
+      parentId: "1000",
+      type: "M",
+      permission: "",
+      name: "我的通知",
+      sort: 3,
+      component: "My/Notification",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(58),
@@ -530,11 +483,11 @@ function seed() {
     {
       id: "2300",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:role",
+      type: "M",
+      permission: "admin.role",
       name: "角色管理",
       sort: 3,
-      component: "RoleList",
+      component: "System/Role",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(58),
@@ -544,8 +497,8 @@ function seed() {
     {
       id: "2301",
       parentId: "2300",
-      type: "BUTTON",
-      permission: "system:role:add",
+      type: "B",
+      permission: "admin.role.add",
       name: "新增角色",
       sort: 1,
       component: "",
@@ -558,8 +511,8 @@ function seed() {
     {
       id: "2302",
       parentId: "2300",
-      type: "BUTTON",
-      permission: "system:role:update",
+      type: "B",
+      permission: "admin.role.update",
       name: "修改角色",
       sort: 2,
       component: "",
@@ -572,8 +525,8 @@ function seed() {
     {
       id: "2303",
       parentId: "2300",
-      type: "BUTTON",
-      permission: "system:role:remove",
+      type: "B",
+      permission: "admin.role.remove",
       name: "删除角色",
       sort: 3,
       component: "",
@@ -586,8 +539,8 @@ function seed() {
     {
       id: "2304",
       parentId: "2300",
-      type: "BUTTON",
-      permission: "system:role:bindPermissions",
+      type: "B",
+      permission: "admin.role.bindPermissions",
       name: "绑定权限",
       sort: 4,
       component: "",
@@ -600,8 +553,8 @@ function seed() {
     {
       id: "2305",
       parentId: "2300",
-      type: "BUTTON",
-      permission: "system:role:bindDataPermissions",
+      type: "B",
+      permission: "admin.role.bindDataPermissions",
       name: "绑定数据权限",
       sort: 5,
       component: "",
@@ -614,11 +567,11 @@ function seed() {
     {
       id: "2400",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:permission",
+      type: "M",
+      permission: "admin.permission",
       name: "权限管理",
       sort: 4,
-      component: "PermissionList",
+      component: "System/Permission",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(57),
@@ -628,8 +581,8 @@ function seed() {
     {
       id: "2401",
       parentId: "2400",
-      type: "BUTTON",
-      permission: "system:permission:add",
+      type: "B",
+      permission: "admin.permission.add",
       name: "新增权限",
       sort: 1,
       component: "",
@@ -642,8 +595,8 @@ function seed() {
     {
       id: "2402",
       parentId: "2400",
-      type: "BUTTON",
-      permission: "system:permission:update",
+      type: "B",
+      permission: "admin.permission.update",
       name: "修改权限",
       sort: 2,
       component: "",
@@ -656,8 +609,8 @@ function seed() {
     {
       id: "2403",
       parentId: "2400",
-      type: "BUTTON",
-      permission: "system:permission:remove",
+      type: "B",
+      permission: "admin.permission.remove",
       name: "删除权限",
       sort: 3,
       component: "",
@@ -670,11 +623,11 @@ function seed() {
     {
       id: "2500",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:dept",
+      type: "M",
+      permission: "admin.dept",
       name: "部门管理",
       sort: 5,
-      component: "DeptList",
+      component: "System/Dept",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(56),
@@ -684,8 +637,8 @@ function seed() {
     {
       id: "2501",
       parentId: "2500",
-      type: "BUTTON",
-      permission: "system:dept:add",
+      type: "B",
+      permission: "admin.dept.add",
       name: "新增部门",
       sort: 1,
       component: "",
@@ -698,8 +651,8 @@ function seed() {
     {
       id: "2502",
       parentId: "2500",
-      type: "BUTTON",
-      permission: "system:dept:update",
+      type: "B",
+      permission: "admin.dept.update",
       name: "修改部门",
       sort: 2,
       component: "",
@@ -712,8 +665,8 @@ function seed() {
     {
       id: "2503",
       parentId: "2500",
-      type: "BUTTON",
-      permission: "system:dept:remove",
+      type: "B",
+      permission: "admin.dept.remove",
       name: "删除部门",
       sort: 3,
       component: "",
@@ -724,69 +677,13 @@ function seed() {
       updateTime: daysAgo(24),
     },
     {
-      id: "2600",
-      parentId: "2000",
-      type: "MENU",
-      permission: "system:tenant",
-      name: "租户管理",
-      sort: 6,
-      component: "TenantList",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(55),
-      updateBy: "admin",
-      updateTime: daysAgo(23),
-    },
-    {
-      id: "2601",
-      parentId: "2600",
-      type: "BUTTON",
-      permission: "system:tenant:add",
-      name: "新增租户",
-      sort: 1,
-      component: "",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(55),
-      updateBy: "admin",
-      updateTime: daysAgo(23),
-    },
-    {
-      id: "2602",
-      parentId: "2600",
-      type: "BUTTON",
-      permission: "system:tenant:update",
-      name: "修改租户",
-      sort: 2,
-      component: "",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(55),
-      updateBy: "admin",
-      updateTime: daysAgo(23),
-    },
-    {
-      id: "2603",
-      parentId: "2600",
-      type: "BUTTON",
-      permission: "system:tenant:remove",
-      name: "删除租户",
-      sort: 3,
-      component: "",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(55),
-      updateBy: "admin",
-      updateTime: daysAgo(23),
-    },
-    {
       id: "2700",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:param",
+      type: "M",
+      permission: "admin.param",
       name: "系统参数",
       sort: 7,
-      component: "ParamList",
+      component: "System/Param",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(54),
@@ -796,8 +693,8 @@ function seed() {
     {
       id: "2701",
       parentId: "2700",
-      type: "BUTTON",
-      permission: "system:param:add",
+      type: "B",
+      permission: "admin.param.add",
       name: "新增参数",
       sort: 1,
       component: "",
@@ -810,8 +707,8 @@ function seed() {
     {
       id: "2702",
       parentId: "2700",
-      type: "BUTTON",
-      permission: "system:param:update",
+      type: "B",
+      permission: "admin.param.update",
       name: "修改参数",
       sort: 2,
       component: "",
@@ -824,8 +721,8 @@ function seed() {
     {
       id: "2703",
       parentId: "2700",
-      type: "BUTTON",
-      permission: "system:param:remove",
+      type: "B",
+      permission: "admin.param.remove",
       name: "删除参数",
       sort: 3,
       component: "",
@@ -838,11 +735,11 @@ function seed() {
     {
       id: "2800",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:dict",
+      type: "M",
+      permission: "admin.dict",
       name: "系统字典",
       sort: 8,
-      component: "DictList",
+      component: "System/Dict",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(53),
@@ -852,8 +749,8 @@ function seed() {
     {
       id: "2801",
       parentId: "2800",
-      type: "BUTTON",
-      permission: "system:dict:add",
+      type: "B",
+      permission: "admin.dict.add",
       name: "新增字典",
       sort: 1,
       component: "",
@@ -866,8 +763,8 @@ function seed() {
     {
       id: "2802",
       parentId: "2800",
-      type: "BUTTON",
-      permission: "system:dict:update",
+      type: "B",
+      permission: "admin.dict.update",
       name: "修改字典",
       sort: 2,
       component: "",
@@ -880,8 +777,8 @@ function seed() {
     {
       id: "2803",
       parentId: "2800",
-      type: "BUTTON",
-      permission: "system:dict:remove",
+      type: "B",
+      permission: "admin.dict.remove",
       name: "删除字典",
       sort: 3,
       component: "",
@@ -894,11 +791,11 @@ function seed() {
     {
       id: "2900",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:loginLog",
+      type: "M",
+      permission: "admin.loginLog",
       name: "登录日志",
       sort: 9,
-      component: "LoginLog",
+      component: "System/LoginLog",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(52),
@@ -908,69 +805,16 @@ function seed() {
     {
       id: "2910",
       parentId: "2000",
-      type: "MENU",
-      permission: "system:operationLog",
+      type: "M",
+      permission: "admin.operLog",
       name: "操作日志",
       sort: 10,
-      component: "OperationLog",
+      component: "System/OperLog",
       status: "E",
       createBy: "admin",
       createTime: daysAgo(52),
       updateBy: "admin",
       updateTime: daysAgo(20),
-    },
-  ];
-
-  db.dataPermissions = [
-    {
-      id: "30001",
-      permissionId: "2100",
-      dataScope: "ALL",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(59),
-      updateBy: "admin",
-      updateTime: daysAgo(27),
-    },
-    {
-      id: "30002",
-      permissionId: "2100",
-      dataScope: "DEPT",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(59),
-      updateBy: "admin",
-      updateTime: daysAgo(27),
-    },
-    {
-      id: "30003",
-      permissionId: "2100",
-      dataScope: "SELF",
-      status: "D",
-      createBy: "admin",
-      createTime: daysAgo(59),
-      updateBy: "admin",
-      updateTime: daysAgo(27),
-    },
-    {
-      id: "30004",
-      permissionId: "2300",
-      dataScope: "ALL",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(58),
-      updateBy: "admin",
-      updateTime: daysAgo(26),
-    },
-    {
-      id: "30005",
-      permissionId: "2500",
-      dataScope: "DEPT",
-      status: "E",
-      createBy: "admin",
-      createTime: daysAgo(56),
-      updateBy: "admin",
-      updateTime: daysAgo(24),
     },
   ];
 
@@ -1081,18 +925,6 @@ function seed() {
       updateTime: daysAgo(27),
     },
     {
-      id: "50003",
-      dictKey: "tenant_type",
-      name: "租户类型",
-      sort: 3,
-      type: "SYSTEM",
-      remark: "租户类型",
-      createBy: "admin",
-      createTime: daysAgo(58),
-      updateBy: "admin",
-      updateTime: daysAgo(26),
-    },
-    {
       id: "50004",
       dictKey: "data_scope",
       name: "数据域",
@@ -1164,28 +996,6 @@ function seed() {
       remark: "",
     },
     {
-      id: "51005",
-      dictId: "50003",
-      valueKey: "SYSTEM",
-      name: "系统租户",
-      sort: 1,
-      value: "SYSTEM",
-      type: "warning",
-      color: "#faad14",
-      remark: "",
-    },
-    {
-      id: "51006",
-      dictId: "50003",
-      valueKey: "NORMAL",
-      name: "普通租户",
-      sort: 2,
-      value: "NORMAL",
-      type: "default",
-      color: "",
-      remark: "",
-    },
-    {
       id: "51007",
       dictId: "50004",
       valueKey: "ALL",
@@ -1232,10 +1042,10 @@ function seed() {
     {
       id: "51011",
       dictId: "50005",
-      valueKey: "CATALOG",
+      valueKey: "D",
       name: "目录",
       sort: 1,
-      value: "CATALOG",
+      value: "D",
       type: "default",
       color: "",
       remark: "",
@@ -1243,10 +1053,10 @@ function seed() {
     {
       id: "51012",
       dictId: "50005",
-      valueKey: "MENU",
+      valueKey: "M",
       name: "菜单",
       sort: 2,
-      value: "MENU",
+      value: "M",
       type: "default",
       color: "",
       remark: "",
@@ -1254,10 +1064,10 @@ function seed() {
     {
       id: "51013",
       dictId: "50005",
-      valueKey: "BUTTON",
+      valueKey: "B",
       name: "按钮",
       sort: 3,
-      value: "BUTTON",
+      value: "B",
       type: "default",
       color: "",
       remark: "",
@@ -1281,49 +1091,45 @@ function seed() {
     "Firefox / Ubuntu",
   ];
   for (let i = 0; i < 26; i += 1) {
-    const success = i % 7 !== 6;
     db.loginLogs.push({
       id: String(60000 + i),
-      userName: names[i % names.length],
+      succeed: i % 7 !== 6,
+      failReason: i % 7 === 6 ? "用户名或密码错误" : "",
       ip: ips[i % ips.length],
       device: devices[i % devices.length],
-      loginTime: daysAgo(25 - i, 8 + (i % 10), 15 + (i % 40)),
-      success,
-      message: success ? "登录成功" : "用户名或密码错误",
+      userAgent: "",
+      costTime: 20 + ((i * 7) % 80),
+      createBy: names[i % names.length],
+      createTime: daysAgo(25 - i, 8 + (i % 10), 15 + (i % 40)),
     });
   }
 
-  const modules = [
-    "用户管理",
-    "角色管理",
-    "权限管理",
-    "部门管理",
-    "租户管理",
-    "系统参数",
-    "系统字典",
-  ];
+  const modules = ["部门管理", "用户管理", "角色管理", "菜单管理", "字典管理", "参数管理", "认证"];
   const actions = ["新增", "修改", "删除", "查询"];
   const urls = [
-    "/api/user/query",
-    "/api/role/update",
-    "/api/dept/add",
-    "/api/tenant/remove",
-    "/api/param/update",
-    "/api/dict/add",
+    "/api/sys/user/query",
+    "/api/sys/role/update",
+    "/api/sys/dept/add",
+    "/api/sys/param/update",
+    "/api/sys/dict/add",
   ];
   for (let i = 0; i < 30; i += 1) {
     const module = modules[i % modules.length];
     const action = i % 5 === 3 ? "查询" : actions[i % 4];
     db.operationLogs.push({
       id: String(70000 + i),
-      userName: names[i % names.length],
+      name: `${action}${module.replace("管理", "")}`,
+      type: action,
       module,
-      action: `${action}${module.replace("管理", "")}`,
-      method: i % 5 === 3 ? "GET" : "POST",
-      url: urls[i % urls.length],
+      method: "com.bkbits.admin.controller.MockController.handle",
+      args: "",
+      result: i % 9 === 8 ? "操作失败" : "操作成功",
       ip: ips[i % ips.length],
-      duration: 10 + ((i * 13) % 200),
-      status: i % 9 === 8 ? "error" : "success",
+      userAgent: "",
+      url: urls[i % urls.length],
+      costTime: 10 + ((i * 13) % 200),
+      remark: "",
+      createBy: names[i % names.length],
       createTime: daysAgo(20 - i, 9 + (i % 9), (i * 3) % 60),
     });
   }
@@ -1337,7 +1143,6 @@ function seed() {
       ip: "192.168.1.23",
       device: "Chrome / macOS",
       deptId: "103",
-      tenantId: "1",
     },
     {
       token: "mock-online-2",
@@ -1347,7 +1152,6 @@ function seed() {
       ip: "10.0.0.55",
       device: "Edge / Windows 10",
       deptId: "104",
-      tenantId: "1",
     },
     {
       token: "mock-online-3",
@@ -1357,7 +1161,6 @@ function seed() {
       ip: "192.168.1.101",
       device: "Safari / iPhone",
       deptId: "105",
-      tenantId: "1",
     },
   ];
 
@@ -1409,7 +1212,7 @@ function seed() {
       id: "90004",
       type: "MESSAGE",
       title: "新版本特性",
-      content: "新增租户管理与系统字典功能，支持多租户数据隔离。",
+      content: "新增系统字典功能，支持更细粒度的数据权限配置。",
       publishTime: daysAgo(3, 11, 20),
       expiredTime: daysAgo(-15, 11, 20),
       createBy: "admin",
@@ -1430,17 +1233,15 @@ function seed() {
     ["20001", db.permissions.map((p) => p.id ?? "")],
     [
       "20002",
-      db.permissions
-        .filter((p) => p.type !== "BUTTON" || p.parentId === "2100")
-        .map((p) => p.id ?? ""),
+      db.permissions.filter((p) => p.type !== "B" || p.parentId === "2100").map((p) => p.id ?? ""),
     ],
     ["20003", ["1100", "1200", "2000", "2100", "2200"]],
   ]);
 
-  db.dataPermissionBindings = new Map<string, string[]>([
-    ["20001::2100", ["30001"]],
-    ["20002::2100", ["30002"]],
-    ["20003::2100", ["30003"]],
+  db.dataScopeBindings = new Map<string, string[]>([
+    ["20001::2100", ["OnlySelfDept"]],
+    ["20002::2100", ["ChildDept"]],
+    ["20003::2100", ["ParentDept"]],
   ]);
 }
 

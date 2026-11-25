@@ -1,13 +1,13 @@
 package com.bkbits.admin.service;
 
-import com.bkbits.dbo.entity.DataPermission;
+import com.bkbits.admin.pojo.DataScopeVO;
 import com.bkbits.dbo.entity.Permission;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 权限及数据权限服务。
+ * 权限服务。
  */
 public interface PermissionService {
 
@@ -66,23 +66,10 @@ public interface PermissionService {
     }
 
     /**
-     * 新增数据权限，并校验其所属权限存在。
+     * 查询菜单权限可选的数据域。
      *
-     * @param dataPermission 数据权限信息
+     * @param permissionId 菜单权限编号
+     * @return 数据域列表
      */
-    void addDataPermission(DataPermission dataPermission);
-
-    /**
-     * 更新数据权限（不允许变更所属权限）。
-     *
-     * @param dataPermission 待更新的数据权限信息
-     */
-    void updateDataPermission(DataPermission dataPermission);
-
-    /**
-     * 按编号删除数据权限及其关联关系。
-     *
-     * @param dataPermissionId 数据权限编号
-     */
-    void removeDataPermission(String dataPermissionId);
+    List<DataScopeVO> listDataScopes(String permissionId);
 }

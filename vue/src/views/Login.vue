@@ -3,6 +3,7 @@ import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "antdv-next";
 import { useAuthStore } from "../stores/auth";
+import { encryptPassword } from "../utils/password";
 
 const router = useRouter();
 const route = useRoute();
@@ -10,7 +11,7 @@ const authStore = useAuthStore();
 
 const form = reactive({
   username: "admin",
-  password: "123456",
+  password: "admin@123",
   remember: true,
 });
 
@@ -23,12 +24,22 @@ async function handleLogin() {
   }
   loading.value = true;
   try {
-    await authStore.login({ username: form.username, password: form.password });
+    let password: string;
+    try {
+      password = await encryptPassword(form.password);
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : "密码加密失败，请重试");
+      return;
+    }
+    await authStore.login({ username: form.username, password });
     message.success("登录成功");
     const redirect = (route.query.redirect as string) || "/dashboard";
     router.push(redirect);
-  } catch {
-    // 错误提示已在 http 拦截器中统一处理
+  } catch (error) {
+    // HTTP 错误已由 http 拦截器提示，这里只提示业务错误（如用户名或密码错误）
+    if (error instanceof Error && !("isAxiosError" in error)) {
+      message.error(error.message);
+    }
   } finally {
     loading.value = false;
   }
@@ -64,7 +75,7 @@ async function handleLogin() {
           登录
         </a-button>
       </a-form>
-      <div class="login-tip">默认账号：admin / 123456（mock 数据）</div>
+      <div class="login-tip">默认账号：admin / admin@123</div>
     </div>
   </div>
 </template>

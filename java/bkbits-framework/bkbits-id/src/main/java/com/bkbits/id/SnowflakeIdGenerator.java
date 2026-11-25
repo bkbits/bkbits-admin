@@ -31,8 +31,8 @@ class SnowflakeIdGenerator implements IdGenerator {
     /**
      * 构造器。
      *
-     * @param workerId      工作节点 ID（0-31）
-     * @param datacenterId  数据中心 ID（0-31）
+     * @param workerId     工作节点 ID（0-31）
+     * @param datacenterId 数据中心 ID（0-31）
      */
     public SnowflakeIdGenerator(long workerId, long datacenterId) {
         if (workerId > MAX_WORKER_ID || workerId < 0) {

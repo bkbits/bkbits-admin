@@ -13,14 +13,13 @@ import org.noear.solon.validation.annotation.NotBlank;
  * @easy-query-dto schema: request
  */
 @Data
-@ApiModel("用户输入参数")
-public class UserAddDTO {
+@ApiModel("用户新增/更新参数")
+public class UserAddUpdateDTO {
     @ApiModelProperty("用户名")
     @NotBlank
     private String userName;
 
     @ApiModelProperty("密码")
-    @NotBlank
     private String password;
 
     @ApiModelProperty("邮箱")
@@ -42,9 +41,6 @@ public class UserAddDTO {
     @ApiModelProperty("状态（E=启用,D=禁用）")
     @NotBlank
     private String status;
-
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
 
     @ApiModelProperty("所属部门id")
     private String deptId;

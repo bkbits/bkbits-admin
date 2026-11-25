@@ -56,9 +56,13 @@ public class RoleServiceImpl implements RoleService {
     @EasyQueryTrack
     @Override
     public void removeRoleByIds(List<String> roleIds) {
+        easyEntityQuery.deletable(RolePermissionDataScope.class)
+                .allowDeleteStatement(true)
+                .where(r -> r.roleId().in(roleIds))
+                .executeRows();
+
         List<Role> roles = easyEntityQuery.queryable(Role.class)
                 .include2((context, r) -> {
-                    context.query(r.dataPermissionList());
                     context.query(r.dataScopeList());
                     context.query(r.permissionList());
                     context.query(r.userList());
@@ -113,17 +117,26 @@ public class RoleServiceImpl implements RoleService {
 
     @Transaction
     @Override
-    public void bingRoleDataPermission(String roleId, List<String> dataPermissionIds) {
-        easyEntityQuery.deletable(RolePermissionDataPermissionRel.class)
+    public void bingRoleDataPermission(String roleId, String permissionId, List<String> dataScopes) {
+        easyEntityQuery.deletable(RolePermissionDataScope.class)
                 .allowDeleteStatement(true)
-                .where(r -> r.roleId().eq(roleId))
+                .where(r -> {
+                    r.roleId().eq(roleId);
+                    r.permissionId().eq(permissionId);
+                })
                 .executeRows();
+
+        if (CollectionUtil.isEmpty(dataScopes)) {
+            return;
+        }
+
         easyEntityQuery.insertable(
-                        dataPermissionIds.stream()
-                                .map(id -> {
-                                    RolePermissionDataPermissionRel rel = new RolePermissionDataPermissionRel();
+                        dataScopes.stream()
+                                .map(dataScope -> {
+                                    RolePermissionDataScope rel = new RolePermissionDataScope();
                                     rel.setRoleId(roleId);
-                                    rel.setDataPermissionId(id);
+                                    rel.setPermissionId(permissionId);
+                                    rel.setDataScope(dataScope);
                                     return rel;
                                 })
                                 .collect(Collectors.toList())
@@ -131,10 +144,21 @@ public class RoleServiceImpl implements RoleService {
                 .executeRows();
     }
 
+    @Override
+    public List<String> listRoleDataScopes(String roleId, String permissionId) {
+        return easyEntityQuery.queryable(RolePermissionDataScope.class)
+                .where(r -> {
+                    r.roleId().eq(roleId);
+                    r.permissionId().eq(permissionId);
+                })
+                .selectColumn(r -> r.dataScope())
+                .toList();
+    }
+
     @Transaction
     @Override
     public void bindRoleDataScopes(String roleId, List<String> dataScopeList) {
-        easyEntityQuery.deletable(RolePermissionDataPermissionRel.class)
+        easyEntityQuery.deletable(RoleDataScope.class)
                 .allowDeleteStatement(true)
                 .where(r -> r.roleId().eq(roleId))
                 .executeRows();

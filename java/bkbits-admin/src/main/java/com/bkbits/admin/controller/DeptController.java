@@ -7,6 +7,7 @@ import com.bkbits.admin.service.DeptService;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Dept;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -75,6 +76,7 @@ public class DeptController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.dept.add")
+    @Log(value = "新增部门", module = "部门管理", type = Log.INSERT, args = true)
     public Result<Void> add(@Validated @Body DeptAddDTO dto) {
         deptService.add(DeptMapper.INSTANCE.toEntity(dto));
         return Result.ok();
@@ -90,6 +92,7 @@ public class DeptController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.dept.update")
+    @Log(value = "编辑部门", module = "部门管理", type = Log.UPDATE, args = true)
     public Result<Void> update(@Validated @Body DeptUpdateDTO dto) {
         deptService.update(DeptMapper.INSTANCE.toEntity(dto));
         return Result.ok();
@@ -105,6 +108,7 @@ public class DeptController {
     @Post
     @Mapping("/remove")
     @SaCheckPermission("admin.dept.remove")
+    @Log(value = "删除部门", module = "部门管理", type = Log.DELETE, args = true)
     public Result<Void> remove(@Validated @Body IdDTO dto) {
         deptService.removeById(dto.getId());
         return Result.ok();

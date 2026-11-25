@@ -3,7 +3,6 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { deptApi } from "../../api";
-import { tenantApi } from "../../api";
 import type { Dept } from "../../api/types";
 import { STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
 
@@ -56,29 +55,20 @@ const form = reactive({
   name: "",
   sort: 0,
   status: "E",
-  tenantId: "1",
 });
 
 const parentOptions = ref<{ label: string; value: string }[]>([]);
-const tenantOptions = ref<{ label: string; value: string }[]>([]);
 
 async function loadOptions() {
-  const [deptResult, tenantResult] = await Promise.all([
-    deptApi.queryDept({ page: 1, pageSize: 100 }),
-    tenantApi.queryTenant({ page: 1, pageSize: 100 }),
-  ]);
+  const deptResult = await deptApi.queryDept({ page: 1, pageSize: 100 });
   parentOptions.value = [{ label: "顶级部门", value: "0" }].concat(
     (deptResult.data?.rows ?? []).map((d) => ({ label: d.name ?? "", value: d.deptId ?? "" })),
   );
-  tenantOptions.value = (tenantResult.data?.rows ?? []).map((t) => ({
-    label: t.name ?? "",
-    value: t.id ?? "",
-  }));
 }
 
 function openAdd(parentId = "0") {
   modalMode.value = "add";
-  Object.assign(form, { deptId: "", parentId, name: "", sort: 0, status: "E", tenantId: "1" });
+  Object.assign(form, { deptId: "", parentId, name: "", sort: 0, status: "E" });
   modalVisible.value = true;
   void loadOptions();
 }
@@ -91,7 +81,6 @@ function openEdit(record: Dept) {
     name: record.name,
     sort: record.sort ?? 0,
     status: record.status ?? "E",
-    tenantId: record.tenantId ?? "1",
   });
   modalVisible.value = true;
   void loadOptions();
@@ -111,7 +100,6 @@ async function handleSubmit() {
             name: form.name,
             sort: form.sort,
             status: form.status,
-            tenantId: form.tenantId,
           })
         : await deptApi.updateDept({
             deptId: form.deptId,
@@ -119,7 +107,6 @@ async function handleSubmit() {
             name: form.name,
             sort: form.sort,
             status: form.status,
-            tenantId: form.tenantId,
           });
     if (result.ok) {
       message.success(result.message);
@@ -193,7 +180,6 @@ function handleRemove(record: Dept) {
           { title: '上级部门', key: 'parentName' },
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 90 },
           { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
-          { title: '所属租户', key: 'tenantName', width: 140 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
           { title: '操作', key: 'action', width: 180 },
         ]"
@@ -219,9 +205,7 @@ function handleRemove(record: Dept) {
           <template v-if="column.key === 'parentName'">
             {{ parentOptions.find((p) => p.value === record.parentId)?.label ?? "-" }}
           </template>
-          <template v-else-if="column.key === 'tenantName'">
-            {{ tenantOptions.find((t) => t.value === record.tenantId)?.label ?? "-" }}
-          </template>
+
           <template v-else-if="column.key === 'status'">
             <a-tag :color="dictColor(STATUS_OPTIONS, record.status)">
               {{ dictLabel(STATUS_OPTIONS, record.status) }}
@@ -253,9 +237,7 @@ function handleRemove(record: Dept) {
         <a-form-item label="部门名称" required>
           <a-input v-model:value="form.name" placeholder="请输入部门名称" />
         </a-form-item>
-        <a-form-item label="所属租户">
-          <a-select v-model:value="form.tenantId" :options="tenantOptions" />
-        </a-form-item>
+
         <a-form-item label="排序">
           <a-input-number v-model:value="form.sort" :min="0" style="width: 100%" />
         </a-form-item>

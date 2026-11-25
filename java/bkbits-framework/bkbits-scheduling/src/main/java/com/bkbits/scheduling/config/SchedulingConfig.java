@@ -38,7 +38,8 @@ public class SchedulingConfig {
         prop.setProperty("org.quartz.dataSource.qzDS.driver",
                 properties.getProperty("driverClassName", "com.mysql.cj.jdbc.Driver"));
         prop.setProperty("org.quartz.dataSource.qzDS.URL",
-                properties.getProperty("jdbcUrl", "jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8"));
+                properties.getProperty("jdbcUrl",
+                        "jdbc:mysql://localhost:3306/bkbits?useUnicode=true&characterEncoding=utf8"));
         prop.setProperty("org.quartz.dataSource.qzDS.user",
                 properties.getProperty("username", "root"));
         prop.setProperty("org.quartz.dataSource.qzDS.password",

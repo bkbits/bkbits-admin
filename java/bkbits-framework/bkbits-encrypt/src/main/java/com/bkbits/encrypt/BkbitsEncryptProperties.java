@@ -20,13 +20,21 @@ import org.noear.solon.annotation.Configuration;
 @BindProps(prefix = "bkbits.encrypt")
 @Configuration
 public class BkbitsEncryptProperties {
-    /** 密码加密复杂度 */
+    /**
+     * 密码加密复杂度
+     */
     private int cost = 6;
 
-    /** 启用rsa */
+    /**
+     * 启用rsa
+     */
     private boolean rsa = true;
-    /** 公钥 */
+    /**
+     * 公钥
+     */
     private String publicKey = "./public.pem";
-    /** 私钥 */
+    /**
+     * 私钥
+     */
     private String privateKey = "./private.pem";
 }

@@ -21,25 +21,11 @@ export const SEX_OPTIONS: DictOption[] = [
   { value: "F", label: "女", color: "magenta" },
 ];
 
-/** 租户类型 */
-export const TENANT_TYPE_OPTIONS: DictOption[] = [
-  { value: "SYSTEM", label: "系统租户", color: "warning" },
-  { value: "NORMAL", label: "普通租户" },
-];
-
-/** 数据域（数据权限范围） */
-export const DATA_SCOPE_OPTIONS: DictOption[] = [
-  { value: "ALL", label: "全部数据" },
-  { value: "DEPT", label: "本部门及以下" },
-  { value: "DEPT_ONLY", label: "仅本部门" },
-  { value: "SELF", label: "仅本人" },
-];
-
 /** 权限类型 */
 export const PERMISSION_TYPE_OPTIONS: DictOption[] = [
-  { value: "CATALOG", label: "目录", color: "purple" },
-  { value: "MENU", label: "菜单", color: "blue" },
-  { value: "BUTTON", label: "按钮", color: "cyan" },
+  { value: "D", label: "目录", color: "purple" },
+  { value: "M", label: "菜单", color: "blue" },
+  { value: "B", label: "按钮", color: "cyan" },
 ];
 
 /** 字典/参数类型 */

@@ -1,26 +1,30 @@
 package com.bkbits.auth;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
+
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.fun.SaFunction;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.session.SaTerminalInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import com.bkbits.core.PageQuery;
-import com.bkbits.core.PageResult;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 登录工具类，基于 sa-token {@link StpUtil} 封装登录、会话与权限校验操作。
  *
- * <p>登录用户的详细信息（{@link LoginUser}）保存于 token 会话中，
- * 可通过 {@link #getLoginUser()} 等方法获取。</p>
+ * <p>
+ * 登录用户的详细信息（{@link LoginUser}）保存于 token 会话中，
+ * 可通过 {@link #getLoginUser()} 等方法获取。
+ * </p>
  */
 @UtilityClass
 public class LoginUtil {
@@ -29,6 +33,10 @@ public class LoginUtil {
      * 登录用户在会话中的属性键
      */
     private static final String LOGIN_USER_KEY = "LoginUser";
+
+    public String getSystemLoginUserId() {
+        return "0";
+    }
 
     /**
      * 当前会话登录指定用户，并将用户信息存入会话。
@@ -45,7 +53,6 @@ public class LoginUtil {
                 .ip(loginUser.getIp())
                 .device(loginUser.getDevice())
                 .deptId(loginUser.getDeptId())
-                .tenantId(loginUser.getTenantId())
                 .build();
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, stored);
         return stored;
@@ -77,16 +84,6 @@ public class LoginUtil {
     public @NotNull String getLoginUserId() {
         checkLogin();
         return StpUtil.getLoginIdAsString();
-    }
-
-    /**
-     * 获取当前登录用户名，未登录抛出 {@link NotLoginException}。
-     *
-     * @return 登录用户名
-     * @throws SaTokenException 会话中不存在登录用户信息时抛出
-     */
-    public @NotNull String getLoginUserName() {
-        return getLoginUser().getUserName();
     }
 
     /**
@@ -174,7 +171,12 @@ public class LoginUtil {
      * @return 已登录返回 true
      */
     public boolean isLogin() {
-        return StpUtil.isLogin();
+        try {
+            return StpUtil.isLogin();
+        } catch (SaTokenException e) {
+            // 非 Web 请求上下文（如应用启动期）视为未登录
+            return false;
+        }
     }
 
     /**
@@ -221,8 +223,7 @@ public class LoginUtil {
                 "",
                 0,
                 -1,
-                false
-        );
+                false);
 
         List<LoginUser> userList = tokenList.stream()
                 .skip((pageQuery.getPage() - 1) * pageQuery.getPageSize())

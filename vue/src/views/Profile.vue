@@ -3,7 +3,6 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { message } from "antdv-next";
 import { userApi } from "../api";
 import { deptApi } from "../api";
-import { tenantApi } from "../api";
 import type { UserVO } from "../api/types";
 import { SEX_OPTIONS, STATUS_OPTIONS, dictLabel } from "../utils/dict";
 import { useAuthStore } from "../stores/auth";
@@ -22,22 +21,19 @@ const form = reactive({
   phone: "",
   sex: "M",
   status: "E",
-  tenantId: "",
   deptId: "",
 });
 
 const deptOptions = ref<{ label: string; value: string }[]>([]);
-const tenantOptions = ref<{ label: string; value: string }[]>([]);
 
 async function loadProfile() {
   const userId = authStore.loginUser?.userId;
   if (!userId) return;
   loading.value = true;
   try {
-    const [userResult, deptResult, tenantResult] = await Promise.all([
+    const [userResult, deptResult] = await Promise.all([
       userApi.getUserByUserId({ userId }),
       deptApi.queryDept({ page: 1, pageSize: 100 }),
-      tenantApi.queryTenant({ page: 1, pageSize: 100 }),
     ]);
     const user = userResult.data;
     if (user) {
@@ -50,17 +46,12 @@ async function loadProfile() {
         phone: user.phone,
         sex: user.sex ?? "M",
         status: user.status ?? "E",
-        tenantId: user.tenantId ?? "",
         deptId: user.deptId ?? "",
       });
     }
     deptOptions.value = (deptResult.data?.rows ?? []).map((d) => ({
       label: d.name ?? "",
       value: d.deptId ?? "",
-    }));
-    tenantOptions.value = (tenantResult.data?.rows ?? []).map((t) => ({
-      label: t.name ?? "",
-      value: t.id ?? "",
     }));
   } finally {
     loading.value = false;
@@ -82,7 +73,6 @@ async function handleSave() {
     phone: form.phone,
     sex: form.sex,
     status: form.status,
-    tenantId: form.tenantId,
     deptId: form.deptId,
   });
   if (result.ok) {
@@ -105,10 +95,6 @@ const descItems = computed(() => {
     { label: "手机号", value: p.phone ?? "-" },
     { label: "性别", value: dictLabel(SEX_OPTIONS, p.sex) },
     { label: "状态", value: dictLabel(STATUS_OPTIONS, p.status) },
-    {
-      label: "租户",
-      value: tenantOptions.value.find((t) => t.value === p.tenantId)?.label ?? "-",
-    },
     {
       label: "部门",
       value: deptOptions.value.find((d) => d.value === p.deptId)?.label ?? "-",
@@ -177,11 +163,6 @@ const descItems = computed(() => {
               <a-col :xs="24" :md="12">
                 <a-form-item label="状态">
                   <a-select v-model:value="form.status" :options="STATUS_OPTIONS" />
-                </a-form-item>
-              </a-col>
-              <a-col :xs="24" :md="12">
-                <a-form-item label="所属租户">
-                  <a-select v-model:value="form.tenantId" :options="tenantOptions" />
                 </a-form-item>
               </a-col>
               <a-col :xs="24" :md="12">

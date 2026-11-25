@@ -41,18 +41,6 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    public List<Dept> listByTenantId(String tenantId) {
-        return easyEntityQuery.queryable(Dept.class)
-                .where(o -> o.tenantId().eq(ValidUtil.requireString(tenantId, "租户编号不能为空")))
-                .orderBy(o -> {
-                    o.parentId().asc();
-                    o.sort().asc();
-                    o.deptId().asc();
-                })
-                .toList();
-    }
-
-    @Override
     public List<Dept> listByParentId(String parentId) {
         return easyEntityQuery.queryable(Dept.class)
                 .where(o -> {

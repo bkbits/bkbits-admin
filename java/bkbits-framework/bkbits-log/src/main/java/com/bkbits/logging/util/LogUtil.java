@@ -1,6 +1,7 @@
 package com.bkbits.logging.util;
 
 import com.bkbits.auth.LoginUtil;
+import com.bkbits.id.IdUtil;
 import com.bkbits.logging.dbo.LogLogin;
 import com.bkbits.logging.dbo.LogOperation;
 import com.bkbits.util.AsyncUtil;
@@ -20,11 +21,14 @@ public class LogUtil {
      * @param logOperation 操作日志信息
      */
     public void log(LogOperation logOperation) {
+        if (logOperation.getId() == null) {
+            logOperation.setId(IdUtil.nextId());
+        }
         if (logOperation.getCreateBy() == null) {
             logOperation.setCreateBy(
                     LoginUtil.isLogin() ?
-                            LoginUtil.getLoginUserName() :
-                            "system"
+                            LoginUtil.getLoginUserId() :
+                            LoginUtil.getSystemLoginUserId()
             );
         }
         if (logOperation.getCreateTime() == null) {
@@ -39,11 +43,14 @@ public class LogUtil {
      * @param logLogin 登录信息
      */
     public void addLoginLog(LogLogin logLogin) {
+        if (logLogin.getId() == null) {
+            logLogin.setId(IdUtil.nextId());
+        }
         if (logLogin.getCreateBy() == null) {
             logLogin.setCreateBy(
                     LoginUtil.isLogin() ?
-                            LoginUtil.getLoginUserName() :
-                            "system"
+                            LoginUtil.getLoginUserId() :
+                            LoginUtil.getSystemLoginUserId()
             );
         }
         if (logLogin.getCreateTime() == null) {

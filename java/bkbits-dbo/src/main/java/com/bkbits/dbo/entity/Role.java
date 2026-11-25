@@ -30,9 +30,6 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @Column(primaryKey = true)
     private String id;
 
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
-
     @ApiModelProperty("角色代码")
     private String code;
 
@@ -57,14 +54,6 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
 
-    @ApiModelProperty("所属租户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = Role.Fields.tenantId,
-            targetProperty = Tenant.Fields.id
-    )
-    private Tenant tenant;
-
     @ApiModelProperty("用户列表")
     @Navigate(
             value = RelationTypeEnum.ManyToMany,
@@ -88,18 +77,6 @@ public class Role implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             cascade = CascadeTypeEnum.DELETE
     )
     private List<Permission> permissionList;
-
-    @ApiModelProperty("数据权限列表")
-    @Navigate(
-            value = RelationTypeEnum.ManyToMany,
-            selfProperty = Role.Fields.id,
-            selfMappingProperty = RolePermissionDataPermissionRel.Fields.roleId,
-            mappingClass = RolePermissionDataPermissionRel.class,
-            targetProperty = DataPermission.Fields.id,
-            targetMappingProperty = RolePermissionDataPermissionRel.Fields.dataPermissionId,
-            cascade = CascadeTypeEnum.DELETE
-    )
-    private List<DataPermission> dataPermissionList;
 
     @ApiModelProperty("数据域列表")
     @Navigate(

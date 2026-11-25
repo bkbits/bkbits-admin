@@ -52,15 +52,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> listForUser(String userId, String tenantId, String deptId) {
+    public List<Notification> listForUser(String userId, String deptId) {
         String checkedUserId = ValidUtil.requireString(userId, "用户编号不能为空");
         return easyEntityQuery.queryable(Notification.class)
                 .where(o -> {
                     o.type().eq(BaseConstants.NOTIFICATION_TYPE_MESSAGE);
-                    o.or(tenantId != null && !tenantId.isBlank(), () -> {
-                        o.type().eq(BaseConstants.NOTIFICATION_TYPE_TENANT);
-                        o.targetId().eq(tenantId);
-                    });
                     o.or(deptId != null && !deptId.isBlank(), () -> {
                         o.type().eq(BaseConstants.NOTIFICATION_TYPE_DEPT);
                         o.targetId().eq(deptId);

@@ -17,9 +17,9 @@ public class CreateByInterceptor implements EntityInterceptor {
         ICreateBy createBy = (ICreateBy) entity;
         if (createBy.getCreateBy() == null) {
             if (LoginUtil.isLogin()) {
-                createBy.setCreateBy(LoginUtil.getLoginUserName());
+                createBy.setCreateBy(LoginUtil.getLoginUserId());
             } else {
-                createBy.setCreateBy("system");
+                createBy.setCreateBy(LoginUtil.getSystemLoginUserId());
             }
         }
 

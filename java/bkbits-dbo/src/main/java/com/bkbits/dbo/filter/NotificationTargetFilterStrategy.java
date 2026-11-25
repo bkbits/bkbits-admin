@@ -3,13 +3,13 @@ package com.bkbits.dbo.filter;
 import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.Dept;
 import com.bkbits.dbo.entity.Notification;
-import com.bkbits.dbo.entity.Tenant;
 import com.bkbits.dbo.entity.User;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import org.jspecify.annotations.NonNull;
+import org.noear.solon.annotation.Component;
 
 import java.util.Objects;
 
@@ -17,8 +17,9 @@ import java.util.Objects;
  * 通知目标关联过滤策略
  *
  * <p>{@code Notification.targetId} 为多态外键，指向的目标实体由 {@code Notification.type} 决定：
- * 租户(T)、部门(D)、用户(U)。该策略在导航查询目标通知列表时，按主实体类型附加通知类型过滤条件。</p>
+ * 部门(D)、用户(U)。该策略在导航查询目标通知列表时，按主实体类型附加通知类型过滤条件。</p>
  */
+@Component
 public class NotificationTargetFilterStrategy implements NavigateExtraFilterStrategy {
 
     @Override
@@ -33,9 +34,6 @@ public class NotificationTargetFilterStrategy implements NavigateExtraFilterStra
 
     @NonNull
     private SQLActionExpression1<WherePredicate<?>> addCondition(Class<?> entityClass, Class<?> propClass) {
-        if (Objects.equals(Tenant.class, propClass)) {
-            return o -> o.eq("type", BaseConstants.NOTIFICATION_TYPE_TENANT);
-        }
         if (Objects.equals(Dept.class, propClass)) {
             return o -> o.eq("type", BaseConstants.NOTIFICATION_TYPE_DEPT);
         }

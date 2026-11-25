@@ -43,7 +43,7 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
     @ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty(value = "uri路径", notes = "/开头为绝对路径，否则为基于父级权限的相对路径")
+    @ApiModelProperty(value = "路径", notes = "/开头为绝对路径，否则为基于父级权限的相对路径")
     private String path;
 
     @ApiModelProperty("排序")
@@ -94,12 +94,4 @@ public class Permission implements IGenId, ICreateBy, IUpdateBy, CollectionUtil.
             cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
-
-    @ApiModelProperty("数据权限")
-    @Navigate(
-            value = RelationTypeEnum.OneToMany,
-            selfProperty = Permission.Fields.id,
-            targetProperty = DataPermission.Fields.permissionId
-    )
-    private List<DataPermission> dataPermissionList;
 }

@@ -40,10 +40,6 @@ public class DeptQueryDTO {
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String parentId;
 
-    @ApiModelProperty("所属租户id")
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
-    private String tenantId;
-
     @ApiModelProperty("部门名称")
     @EasyWhereCondition
     private String name;

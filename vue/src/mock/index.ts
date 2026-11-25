@@ -27,8 +27,8 @@ async function handleMockRequest(req: IncomingMessage, res: ServerResponse): Pro
     return true;
   }
 
-  // 鉴权（白名单除外）
-  const token = String(req.headers.authorization ?? "");
+  // 鉴权（白名单除外）：token 头名与后端 Sa-Token 配置一致
+  const token = String(req.headers["bkbits-token"] ?? "");
   if (!PUBLIC_PATHS.has(pathname) && !token) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.statusCode = 200;

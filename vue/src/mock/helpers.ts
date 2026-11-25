@@ -13,7 +13,7 @@ export interface MockContext {
   body: Record<string, unknown>;
   /** multipart 中提取的文件信息 */
   files: { field: string; filename: string }[];
-  /** 当前登录 token（Authorization 头） */
+  /** 当前登录 token（bkbits-token 头） */
   token?: string;
 }
 

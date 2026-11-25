@@ -26,9 +26,6 @@ public class DeptVO {
     @ApiModelProperty("父级部门编号；为空表示顶级部门")
     private String parentId;
 
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
-
     @ApiModelProperty("部门名称")
     private String name;
 

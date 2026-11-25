@@ -31,10 +31,11 @@ public class Notification implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAv
     @Column(primaryKey = true)
     private String id;
 
-    @ApiModelProperty(value = "通知类型", notes = "M=站内消息,T=租户通知,D=部门通知,U=用户通知")
+    @ApiModelProperty(value = "通知类型", notes = "M=站内消息,D=部门通知,U=用户通知")
     private String type;
 
-    @ApiModelProperty(value = "通知目标id", notes = "站内消息时忽略,租户通知时为租户id,部门通知为部门id,用户通知时为用户id")
+    @ApiModelProperty(value = "通知目标id",
+            notes = "站内消息时忽略,部门通知为部门id,用户通知时为用户id")
     private String targetId;
 
     @ApiModelProperty("通知标题")
@@ -60,15 +61,6 @@ public class Notification implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAv
 
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
-
-    @ApiModelProperty("通知租户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = Notification.Fields.targetId,
-            targetProperty = Tenant.Fields.id,
-            extraFilter = NotificationTargetFilterStrategy.class
-    )
-    private Tenant tenant;
 
     @ApiModelProperty("通知部门")
     @Navigate(

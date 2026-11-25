@@ -8,6 +8,7 @@ import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Dict;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -83,6 +84,7 @@ public class DictController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.dict.add")
+    @Log(value = "新增字典", module = "字典管理", type = Log.INSERT, args = true)
     public Result<Void> add(@Validated @Body DictAddDTO dto) {
         dictService.add(DictMapper.INSTANCE.toDictEntity(dto));
         return Result.ok();
@@ -98,6 +100,7 @@ public class DictController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.dict.update")
+    @Log(value = "编辑字典", module = "字典管理", type = Log.UPDATE, args = true)
     public Result<Void> update(@Validated @Body DictUpdateDTO dto) {
         dictService.update(DictMapper.INSTANCE.toDictEntity(dto));
         return Result.ok();
@@ -113,6 +116,7 @@ public class DictController {
     @Post
     @Mapping("/remove")
     @SaCheckPermission("admin.dict.remove")
+    @Log(value = "删除字典", module = "字典管理", type = Log.DELETE, args = true)
     public Result<Void> remove(@Body IdDTO dto) {
         dictService.removeById(dto.getId());
         return Result.ok();
@@ -128,6 +132,7 @@ public class DictController {
     @Post
     @Mapping("/value/add")
     @SaCheckPermission("admin.dict.update")
+    @Log(value = "新增字典值", module = "字典管理", type = Log.INSERT, args = true)
     public Result<Void> addValue(@Validated @Body DictValueAddDTO dto) {
         dictService.addValue(DictMapper.INSTANCE.toDictValueEntity(dto));
         return Result.ok();
@@ -157,6 +162,7 @@ public class DictController {
     @Post
     @Mapping("/value/update")
     @SaCheckPermission("admin.dict.update")
+    @Log(value = "编辑字典值", module = "字典管理", type = Log.UPDATE, args = true)
     public Result<Void> updateValue(@Validated @Body DictValueUpdateDTO dto) {
         dictService.updateValue(DictMapper.INSTANCE.toDictValueEntity(dto));
         return Result.ok();
@@ -172,6 +178,7 @@ public class DictController {
     @Post
     @Mapping("/value/remove")
     @SaCheckPermission("admin.dict.update")
+    @Log(value = "删除字典值", module = "字典管理", type = Log.DELETE, args = true)
     public Result<Void> removeValue(@Body IdDTO dto) {
         dictService.removeValueById(dto.getId());
         return Result.ok();

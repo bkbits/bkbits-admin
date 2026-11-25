@@ -25,19 +25,29 @@ import java.util.function.Function;
 @Configuration
 public class JsonConfig {
 
-    /** 统一日期时间格式 */
+    /**
+     * 统一日期时间格式
+     */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /** 统一日期格式 */
+    /**
+     * 统一日期格式
+     */
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    /** 统一时间格式 */
+    /**
+     * 统一时间格式
+     */
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    /** JS 安全整数上界（超出则 Long 转字符串输出，避免前端精度丢失） */
+    /**
+     * JS 安全整数上界（超出则 Long 转字符串输出，避免前端精度丢失）
+     */
     private static final long JS_SAFE_INTEGER_MAX = 9007199254740991L;
 
-    /** JS 安全整数下界 */
+    /**
+     * JS 安全整数下界
+     */
     private static final long JS_SAFE_INTEGER_MIN = -9007199254740991L;
 
     /**

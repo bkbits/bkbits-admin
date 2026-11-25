@@ -29,6 +29,6 @@ public class OnlySelfDataScope implements IDataScope {
             Class<?> entityClass,
             LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder,
             WherePredicate<Object> wherePredicate) {
-        wherePredicate.eq("createBy", LoginUtil.getLoginUserName());
+        wherePredicate.eq("createBy", LoginUtil.getLoginUserId());
     }
 }

@@ -13,9 +13,8 @@ import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Role;
 import com.bkbits.dbo.entity.User;
 import com.bkbits.encrypt.IPasswordEncrypt;
-import com.bkbits.orm.PageUtil;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.util.StringUtil;
-import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,9 +38,6 @@ import java.util.List;
 public class UserController {
 
     @Inject
-    private EasyEntityQuery easyEntityQuery;
-
-    @Inject
     private UserService userService;
 
     @Inject
@@ -61,7 +57,7 @@ public class UserController {
     @Post
     @Mapping("/queryLoginUser")
     @SaCheckPermission("admin.user.queryLoginUser")
-    public PageResult<LoginUser> queryLoginUser(@Body UserAddDTO dto) {
+    public PageResult<LoginUser> queryLoginUser(@Body UserAddUpdateDTO dto) {
         return LoginUtil.pageLoginUser(PageQuery.current());
     }
 
@@ -75,11 +71,8 @@ public class UserController {
     @Get
     @Mapping("/query")
     @SaCheckPermission("admin.user.query")
-    public PageResult<User> query(UserQueryDTO dto) {
-        return easyEntityQuery.queryable(User.class)
-                .whereObject(dto)
-                .orderBy(o -> o.createTime().desc())
-                .toPageResult(PageUtil.current());
+    public PageResult<UserVO> query(UserQueryDTO dto) {
+        return userService.pageUsers(dto, PageQuery.current());
     }
 
     /**
@@ -93,7 +86,7 @@ public class UserController {
     @Mapping("/getByUserId")
     @SaCheckPermission("admin.user.query")
     public Result<UserVO> getByUserId(@ApiParam("用户编号") @Param("userId") String userId) {
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.getByUserId(userId)));
+        return Result.ok(toVO(userService.getByUserId(userId)));
     }
 
     /**
@@ -107,7 +100,7 @@ public class UserController {
     @Mapping("/getByUserName")
     @SaCheckPermission("admin.user.query")
     public Result<UserVO> getByUserName(@ApiParam("用户名") @Param("userName") String userName) {
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.getByUserName(userName)));
+        return Result.ok(toVO(userService.getByUserName(userName)));
     }
 
     /**
@@ -121,7 +114,7 @@ public class UserController {
     @Mapping("/getByPhone")
     @SaCheckPermission("admin.user.query")
     public Result<UserVO> getByPhone(@ApiParam("手机号") @Param("phone") String phone) {
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.getByPhone(phone)));
+        return Result.ok(toVO(userService.getByPhone(phone)));
     }
 
     /**
@@ -135,7 +128,7 @@ public class UserController {
     @Mapping("/getByEmail")
     @SaCheckPermission("admin.user.query")
     public Result<UserVO> getByEmail(@ApiParam("邮箱") @Param("email") String email) {
-        return Result.ok(UserMapper.INSTANCE.toVO(userService.getByEmail(email)));
+        return Result.ok(toVO(userService.getByEmail(email)));
     }
 
     /**
@@ -148,12 +141,16 @@ public class UserController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.user.add")
-    public Result<Void> add(@Validated @Body UserAddDTO dto) {
+    @Log(value = "新增用户", module = "用户管理", type = Log.INSERT)
+    public Result<Void> add(@Validated @Body UserAddUpdateDTO dto) {
+        if (StringUtil.isBlank(dto.getPassword())) {
+            return Result.fail("密码不能为空");
+        }
         User user = UserMapper.INSTANCE.toAddEntity(dto);
         String password = passwordEncrypt.decrypt(user.getPassword());
         password = passwordEncrypt.hash(password);
         user.setPassword(password);
-        userService.add(user);
+        userService.add(user, dto.getDeptId());
         return Result.ok();
     }
 
@@ -167,8 +164,9 @@ public class UserController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.user.update")
+    @Log(value = "编辑用户", module = "用户管理", type = Log.UPDATE)
     public Result<Void> update(@Validated @Body UserUpdateDTO dto) {
-        userService.update(UserMapper.INSTANCE.toUpdateEntity(dto));
+        userService.update(UserMapper.INSTANCE.toUpdateEntity(dto), dto.getDeptId());
         return Result.ok();
     }
 
@@ -202,6 +200,7 @@ public class UserController {
     @SaCheckPermission("admin.user.resetPassword")
     @Post
     @Mapping("/resetPassword")
+    @Log(value = "重置密码", module = "用户管理", type = Log.UPDATE)
     public Result<Void> resetPassword(@Validated @Body UserResetPasswordDTO dto) {
         String userId = LoginUtil.getLoginUserId();
         if (StringUtil.equals(dto.getUserId(), userId)) {
@@ -221,6 +220,7 @@ public class UserController {
     @Post
     @Mapping("/remove")
     @SaCheckPermission("admin.user.remove")
+    @Log(value = "删除用户", module = "用户管理", type = Log.DELETE)
     public Result<Void> remove(@Body IdDTO dto) {
         userService.removeById(dto.getId());
         return Result.ok();
@@ -236,6 +236,7 @@ public class UserController {
     @Post
     @Mapping("/bindRole")
     @SaCheckPermission("admin.user.bind")
+    @Log(value = "分配角色", module = "用户管理", type = Log.UPDATE)
     public Result<Void> bindRolesToUser(@Validated @Body BindRolesToUserDTO dto) {
         roleService.bingUserRole(dto.getUserId(), dto.getRoleIds());
         return Result.ok();
@@ -253,5 +254,19 @@ public class UserController {
     @SaCheckPermission("admin.user.bind")
     public Result<List<Role>> listRoles(@ApiParam("用户id") @Param("userId") String userId) {
         return Result.ok(roleService.getRolesByUserId(userId, false));
+    }
+
+    /**
+     * 实体转输出参数，并填充所属部门。
+     *
+     * @param user 用户实体
+     * @return 输出参数；入参为 null 时返回 null
+     */
+    private UserVO toVO(User user) {
+        UserVO vo = UserMapper.INSTANCE.toVO(user);
+        if (vo != null) {
+            vo.setDeptId(userService.getDeptIdByUserId(vo.getUserId()));
+        }
+        return vo;
     }
 }

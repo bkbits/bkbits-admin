@@ -1,13 +1,22 @@
 package com.bkbits.auth.config;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.solon.integration.SaTokenInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import com.bkbits.auth.AuthProperties;
+import com.bkbits.core.Result;
+import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
+import org.noear.solon.core.event.AppLoadEndEvent;
+
+import java.util.List;
 
 /**
  * 认证配置。
@@ -30,6 +39,64 @@ public class AuthConfig {
     public SaTokenConfig getSaTokenConfigPrimary(
             @Inject AuthProperties authProperties
     ) {
+        return buildSaTokenConfig(authProperties);
+    }
+
+    /**
+     * 注册 Sa-Token 拦截器。
+     *
+     * <p>{@code index = -100} 为顺序位（低值优先）。</p>
+     */
+    @Bean(index = -100)
+    public SaTokenInterceptor saTokenInterceptor(@Inject AuthProperties authProperties) {
+        SaTokenConfig config = buildSaTokenConfig(authProperties);
+        // sa-token-solon-plugin 自带默认 SaTokenConfig Bean，与本类配置存在初始化顺序竞争，
+        // 应用加载完成后再写入一次，确保 bkbits.auth.* 配置真正生效
+        SaManager.setConfig(config);
+        Solon.context().onEvent(AppLoadEndEvent.class, e -> SaManager.setConfig(config));
+
+        SaTokenInterceptor saTokenInterceptor = new SaTokenInterceptor();
+
+        // 拦截路由为空时默认拦截全部路径，否则 SaRouter.match 匹配不到任何路径，注解鉴权不会执行
+        List<String> includes = authProperties.getInclude();
+        if (includes == null || includes.isEmpty()) {
+            saTokenInterceptor.addInclude("/**");
+        } else {
+            includes.forEach(saTokenInterceptor::addInclude);
+        }
+        authProperties.getExclude().forEach(saTokenInterceptor::addExclude);
+        saTokenInterceptor.addExclude(
+                "/favicon.ico",
+                // knife4j 文档资源（参考 solon-openapi2-knife4j 文档）
+                "/doc.html",
+                "/webjars/**",
+                "/img/**",
+                "/swagger-resources",
+                "/swagger/**"
+        );
+
+        return saTokenInterceptor
+                // 认证函数：每次请求执行，全局登录校验
+                .setAuth(r -> SaRouter.match("/api/**", StpUtil::checkLogin))
+                // 异常处理：统一返回 JSON 结构
+                .setError(e -> {
+                    if (e instanceof NotLoginException) {
+                        return Result.fail(401, "未登录或登录已过期");
+                    }
+                    if (e instanceof NotPermissionException || e instanceof NotRoleException) {
+                        return Result.fail(403, "无访问权限");
+                    }
+                    return Result.fail(500, e.getMessage());
+                });
+    }
+
+    /**
+     * 按 {@link AuthProperties} 构建 Sa-Token 配置。
+     *
+     * @param authProperties 认证配置属性
+     * @return Sa-Token 配置
+     */
+    private SaTokenConfig buildSaTokenConfig(AuthProperties authProperties) {
         SaTokenConfig config = new SaTokenConfig();
         // token 名称（同时也是 cookie 名称）
         config.setTokenName(authProperties.getTokenName());
@@ -45,32 +112,6 @@ public class AuthConfig {
         config.setTokenStyle(authProperties.getStyle());
         // 是否输出操作日志
         config.setIsLog(authProperties.isLog());
-
         return config;
-    }
-
-    /**
-     * 注册 Sa-Token 拦截器。
-     *
-     * <p>{@code index = -100} 为顺序位（低值优先）。</p>
-     */
-    @Bean(index = -100)
-    public SaTokenInterceptor saTokenInterceptor(@Inject AuthProperties authProperties) {
-        SaTokenInterceptor saTokenInterceptor = new SaTokenInterceptor();
-        authProperties.getInclude().forEach(saTokenInterceptor::addInclude);
-        authProperties.getExclude().forEach(saTokenInterceptor::addExclude);
-        saTokenInterceptor.addExclude(
-                "/favicon.ico",
-                // knife4j 文档资源（参考 solon-openapi2-knife4j 文档）
-                "/doc.html",
-                "/webjars/**",
-                "/img/**",
-                "/swagger-resources",
-                "/swagger/**"
-        );
-
-        return saTokenInterceptor
-                // 认证函数：每次请求执行，全局登录校验
-                .setAuth(r -> SaRouter.match("/api/**", StpUtil::checkLogin));
     }
 }

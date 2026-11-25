@@ -1,6 +1,6 @@
 package com.bkbits.admin.mapper;
 
-import com.bkbits.admin.pojo.UserAddDTO;
+import com.bkbits.admin.pojo.UserAddUpdateDTO;
 import com.bkbits.admin.pojo.UserUpdateDTO;
 import com.bkbits.admin.pojo.UserVO;
 import com.bkbits.dbo.entity.User;
@@ -27,7 +27,7 @@ public interface UserMapper {
      * @param dto 输入参数
      * @return 用户实体
      */
-    User toAddEntity(UserAddDTO dto);
+    User toAddEntity(UserAddUpdateDTO dto);
 
 
     User toUpdateEntity(UserUpdateDTO dto);

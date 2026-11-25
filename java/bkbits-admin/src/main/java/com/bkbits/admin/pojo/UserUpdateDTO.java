@@ -16,7 +16,7 @@ import org.noear.solon.validation.annotation.NotBlank;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("用户输入参数")
-public class UserUpdateDTO extends UserAddDTO {
+public class UserUpdateDTO extends UserAddUpdateDTO {
     @ApiModelProperty("用户编号")
     @NotBlank
     private String userId;

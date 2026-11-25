@@ -35,14 +35,13 @@ public interface NotificationService {
     List<Notification> listByTarget(String type, String targetId);
 
     /**
-     * 查询指定用户可接收的站内、租户、部门及用户通知。
+     * 查询指定用户可接收的站内、部门及用户通知。
      *
-     * @param userId   用户编号
-     * @param tenantId 用户所属租户编号；可为空
-     * @param deptId   用户所属部门编号；可为空
+     * @param userId 用户编号
+     * @param deptId 用户所属部门编号；可为空
      * @return 用户可接收的通知列表
      */
-    List<Notification> listForUser(String userId, String tenantId, String deptId);
+    List<Notification> listForUser(String userId, String deptId);
 
     /**
      * 更新通知。

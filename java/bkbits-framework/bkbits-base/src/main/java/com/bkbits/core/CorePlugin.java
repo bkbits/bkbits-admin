@@ -116,7 +116,8 @@ public class CorePlugin implements Plugin {
      */
     private void printDocUrl(int port, String contextPath) {
         try {
-            Class<?> resolverClass = Class.forName("com.github.xiaoymin.knife4j.solon.extension.OpenApiExtensionResolver");
+            Class<?> resolverClass = Class.forName(
+                    "com.github.xiaoymin.knife4j.solon.extension.OpenApiExtensionResolver");
             Object resolver = Solon.context().getBean(resolverClass);
             if (resolver == null) {
                 return;

@@ -6,7 +6,6 @@ import {
   UserRound,
   ShieldCheck,
   Building2,
-  Globe,
   SlidersHorizontal,
   BookMarked,
   Wifi,
@@ -14,7 +13,6 @@ import {
 import { userApi } from "../api";
 import { roleApi } from "../api";
 import { deptApi } from "../api";
-import { tenantApi } from "../api";
 import { paramApi } from "../api";
 import { dictApi } from "../api";
 import { logApi } from "../api";
@@ -28,7 +26,6 @@ const stats = reactive({
   user: 0,
   role: 0,
   dept: 0,
-  tenant: 0,
   param: 0,
   dict: 0,
   online: 0,
@@ -38,11 +35,10 @@ const recentLogs = ref<LoginLogVO[]>([]);
 const loading = ref(true);
 
 async function loadStats() {
-  const [users, roles, depts, tenants, params, dicts, online, logs] = await Promise.all([
+  const [users, roles, depts, params, dicts, online, logs] = await Promise.all([
     userApi.queryUser({ page: 1, pageSize: 1 }),
     roleApi.queryRole({ page: 1, pageSize: 1 }),
     deptApi.queryDept({ page: 1, pageSize: 1 }),
-    tenantApi.queryTenant({ page: 1, pageSize: 1 }),
     paramApi.queryParam({ page: 1, pageSize: 1 }),
     dictApi.queryDict({ page: 1, pageSize: 1 }),
     userApi.queryOnlineUser({ page: 1, pageSize: 1 }),
@@ -51,7 +47,6 @@ async function loadStats() {
   stats.user = users.data?.total ?? 0;
   stats.role = roles.data?.total ?? 0;
   stats.dept = depts.data?.total ?? 0;
-  stats.tenant = tenants.data?.total ?? 0;
   stats.param = params.data?.total ?? 0;
   stats.dict = dicts.data?.total ?? 0;
   stats.online = online.data?.total ?? 0;
@@ -74,7 +69,7 @@ const cards = [
   { key: "user", title: "用户总数", icon: Users, color: "#1677ff", path: "/system/user" },
   { key: "role", title: "角色总数", icon: ShieldCheck, color: "#722ed1", path: "/system/role" },
   { key: "dept", title: "部门总数", icon: Building2, color: "#13c2c2", path: "/system/dept" },
-  { key: "tenant", title: "租户总数", icon: Globe, color: "#fa8c16", path: "/system/tenant" },
+
   {
     key: "param",
     title: "系统参数",
@@ -92,15 +87,13 @@ const cards = [
     <a-card variant="borderless" class="welcome-card">
       <div class="welcome">
         <a-avatar :size="56" class="welcome-avatar">
-          {{ (authStore.loginUser?.realName || authStore.loginUser?.userName || "U").charAt(0) }}
+          {{ (authStore.loginUser?.userName || authStore.loginUser?.userId || "U").charAt(0) }}
         </a-avatar>
         <div>
           <div class="welcome-title">
-            {{ greeting }}，{{ authStore.loginUser?.realName || authStore.loginUser?.userName }}
+            {{ greeting }}，{{ authStore.loginUser?.userName || authStore.loginUser?.userId }}
           </div>
-          <div class="welcome-sub">
-            欢迎使用 bkbits-admin 后台管理系统，当前所有数据由 mock 服务提供。
-          </div>
+          <div class="welcome-sub">欢迎使用 bkbits-admin 后台管理系统。</div>
         </div>
       </div>
     </a-card>
@@ -132,19 +125,19 @@ const cards = [
           <a-table
             :data-source="recentLogs"
             :columns="[
-              { title: '用户名', dataIndex: 'userName', key: 'userName' },
+              { title: '登录者', dataIndex: 'createBy', key: 'createBy' },
               { title: 'IP', dataIndex: 'ip', key: 'ip' },
-              { title: '登录时间', dataIndex: 'loginTime', key: 'loginTime' },
-              { title: '结果', dataIndex: 'success', key: 'success' },
+              { title: '登录时间', dataIndex: 'createTime', key: 'createTime' },
+              { title: '结果', dataIndex: 'succeed', key: 'succeed' },
             ]"
             :pagination="false"
             size="small"
             row-key="id"
           >
             <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'success'">
-                <a-tag :color="record.success ? 'success' : 'error'">
-                  {{ record.success ? "成功" : "失败" }}
+              <template v-if="column.key === 'succeed'">
+                <a-tag :color="record.succeed ? 'success' : 'error'">
+                  {{ record.succeed ? "成功" : "失败" }}
                 </a-tag>
               </template>
             </template>
@@ -167,7 +160,7 @@ const cards = [
           <a-divider style="margin: 12px 0" />
           <div class="tips">
             <UserRound :size="14" />
-            提示：登录后可体验用户、角色、权限、部门、租户、参数、字典、日志等完整功能。
+            提示：登录后可体验用户、角色、权限、部门、参数、字典、日志等完整功能。
           </div>
         </a-card>
       </a-col>

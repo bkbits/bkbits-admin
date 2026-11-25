@@ -7,13 +7,19 @@ package com.bkbits.upload;
  */
 public final class UploadStatus {
 
-    /** 等待上传 */
+    /**
+     * 等待上传
+     */
     public static final String WAITING = "W";
 
-    /** 成功完成 */
+    /**
+     * 成功完成
+     */
     public static final String SUCCESS = "S";
 
-    /** 任务丢弃 */
+    /**
+     * 任务丢弃
+     */
     public static final String ABANDONED = "A";
 
     private UploadStatus() {

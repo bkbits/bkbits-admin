@@ -22,9 +22,9 @@ public class UpdateByInterceptor implements EntityInterceptor {
         IUpdateBy createBy = (IUpdateBy) entity;
         if (createBy.getUpdateBy() == null) {
             if (LoginUtil.isLogin()) {
-                createBy.setUpdateBy(LoginUtil.getLoginUserName());
+                createBy.setUpdateBy(LoginUtil.getLoginUserId());
             } else {
-                createBy.setUpdateBy("system");
+                createBy.setUpdateBy(LoginUtil.getSystemLoginUserId());
             }
         }
 

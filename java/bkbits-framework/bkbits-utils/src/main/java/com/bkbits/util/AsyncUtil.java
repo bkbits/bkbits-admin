@@ -20,11 +20,15 @@ import java.util.concurrent.TimeUnit;
 @UtilityClass
 public class AsyncUtil {
 
-    /** 虚拟线程执行器（普通异步任务） */
+    /**
+     * 虚拟线程执行器（普通异步任务）
+     */
     private static final ExecutorService EXECUTOR = Executors.newThreadPerTaskExecutor(
             Thread.ofVirtual().name("bkbits-async-", 0).factory());
 
-    /** 定时线程池（延迟/周期任务） */
+    /**
+     * 定时线程池（延迟/周期任务）
+     */
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(2, new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {

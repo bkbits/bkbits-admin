@@ -75,18 +75,28 @@ public interface RoleService {
     void bindRolePermissions(String roleId, List<String> permissionIds);
 
     /**
-     * 为指定角色追加绑定数据权限（替换原有绑定）。
+     * 为指定角色绑定菜单权限的数据域（替换原有绑定）。
      *
-     * @param roleId           角色编号
-     * @param dataPermissionIds 数据权限编号集合
+     * @param roleId       角色编号
+     * @param permissionId 菜单权限编号
+     * @param dataScopes   数据域集合
      */
-    void bingRoleDataPermission(String roleId, List<String> dataPermissionIds);
+    void bingRoleDataPermission(String roleId, String permissionId, List<String> dataScopes);
 
     /**
-     * 为指定角色绑定数据权限（替换原有绑定）。
+     * 查询指定角色、菜单权限已绑定的数据域。
+     *
+     * @param roleId       角色编号
+     * @param permissionId 菜单权限编号
+     * @return 数据域标识集合
+     */
+    List<String> listRoleDataScopes(String roleId, String permissionId);
+
+    /**
+     * 为指定角色绑定数据域（替换原有绑定）。
      *
      * @param roleId        角色编号
-     * @param dataScopeList 数据权限编号集合
+     * @param dataScopeList 数据域集合
      */
     void bindRoleDataScopes(String roleId, List<String> dataScopeList);
 }

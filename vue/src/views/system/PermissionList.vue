@@ -62,7 +62,7 @@ const submitting = ref(false);
 const form = reactive({
   id: "",
   parentId: "0",
-  type: "MENU",
+  type: "M",
   name: "",
   permission: "",
   component: "",
@@ -90,7 +90,7 @@ function openAdd(parentId = "0") {
   Object.assign(form, {
     id: "",
     parentId,
-    type: "MENU",
+    type: "M",
     name: "",
     permission: "",
     component: "",
@@ -105,7 +105,7 @@ function openEdit(record: Permission) {
   Object.assign(form, {
     id: record.id ?? "",
     parentId: record.parentId ?? "0",
-    type: record.type ?? "MENU",
+    type: record.type ?? "M",
     name: record.name ?? "",
     permission: record.permission ?? "",
     component: record.component ?? "",
@@ -272,7 +272,7 @@ function handleRemove(record: Permission) {
           <a-input v-model:value="form.name" placeholder="请输入权限名称" />
         </a-form-item>
         <a-form-item label="权限标识">
-          <a-input v-model:value="form.permission" placeholder="请输入权限标识，如 system:role" />
+          <a-input v-model:value="form.permission" placeholder="请输入权限标识，如 admin.role" />
         </a-form-item>
         <a-form-item label="组件">
           <a-input v-model:value="form.component" placeholder="请输入前端组件名" />

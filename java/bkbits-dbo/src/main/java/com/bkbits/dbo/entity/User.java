@@ -53,11 +53,8 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
     @ApiModelProperty(value = "状态", notes = "E=启用,D=禁用")
     private String status;
 
-    @ApiModelProperty("所属租户id")
-    private String tenantId;
-
-    @ApiModelProperty("所属部门id")
-    private String deptId;
+    @ApiModelProperty(value = "最后选择部门id", notes = "保留最后一次登录部门，下次进入系统自动对应部门")
+    private String lastDeptId;
 
     @ApiModelProperty("创建人")
     private String createBy;
@@ -86,22 +83,6 @@ public class User implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable<
             cascade = CascadeTypeEnum.DELETE
     )
     private List<Role> roleList;
-
-    @ApiModelProperty("所属部门")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = User.Fields.deptId,
-            targetProperty = Dept.Fields.deptId
-    )
-    private Dept dept;
-
-    @ApiModelProperty("所属租户")
-    @Navigate(
-            value = RelationTypeEnum.ManyToOne,
-            selfProperty = User.Fields.tenantId,
-            targetProperty = Tenant.Fields.id
-    )
-    private Tenant tenant;
 
     @ApiModelProperty("用户通知列表")
     @Navigate(

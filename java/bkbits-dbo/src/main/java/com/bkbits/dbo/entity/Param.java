@@ -26,7 +26,7 @@ public class Param implements IGenId, ICreateBy, IUpdateBy, ProxyEntityAvailable
     @Column(primaryKey = true)
     private String id;
 
-    @ApiModelProperty("参数键")
+    @ApiModelProperty(value = "参数键", notes = "标准应以 xx.xx 来命名")
     private String paramKey;
 
     @ApiModelProperty("参数名称")

@@ -1,13 +1,15 @@
 package com.bkbits.admin.bootstrap;
 
+import com.bkbits.admin.pojo.DataScopeVO;
 import com.bkbits.dbo.constants.BaseConstants;
-import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 权限菜单构建器（DSL）。
@@ -24,36 +26,48 @@ import java.util.List;
  *         .end()
  *         .build();
  * List<Permission> permissions = result.getPermissions();
- * List<DataPermission> dataPermissions = result.getDataPermissions();
+ * Map<String, List<DataScopeVO>> dataScopes = result.getDataScopes();
  * }</pre>
  *
  * <p>节点语义：{@code dir=目录(D)}、{@code menu=菜单(M)}、{@code btn=按钮(B)}，节点默认启用；
- * {@code data=数据权限}，挂接在菜单/按钮之下（权限类型见 {@link BaseConstants#PERMISSION_DIRECTORY}
+ * {@code data=数据域}，挂接在菜单/按钮之下（权限类型见 {@link BaseConstants#PERMISSION_DIRECTORY}
  * 等常量）。{@code btn} 与 {@code data} 为叶节点，无需 {@code end()} 闭合，
  * 新建兄弟节点或调用 {@code end()} 时自动收尾；{@code end()} 只用于结束（或略过）目录/菜单层级。
  *
- * <p>树结构通过 {@link Permission#getChildren()} 与 {@link Permission#getDataPermissionList()}
- * 嵌套表达；节点 id 与 parentId/permissionId 外键由持久化层（easy-query {@code @Navigate}）维护，
- * 构建产物可直接嵌套插入。
+ * <p>树结构通过 {@link Permission#getChildren()} 嵌套表达；节点 id 与 parentId 外键由持久化层
+ * （easy-query {@code @Navigate}）维护，构建产物可直接嵌套插入。数据域按所属权限的
+ * {@code permission} 标识汇总，仅在内存中使用，不随权限实体持久化。
  */
 public class MenuBuilder {
 
-    /** 根节点集合（顶级权限） */
+    /**
+     * 根节点集合（顶级权限）
+     */
     private final List<Permission> roots = new ArrayList<>();
 
-    /** 目录/菜单层级栈 */
+    /**
+     * 目录/菜单层级栈
+     */
     private final Deque<Permission> stack = new ArrayDeque<>();
 
-    /** 最近创建的按钮（叶节点，不入栈） */
+    /**
+     * 最近创建的按钮（叶节点，不入栈）
+     */
     private Permission currentBtn;
 
-    /** 当前数据权限；非空表示当前上下文为数据权限 */
-    private DataPermission currentData;
+    /**
+     * 当前数据域；非空表示当前上下文为数据域
+     */
+    private DataScopeVO currentData;
 
-    /** 已构建的全部数据权限（扁平收集，构建时同步维护） */
-    private final List<DataPermission> dataPermissions = new ArrayList<>();
+    /**
+     * 已构建的全部数据域（记录所属权限，构建时按权限标识汇总）
+     */
+    private final List<DataScopeEntry> dataScopeEntries = new ArrayList<>();
 
-    /** 全局序号，用作权限排序 */
+    /**
+     * 全局序号，用作权限排序
+     */
     private int seq = 0;
 
     private MenuBuilder() {
@@ -96,19 +110,14 @@ public class MenuBuilder {
     }
 
     /**
-     * 为当前权限节点（按钮或菜单）添加数据权限。
+     * 为当前权限节点（按钮或菜单）添加数据域。
      *
      * @return this
      */
     public MenuBuilder data() {
         Permission owner = currentPermission("data 节点必须挂接在菜单/按钮权限之下");
-        currentData = new DataPermission();
-        currentData.setStatus(BaseConstants.STATUS_ENABLED);
-        if (owner.getDataPermissionList() == null) {
-            owner.setDataPermissionList(new ArrayList<>());
-        }
-        owner.getDataPermissionList().add(currentData);
-        dataPermissions.add(currentData);
+        currentData = new DataScopeVO();
+        dataScopeEntries.add(new DataScopeEntry(owner, currentData));
         return this;
     }
 
@@ -161,7 +170,7 @@ public class MenuBuilder {
     }
 
     /**
-     * 设置当前数据权限的数据域。
+     * 设置当前数据域的数据域标识。
      *
      * @param dataScope 数据域标识
      * @return this
@@ -192,13 +201,11 @@ public class MenuBuilder {
     }
 
     /**
-     * 完成构建：返回全部权限节点与全部数据权限的构建结果。
+     * 完成构建：返回全部权限节点与数据域映射。
      *
      * <p>{@code permissions} 为整棵权限树展平后的全部节点（含顶层目录/菜单及下属菜单/按钮，
      * 深度优先，层级仍通过 {@link Permission#getChildren()} 表达），可直接交给 easy-query
-     * 按序/嵌套插入；{@code dataPermissions} 与
-     * {@link Permission#getDataPermissionList()} 中的对象为同一实例，扁平列表
-     * 便于角色授权绑定，permissionId 需在持久化后回填。
+     * 按序/嵌套插入；{@code dataScopes} 按权限标识汇总全部数据域。
      *
      * @return 构建结果
      */
@@ -208,7 +215,25 @@ public class MenuBuilder {
         }
         List<Permission> all = new ArrayList<>();
         collectPermissions(roots, all);
-        return new MenuBuilded(all, dataPermissions);
+
+        Map<String, List<DataScopeVO>> dataScopes = new LinkedHashMap<>();
+        for (DataScopeEntry entry : dataScopeEntries) {
+            String permission = entry.owner().getPermission();
+            if (permission == null || permission.isBlank()) {
+                throw new IllegalStateException("数据域必须挂接在设置了 permission 的权限节点下");
+            }
+            dataScopes.computeIfAbsent(permission, key -> new ArrayList<>()).add(entry.dataScope());
+        }
+        return new MenuBuilded(all, dataScopes);
+    }
+
+    /**
+     * 数据域构建项。
+     *
+     * @param owner     所属权限节点
+     * @param dataScope 数据域
+     */
+    private record DataScopeEntry(Permission owner, DataScopeVO dataScope) {
     }
 
     /**

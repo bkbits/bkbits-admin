@@ -18,6 +18,7 @@ import com.bkbits.core.Result;
 import com.bkbits.dbo.entity.Permission;
 import com.bkbits.dbo.entity.Role;
 import com.bkbits.dbo.entity.User;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.orm.PageUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -61,6 +62,7 @@ public class RoleController {
     @Post
     @Mapping("/add")
     @SaCheckPermission("admin.role.add")
+    @Log(value = "新增角色", module = "角色管理", type = Log.INSERT, args = true)
     public Result<Void> add(@Validated @Body RoleAddDTO dto) {
         roleService.addRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
         return Result.ok();
@@ -76,6 +78,7 @@ public class RoleController {
     @Post
     @Mapping("/update")
     @SaCheckPermission("admin.role.update")
+    @Log(value = "编辑角色", module = "角色管理", type = Log.UPDATE, args = true)
     public Result<Void> update(@Validated @Body RoleUpdateDTO dto) {
         roleService.updateRole(PermissionMapper.INSTANCE.toRoleEntity(dto));
         return Result.ok();
@@ -91,6 +94,7 @@ public class RoleController {
     @Post
     @Mapping("/remove")
     @SaCheckPermission("admin.role.remove")
+    @Log(value = "删除角色", module = "角色管理", type = Log.DELETE, args = true)
     public Result<Void> remove(@Validated @Body IdDTO dto) {
         roleService.removeRoleById(dto.getId());
         return Result.ok();
@@ -174,6 +178,7 @@ public class RoleController {
     @Post
     @Mapping("/bindPermissions")
     @SaCheckPermission("admin.role.bind")
+    @Log(value = "分配权限", module = "角色管理", type = Log.UPDATE)
     public Result<Void> bindPermissions(@Validated @Body BindPermissionsToRoleDTO dto) {
         roleService.bindRolePermissions(dto.getRoleId(), dto.getPermissionIds());
         return Result.ok();
@@ -189,9 +194,27 @@ public class RoleController {
     @Post
     @Mapping("/bindDataPermissions")
     @SaCheckPermission("admin.role.bind")
+    @Log(value = "分配数据权限", module = "角色管理", type = Log.UPDATE, args = true)
     public Result<Void> bindDataPermissions(@Validated @Body BindDataPermissionsToRoleDTO dto) {
-        roleService.bingRoleDataPermission(dto.getRoleId(), dto.getDataPermissionIds());
+        roleService.bingRoleDataPermission(dto.getRoleId(), dto.getPermissionId(), dto.getDataScopes());
         return Result.ok();
+    }
+
+    /**
+     * 查询角色菜单权限已绑定的数据域。
+     *
+     * @param roleId       角色编号
+     * @param permissionId 菜单权限编号
+     * @return 数据域标识集合
+     */
+    @ApiOperation("查询角色绑定的数据域")
+    @Get
+    @Mapping("/listDataScopes")
+    @SaCheckPermission("admin.role.query")
+    public Result<List<String>> listDataScopes(
+            @ApiParam("角色编号") @Param("roleId") String roleId,
+            @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
+        return Result.ok(roleService.listRoleDataScopes(roleId, permissionId));
     }
 
     /**
@@ -204,6 +227,7 @@ public class RoleController {
     @Post
     @Mapping("/bindDataScope")
     @SaCheckPermission("admin.role.bind")
+    @Log(value = "分配数据域", module = "角色管理", type = Log.UPDATE, args = true)
     public Result<Void> bindDataScope(@Validated @Body BindDataScopesToRoleDTO dto) {
         roleService.bindRoleDataScopes(dto.getRoleId(), dto.getDataScopes());
         return Result.ok();

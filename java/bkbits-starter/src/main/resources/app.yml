@@ -20,7 +20,8 @@ easy-query:
   db1:
     database: mysql
     name-conversion: underlined
-    delete-throw: true
+    delete-throw: false
+    update-strategy: only_not_null_columns
     print-sql: true
 
 solon.logging.logger:

@@ -11,11 +11,11 @@ const instance = axios.create({
   timeout: 15000,
 });
 
-// 请求拦截：自动附带登录 token
+// 请求拦截：自动附带登录 token（后端 Sa-Token 头名为 bkbits-token）
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
-    config.headers.Authorization = token;
+    config.headers["bkbits-token"] = token;
   }
   return config;
 });

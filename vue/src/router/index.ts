@@ -3,18 +3,17 @@ import { TOKEN_KEY } from "../api/http";
 
 /** 权限 component 字段 → 路由路径 映射（与后端权限表 component 字段对应） */
 export const MENU_ROUTE_MAP: Record<string, string> = {
-  Dashboard: "/dashboard",
-  Profile: "/profile",
-  UserList: "/system/user",
-  OnlineUser: "/system/online-user",
-  RoleList: "/system/role",
-  PermissionList: "/system/permission",
-  DeptList: "/system/dept",
-  TenantList: "/system/tenant",
-  ParamList: "/system/param",
-  DictList: "/system/dict",
-  LoginLog: "/system/login-log",
-  OperationLog: "/system/operation-log",
+  "My/DashBoard": "/dashboard",
+  "My/UserInfo": "/profile",
+  "My/Notification": "",
+  "System/Dept": "/system/dept",
+  "System/User": "/system/user",
+  "System/Role": "/system/role",
+  "System/Permission": "/system/permission",
+  "System/LoginLog": "/system/login-log",
+  "System/OperLog": "/system/operation-log",
+  "System/Dict": "/system/dict",
+  "System/Param": "/system/param",
 };
 
 const routes: RouteRecordRaw[] = [
@@ -77,12 +76,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import("../views/system/DeptList.vue"),
         meta: { title: "部门管理" },
       },
-      {
-        path: "system/tenant",
-        name: "tenant-list",
-        component: () => import("../views/system/TenantList.vue"),
-        meta: { title: "租户管理" },
-      },
+
       {
         path: "system/param",
         name: "param-list",

@@ -2,16 +2,15 @@ package com.bkbits.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.bkbits.admin.mapper.PermissionMapper;
-import com.bkbits.admin.pojo.DataPermissionAddDTO;
-import com.bkbits.admin.pojo.DataPermissionUpdateDTO;
+import com.bkbits.admin.pojo.DataScopeVO;
 import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.admin.pojo.PermissionAddDTO;
 import com.bkbits.admin.pojo.PermissionQueryDTO;
 import com.bkbits.admin.pojo.PermissionUpdateDTO;
 import com.bkbits.admin.service.PermissionService;
 import com.bkbits.core.Result;
-import com.bkbits.dbo.entity.DataPermission;
 import com.bkbits.dbo.entity.Permission;
+import com.bkbits.logging.annotations.Log;
 import com.bkbits.util.CollectionUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
@@ -29,7 +28,7 @@ import org.noear.solon.validation.annotation.Validated;
 import java.util.List;
 
 /**
- * 权限及数据权限控制器。
+ * 权限控制器。
  */
 @Api("权限接口")
 @Controller
@@ -52,6 +51,7 @@ public class PermissionController {
     @Post
     @Mapping("/permission/add")
     @SaCheckPermission("admin.permission.add")
+    @Log(value = "新增菜单", module = "菜单管理", type = Log.INSERT, args = true)
     public Result<Void> addPermission(@Validated @Body PermissionAddDTO dto) {
         permissionService.addPermission(PermissionMapper.INSTANCE.toPermissionEntity(dto));
         return Result.ok();
@@ -106,13 +106,14 @@ public class PermissionController {
     @Post
     @Mapping("/permission/update")
     @SaCheckPermission("admin.permission.update")
+    @Log(value = "编辑菜单", module = "菜单管理", type = Log.UPDATE, args = true)
     public Result<Void> updatePermission(@Validated @Body PermissionUpdateDTO dto) {
         permissionService.updatePermission(PermissionMapper.INSTANCE.toPermissionEntity(dto));
         return Result.ok();
     }
 
     /**
-     * 删除权限及其角色、数据权限关联。
+     * 删除权限及其角色关联。
      *
      * @param dto 编号参数
      * @return 操作结果
@@ -121,72 +122,24 @@ public class PermissionController {
     @Post
     @Mapping("/permission/remove")
     @SaCheckPermission("admin.permission.remove")
+    @Log(value = "删除菜单", module = "菜单管理", type = Log.DELETE, args = true)
     public Result<Void> removePermission(@Body IdDTO dto) {
         permissionService.removePermissions(dto.getId());
         return Result.ok();
     }
 
     /**
-     * 为菜单权限添加数据权限。
-     *
-     * @param dto 数据权限输入参数
-     * @return 操作结果
-     */
-    @ApiOperation("为菜单权限添加数据权限")
-    @Post
-    @Mapping("/dataPermission/add")
-    @SaCheckPermission("admin.permission.add")
-    public Result<Void> addDataPermission(@Validated @Body DataPermissionAddDTO dto) {
-        permissionService.addDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto));
-        return Result.ok();
-    }
-
-    /**
-     * 查询指定菜单权限下的数据权限。
+     * 查询指定菜单权限可选的数据域。
      *
      * @param permissionId 菜单权限编号
-     * @return 数据权限列表
+     * @return 数据域列表
      */
-    @ApiOperation("查询菜单权限下数据权限")
+    @ApiOperation("查询菜单权限可选数据域")
     @Get
-    @Mapping("/dataPermission/list")
+    @Mapping("/permission/dataScope/list")
     @SaCheckPermission("admin.permission.query")
-    public Result<List<DataPermission>> listDataPermissions(
+    public Result<List<DataScopeVO>> listDataScopes(
             @ApiParam("菜单权限编号") @Param("permissionId") String permissionId) {
-        return Result.ok(
-                easyEntityQuery.queryable(DataPermission.class)
-                        .where(p -> p.permissionId().eq(permissionId))
-                        .toList()
-        );
-    }
-
-    /**
-     * 更新数据权限。
-     *
-     * @param dto 数据权限输入参数
-     * @return 操作结果
-     */
-    @ApiOperation("更新数据权限")
-    @Post
-    @Mapping("/dataPermission/update")
-    @SaCheckPermission("admin.permission.update")
-    public Result<Void> updateDataPermission(@Validated @Body DataPermissionUpdateDTO dto) {
-        permissionService.updateDataPermission(PermissionMapper.INSTANCE.toDataPermissionEntity(dto));
-        return Result.ok();
-    }
-
-    /**
-     * 删除数据权限及其角色关联。
-     *
-     * @param dto 编号参数
-     * @return 操作结果
-     */
-    @ApiOperation("删除数据权限")
-    @Post
-    @Mapping("/dataPermission/remove")
-    @SaCheckPermission("admin.permission.remove")
-    public Result<Void> removeDataPermission(@Body IdDTO dto) {
-        permissionService.removeDataPermission(dto.getId());
-        return Result.ok();
+        return Result.ok(permissionService.listDataScopes(permissionId));
     }
 }

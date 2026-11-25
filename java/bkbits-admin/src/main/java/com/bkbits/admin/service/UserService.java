@@ -1,5 +1,9 @@
 package com.bkbits.admin.service;
 
+import com.bkbits.admin.pojo.UserQueryDTO;
+import com.bkbits.admin.pojo.UserVO;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.dbo.entity.User;
 
 import java.util.List;
@@ -10,11 +14,12 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * 新增用户。
+     * 新增用户，并绑定所属部门。
      *
-     * @param user 用户信息
+     * @param user   用户信息
+     * @param deptId 部门编号，可为空
      */
-    void add(User user);
+    void add(User user, String deptId);
 
     /**
      * 按编号查询用户及其角色。
@@ -49,14 +54,6 @@ public interface UserService {
     User getByEmail(String email);
 
     /**
-     * 查询指定租户下的用户。
-     *
-     * @param tenantId 租户编号
-     * @return 用户列表
-     */
-    List<User> listByTenantId(String tenantId);
-
-    /**
      * 查询指定部门下的用户。
      *
      * @param deptId 部门编号
@@ -65,11 +62,29 @@ public interface UserService {
     List<User> listByDeptId(String deptId);
 
     /**
+     * 分页查询用户（含所属部门）。
+     *
+     * @param query     查询条件，可为 {@code null}
+     * @param pageQuery 分页参数
+     * @return 分页结果
+     */
+    PageResult<UserVO> pageUsers(UserQueryDTO query, PageQuery pageQuery);
+
+    /**
+     * 查询用户所属部门编号。
+     *
+     * @param userId 用户编号
+     * @return 部门编号；未绑定部门时返回 {@code null}
+     */
+    String getDeptIdByUserId(String userId);
+
+    /**
      * 更新用户。
      *
-     * @param user 待更新的用户信息
+     * @param user   待更新的用户信息
+     * @param deptId 部门编号；{@code null} 表示不修改，空字符串表示清空
      */
-    void update(User user);
+    void update(User user, String deptId);
 
     /**
      * 修改密码

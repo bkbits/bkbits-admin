@@ -15,7 +15,9 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DeptMapper {
 
-    /** 内置静态单例 */
+    /**
+     * 内置静态单例
+     */
     DeptMapper INSTANCE = Mappers.getMapper(DeptMapper.class);
 
     /**
