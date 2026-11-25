@@ -1,9 +1,12 @@
 package com.bkbits.admin.service.impl;
 
 import com.bkbits.admin.service.NotificationService;
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.dbo.constants.BaseConstants;
 import com.bkbits.dbo.entity.Notification;
 import com.bkbits.dbo.entity.NotificationRead;
+import com.bkbits.orm.EasyPager;
 import com.bkbits.util.ValidUtil;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.noear.solon.annotation.Component;
@@ -71,6 +74,30 @@ public class NotificationServiceImpl implements NotificationService {
                     o.id().desc();
                 })
                 .toList();
+    }
+
+    @Override
+    public PageResult<Notification> pageForUser(String userId, String deptId, PageQuery pageQuery) {
+        String checkedUserId = ValidUtil.requireString(userId, "用户编号不能为空");
+        PageQuery checkedPage = ValidUtil.requireNotNull(pageQuery, "分页参数不能为空");
+        PageResult<Notification> page = easyEntityQuery.queryable(Notification.class)
+                .where(o -> {
+                    o.type().eq(BaseConstants.NOTIFICATION_TYPE_MESSAGE);
+                    o.or(deptId != null && !deptId.isBlank(), () -> {
+                        o.type().eq(BaseConstants.NOTIFICATION_TYPE_DEPT);
+                        o.targetId().eq(deptId);
+                    });
+                    o.or(() -> {
+                        o.type().eq(BaseConstants.NOTIFICATION_TYPE_USER);
+                        o.targetId().eq(checkedUserId);
+                    });
+                })
+                .orderBy(o -> {
+                    o.publishTime().desc();
+                    o.id().desc();
+                })
+                .toPageResult(EasyPager.of(checkedPage.getPage(), checkedPage.getPageSize()));
+        return page;
     }
 
     @Override

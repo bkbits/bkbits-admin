@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { message } from "antdv-next";
 import { userApi } from "../api";
 import { deptApi } from "../api";
@@ -58,7 +58,13 @@ async function loadProfile() {
   }
 }
 
-onMounted(loadProfile);
+watch(
+  () => authStore.loginUser?.userId,
+  (userId) => {
+    if (userId) void loadProfile();
+  },
+  { immediate: true },
+);
 
 async function handleSave() {
   if (!form.realName) {

@@ -1,5 +1,7 @@
 package com.bkbits.admin.service;
 
+import com.bkbits.core.PageQuery;
+import com.bkbits.core.PageResult;
 import com.bkbits.dbo.entity.Notification;
 import com.bkbits.dbo.entity.NotificationRead;
 
@@ -42,6 +44,16 @@ public interface NotificationService {
      * @return 用户可接收的通知列表
      */
     List<Notification> listForUser(String userId, String deptId);
+
+    /**
+     * 分页查询指定用户可接收的站内、部门及用户通知。
+     *
+     * @param userId    用户编号
+     * @param deptId    用户所属部门编号；可为空
+     * @param pageQuery 分页参数
+     * @return 分页结果
+     */
+    PageResult<Notification> pageForUser(String userId, String deptId, PageQuery pageQuery);
 
     /**
      * 更新通知。
