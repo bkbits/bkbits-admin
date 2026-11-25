@@ -28,6 +28,13 @@
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon-web</artifactId>
+            <exclusions>
+                <!-- 项目统一使用 Jackson 序列化（见 bkbits-json JsonConfig） -->
+                <exclusion>
+                    <groupId>org.noear</groupId>
+                    <artifactId>solon-serialization-snack4</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

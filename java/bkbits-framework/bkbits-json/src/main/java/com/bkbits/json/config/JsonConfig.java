@@ -2,12 +2,16 @@ package com.bkbits.json.config;
 
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
+import org.noear.solon.Solon;
+import org.noear.solon.core.event.AppLoadEndEvent;
+import org.noear.solon.serialization.jackson.JacksonDecl;
 import org.noear.solon.serialization.jackson.JacksonStringSerializer;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -55,6 +59,15 @@ public class JsonConfig {
      */
     @Bean
     public void jacksonConfig(JacksonStringSerializer serializer) {
+        applyJacksonConfig(serializer);
+        // JacksonEntityConverter 可能在配置之后再注册 JavaTimeModule，应用加载完成后再覆盖一次
+        Solon.context().onEvent(AppLoadEndEvent.class, e -> applyJacksonConfig(serializer));
+    }
+
+    /**
+     * 应用序列化/反序列化定制，并立即重新注册自定义模块。
+     */
+    private void applyJacksonConfig(JacksonStringSerializer serializer) {
         //::序列化（渲染输出）
         serializer.addEncoder(Date.class,
                 s -> s.toInstant().atZone(ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
@@ -82,6 +95,11 @@ public class JsonConfig {
         // BigDecimal：字符串转回 BigDecimal（对应 toPlainString 输出）
         serializer.getDeserializeConfig().getCustomModule().addDeserializer(BigDecimal.class,
                 stringValueDeserializer(BigDecimal::new));
+
+        // 立即注册自定义模块，避免被后续注册的 JavaTimeModule 覆盖
+        JacksonDecl<SerializationFeature> serializeConfig = serializer.getSerializeConfig();
+        serializeConfig.getMapper().registerModule(serializeConfig.getCustomModule());
+        serializer.refresh();
     }
 
     /**

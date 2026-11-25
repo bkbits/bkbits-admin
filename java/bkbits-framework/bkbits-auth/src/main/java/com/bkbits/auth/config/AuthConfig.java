@@ -2,6 +2,8 @@ package com.bkbits.auth.config;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.dao.SaTokenDao;
+import cn.dev33.satoken.dao.SaTokenDaoForRedisx;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
@@ -12,9 +14,11 @@ import com.bkbits.auth.AuthProperties;
 import com.bkbits.core.Result;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
 import org.noear.solon.core.event.AppLoadEndEvent;
+import org.noear.redisx.RedisClient;
 
 import java.util.List;
 
@@ -40,6 +44,16 @@ public class AuthConfig {
             @Inject AuthProperties authProperties
     ) {
         return buildSaTokenConfig(authProperties);
+    }
+
+    /**
+     * 注册 sa-token 会话存储；存在 Redis 客户端时使用 Redis 持久化，
+     * 未配置缓存模块时回退到默认内存存储。
+     */
+    @Bean
+    @Condition(onBean = RedisClient.class)
+    public SaTokenDao saTokenDao(@Inject RedisClient redisClient) {
+        return new SaTokenDaoForRedisx(redisClient);
     }
 
     /**

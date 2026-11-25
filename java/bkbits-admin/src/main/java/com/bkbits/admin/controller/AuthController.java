@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaIgnore;
 import com.bkbits.admin.AdminParamConstants;
 import com.bkbits.admin.config.BkbitsAdminProperties;
 import com.bkbits.admin.pojo.LoginDTO;
+import com.bkbits.admin.pojo.RegisterDTO;
 import com.bkbits.admin.service.ParamService;
 import com.bkbits.admin.service.UserService;
 import com.bkbits.auth.LoginUser;
@@ -127,6 +128,42 @@ public class AuthController implements AdminParamConstants, BaseConstants {
         } finally {
             recordLoginLog(succeed, failReason, ip, userAgent, startTime, loginUserId);
         }
+    }
+
+    @ApiOperation("注册")
+    @Post
+    @SaIgnore
+    @Mapping("/register")
+    public Result<Void> register(@Validated @Body RegisterDTO registerDTO) {
+        String userName = StringUtil.trim(registerDTO.getUsername());
+        if (StringUtil.isBlank(userName)) {
+            return Result.fail("用户名不能为空");
+        }
+        if (userService.getByUserName(userName) != null) {
+            return Result.fail("用户名已存在");
+        }
+
+        String password;
+        try {
+            password = passwordEncrypt.decrypt(registerDTO.getPassword());
+        } catch (RuntimeException e) {
+            return Result.fail("密码格式错误");
+        }
+        if (StringUtil.isBlank(password)) {
+            return Result.fail("密码不能为空");
+        }
+
+        User user = new User();
+        user.setUserName(userName);
+        user.setPassword(passwordEncrypt.hash(password));
+        String realName = StringUtil.trim(registerDTO.getRealName());
+        user.setRealName(StringUtil.isBlank(realName) ? userName : realName);
+        user.setEmail(StringUtil.trim(registerDTO.getEmail()));
+        user.setPhone(StringUtil.trim(registerDTO.getPhone()));
+        user.setSex("U");
+        user.setStatus(STATUS_ENABLED);
+        userService.add(user, null);
+        return Result.ok();
     }
 
     @ApiOperation("注销登录")

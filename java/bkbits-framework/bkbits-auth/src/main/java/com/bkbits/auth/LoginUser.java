@@ -2,18 +2,22 @@ package com.bkbits.auth;
 
 import java.time.LocalDateTime;
 
+import cn.dev33.satoken.json.SaJsonType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @ApiModel("登录用户")
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginUser {
+public class LoginUser implements SaJsonType {
     @ApiModelProperty("令牌")
     private String token;
 
@@ -33,6 +37,5 @@ public class LoginUser {
     private String device;
 
     @ApiModelProperty("部门id")
-    @Setter
     private String deptId;
 }

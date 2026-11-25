@@ -157,7 +157,7 @@ route("POST", "/api/register", (ctx) => {
   db.users.push({
     userId: String(Number(db.users[db.users.length - 1]?.userId ?? "10000") + 1),
     userName: body.username,
-    password: body.password,
+    password: decryptPassword(body.password ?? ""),
     email: body.email,
     phone: body.phone,
     realName: body.realName ?? body.username,

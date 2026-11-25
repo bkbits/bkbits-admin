@@ -3,6 +3,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "antdv-next";
 import * as authApi from "../api/modules/auth";
+import { encryptPassword } from "../utils/password";
 
 const router = useRouter();
 
@@ -30,7 +31,7 @@ async function handleRegister() {
   try {
     const result = await authApi.register({
       username: form.username,
-      password: form.password,
+      password: await encryptPassword(form.password),
       realName: form.realName || undefined,
       email: form.email || undefined,
       phone: form.phone || undefined,
@@ -41,8 +42,11 @@ async function handleRegister() {
     } else {
       message.error(result.message);
     }
-  } catch {
-    // 错误提示已在 http 拦截器中统一处理
+  } catch (error) {
+    // 错误提示已在 http 拦截器中统一处理；加密失败单独提示
+    if (error instanceof Error && !("isAxiosError" in error)) {
+      message.error(error.message);
+    }
   } finally {
     loading.value = false;
   }
