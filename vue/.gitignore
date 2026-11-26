@@ -25,3 +25,6 @@ dist-ssr
 !.vscode/
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# Windows 保留名误建文件
+nul
