@@ -41,6 +41,11 @@ public class AuthProperties {
     private Long tti = 30 * 60L;
 
     /**
+     * 是否为持久 cookie
+     */
+    private boolean isLastingCookie = false;
+
+    /**
      * 是否允许同一账号多地同时登录（true 允许一起登录，false 新登录挤掉旧登录）
      */
     private boolean concurrent = true;

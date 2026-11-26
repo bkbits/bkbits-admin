@@ -3,6 +3,28 @@
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 
+/** 登录 token 名称（与后端 Sa-Token 的 tokenName 一致，同时也是 cookie 名） */
+export const TOKEN_NAME = "bkbits-token";
+
+/** 从 Cookie 请求头中读取指定名称的值（不存在返回空字符串） */
+export function readCookie(req: IncomingMessage, name: string): string {
+  const header = req.headers.cookie;
+  if (!header) return "";
+  for (const part of header.split(";")) {
+    const index = part.indexOf("=");
+    if (index < 0) continue;
+    if (part.slice(0, index).trim() === name) {
+      return decodeURIComponent(part.slice(index + 1).trim());
+    }
+  }
+  return "";
+}
+
+/** 生成登录 token 的 Set-Cookie 值；maxAge 为 0 时清除 cookie */
+export function tokenCookie(token: string, maxAge = 2592000): string {
+  return `${TOKEN_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
 /** 请求上下文 */
 export interface MockContext {
   req: IncomingMessage;
@@ -13,7 +35,7 @@ export interface MockContext {
   body: Record<string, unknown>;
   /** multipart 中提取的文件信息 */
   files: { field: string; filename: string }[];
-  /** 当前登录 token（bkbits-token 头） */
+  /** 当前登录 token（bkbits-token cookie） */
   token?: string;
 }
 

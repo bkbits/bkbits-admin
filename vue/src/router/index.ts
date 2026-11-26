@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
-import { TOKEN_KEY } from "@/api/http";
 
 /** 权限 component 字段 → 路由路径 映射（与后端权限表 component 字段对应） */
 export const MENU_ROUTE_MAP: Record<string, string> = {
@@ -116,18 +115,8 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
-  const token = localStorage.getItem(TOKEN_KEY);
-  if (to.name !== "login" && to.name !== "register" && !token) {
-    return { name: "login", query: { redirect: to.fullPath } };
-  }
-  if ((to.name === "login" || to.name === "register") && token) {
-    return { name: "dashboard" };
-  }
-  return true;
-});
-
 router.afterEach((to) => {
-  const title = typeof to.meta.title === "string" ? to.meta.title : "bkbits-admin";
-  document.title = `${title} - bkbits-admin`;
+  const appTitle = import.meta.env.VITE_TITLE;
+  const title = typeof to.meta.title === "string" ? to.meta.title : appTitle;
+  document.title = `${title} - ${appTitle}`;
 });

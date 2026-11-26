@@ -2,29 +2,16 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { message } from "antdv-next";
 import type { Result } from "@/api/types";
 
-/** 本地存储 token 的键名 */
-export const TOKEN_KEY = "bkbits-admin-token";
-
 /** 创建 axios 实例 */
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API,
   timeout: 15000,
 });
 
-// 请求拦截：自动附带登录 token（后端 Sa-Token 头名为 bkbits-token）
-instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem(TOKEN_KEY);
-  if (token) {
-    config.headers["bkbits-token"] = token;
-  }
-  return config;
-});
-
 /** 登录失效：清理本地令牌并跳转登录页（并发请求只处理一次） */
 let redirectingToLogin = false;
 
 function handleUnauthorized() {
-  localStorage.removeItem(TOKEN_KEY);
   if (redirectingToLogin || window.location.pathname === "/login") return;
   redirectingToLogin = true;
   message.error("登录已过期，请重新登录");

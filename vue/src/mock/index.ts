@@ -1,6 +1,6 @@
 /**
  * bkbits-admin mock 服务器插件。
- * 在 Vite dev / preview 服务器中拦截 /* 请求，
+ * 在 Vite dev / preview 服务器中拦截 /api/* 请求，
  * 以内存数据实现后端 Swagger 全部接口（后端暂无数据，前端联调使用）。
  *
  * 注意：本目录被 vite.config.ts 在加载配置阶段静态引入，此时 resolve.alias 尚未生效，
@@ -9,7 +9,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Connect } from "vite-plus";
 import type { Plugin } from "vite-plus";
-import { extractFilenames, fail, readBody, type MockContext } from "./helpers";
+import {
+  extractFilenames,
+  fail,
+  readBody,
+  readCookie,
+  TOKEN_NAME,
+  type MockContext,
+} from "./helpers";
 import { routes } from "./router";
 
 /** 无需登录即可访问的接口 */
@@ -17,8 +24,9 @@ const PUBLIC_PATHS = new Set(["/login", "/register", "/publicKey"]);
 
 async function handleMockRequest(req: IncomingMessage, res: ServerResponse): Promise<boolean> {
   const url = new URL(req.url ?? "/", "http://localhost");
-  const pathname = url.pathname;
-  if (!pathname.startsWith("/")) return false;
+  // 前端请求统一带 /api 前缀（与后端一致），mock 路由表不含该前缀
+  if (!url.pathname.startsWith("/api/")) return false;
+  const pathname = url.pathname.slice(4);
 
   const method = (req.method ?? "GET").toUpperCase();
   const route = routes.find((r) => r.method === method && r.path === pathname);
@@ -30,8 +38,8 @@ async function handleMockRequest(req: IncomingMessage, res: ServerResponse): Pro
     return true;
   }
 
-  // 鉴权（白名单除外）：token 头名与后端 Sa-Token 配置一致
-  const token = String(req.headers["bkbits-token"] ?? "");
+  // 鉴权（白名单除外）：token 由后端写入 bkbits-token cookie，前端不显式管理
+  const token = readCookie(req, TOKEN_NAME);
   if (!PUBLIC_PATHS.has(pathname) && !token) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.statusCode = 200;

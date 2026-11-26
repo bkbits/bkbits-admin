@@ -7,6 +7,8 @@
 interface ImportMetaEnv {
   /** 接口请求前缀，例如 /api */
   readonly VITE_API: string;
+  /** 应用标题名 */
+  readonly VITE_TITLE: string;
 }
 
 declare module "*.vue" {

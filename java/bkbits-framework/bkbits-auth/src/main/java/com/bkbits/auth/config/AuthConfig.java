@@ -114,6 +114,8 @@ public class AuthConfig {
         SaTokenConfig config = new SaTokenConfig();
         // token 名称（同时也是 cookie 名称）
         config.setTokenName(authProperties.getTokenName());
+        // 设置是否为持久化cookie
+        config.setIsLastingCookie(authProperties.isLastingCookie());
         // token 有效期（单位：秒），默认30天，-1代表永不过期
         config.setTimeout(authProperties.getTimeout());
         // token 最低活跃频率（单位：秒），超过此时间未访问会被冻结，默认30分钟，-1代表不限制

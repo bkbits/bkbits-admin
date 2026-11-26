@@ -1,12 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import * as authApi from "@/api/modules/auth";
-import { TOKEN_KEY } from "@/api/http";
 import type { LoginDTO, LoginUser } from "@/api/types";
 
-/** 认证状态：token + 当前登录用户 */
+/** 认证状态：当前登录用户（凭证由后端通过 cookie 维护） */
 export const useAuthStore = defineStore("auth", () => {
-  const token = ref<string>(localStorage.getItem(TOKEN_KEY) ?? "");
   const loginUser = ref<LoginUser | null>(null);
 
   /** 登录 */
@@ -16,17 +14,14 @@ export const useAuthStore = defineStore("auth", () => {
       throw new Error(result.message || "登录失败");
     }
     const data = result.data;
-    if (!data?.token) {
-      throw new Error("登录失败：未返回令牌");
+    if (!data) {
+      throw new Error("登录失败：未返回登录用户信息");
     }
-    token.value = data.token;
     loginUser.value = data;
-    localStorage.setItem(TOKEN_KEY, token.value);
   }
 
   /** 拉取当前登录用户信息（页面刷新后恢复会话） */
   async function fetchLoginUser() {
-    if (!token.value) return;
     const result = await authApi.getLoginUser();
     loginUser.value = result.data ?? null;
   }
@@ -38,10 +33,8 @@ export const useAuthStore = defineStore("auth", () => {
     } catch {
       // 忽略注销接口异常，继续清理本地状态
     }
-    token.value = "";
     loginUser.value = null;
-    localStorage.removeItem(TOKEN_KEY);
   }
 
-  return { token, loginUser, login, fetchLoginUser, logout };
+  return { loginUser, login, fetchLoginUser, logout };
 });

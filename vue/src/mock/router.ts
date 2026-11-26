@@ -4,7 +4,7 @@
  */
 import type { Dept, Dict, Permission, Role, User } from "../api/types";
 import type { MockContext } from "./helpers";
-import { fail, filterRows, now, ok, paginate } from "./helpers";
+import { fail, filterRows, now, ok, paginate, tokenCookie } from "./helpers";
 import { db, DATA_SCOPE_DEFS, type MockUser } from "./store";
 import { constants, generateKeyPairSync, privateDecrypt } from "node:crypto";
 
@@ -121,6 +121,8 @@ route("POST", "/login", (ctx) => {
   }
   const token = `mock-token-${user.userId}-${Date.now()}`;
   db.tokens.set(token, user.userId ?? "");
+  // 与后端 cookie 授权对齐：token 只写入 HttpOnly cookie，不交给前端脚本
+  ctx.res.setHeader("Set-Cookie", tokenCookie(token));
   db.onlineUsers = db.onlineUsers.filter((o) => o.userId !== user.userId);
   db.onlineUsers.unshift({
     token,
@@ -191,6 +193,7 @@ route("POST", "/logout", (ctx) => {
       db.onlineUsers = db.onlineUsers.filter((o) => o.userId !== userId);
     }
   }
+  ctx.res.setHeader("Set-Cookie", tokenCookie("", 0));
   return ok(null, "注销成功");
 });
 

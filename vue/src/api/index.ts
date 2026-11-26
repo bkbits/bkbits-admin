@@ -4,7 +4,7 @@
  * - http：axios 实例
  * - modules/*：按业务模块组织的接口定义（含 mock 扩展，见各文件注释）
  */
-export { http, TOKEN_KEY } from "@/api/http";
+export { http } from "@/api/http";
 export { defineGet, defineMultipart, definePagePost, definePost, defineQuery } from "@/api/define";
 export type { EmptyResult } from "@/api/modules/auth";
 
