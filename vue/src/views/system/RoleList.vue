@@ -111,8 +111,6 @@ async function handleSubmit() {
       message.success(result.message);
       modalVisible.value = false;
       void loadList();
-    } else {
-      message.error(result.message);
     }
   } finally {
     submitting.value = false;
@@ -133,8 +131,6 @@ function handleRemove(record: Role) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });
@@ -200,8 +196,6 @@ async function handlePermissionSubmit() {
     if (result.ok) {
       message.success(result.message);
       permissionVisible.value = false;
-    } else {
-      message.error(result.message);
     }
   } finally {
     permissionSubmitting.value = false;
@@ -274,8 +268,6 @@ async function handleDataScopeSubmit() {
     if (result.ok) {
       message.success(result.message);
       dataScopeVisible.value = false;
-    } else {
-      message.error(result.message);
     }
   } finally {
     dataScopeSubmitting.value = false;

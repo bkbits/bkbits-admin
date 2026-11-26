@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
-import { message } from "antdv-next";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { deptApi } from "../../api";
 import { userApi } from "../../api";
@@ -29,8 +28,6 @@ async function loadList() {
     if (result.ok) {
       rows.value = result.data?.rows ?? [];
       total.value = result.data?.total ?? 0;
-    } else {
-      message.error(result.message);
     }
   } finally {
     loading.value = false;

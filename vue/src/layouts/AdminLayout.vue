@@ -252,8 +252,6 @@ async function submitPassword() {
       message.success("密码修改成功，请重新登录");
       passwordVisible.value = false;
       await handleLogout();
-    } else {
-      message.error(result.message);
     }
   } finally {
     passwordSubmitting.value = false;
@@ -593,27 +591,29 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
   }
 }
 
-.sider-menu {
+// a-menu 的 class 落在内部 ul 上，该 ul 不带作用域属性，故用 :deep 匹配
+:deep(.sider-menu) {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: transparent;
   border-inline-end: 0;
 
-  :deep(.ant-menu-sub) {
+  .ant-menu-sub {
     background: #121626;
   }
-  :deep(.ant-menu-item),
-  :deep(.ant-menu-submenu-title) {
+  .ant-menu-item,
+  .ant-menu-submenu-title {
     width: calc(100% - 16px);
     height: 38px;
     margin: 3px 8px;
     color: #c3cce0;
   }
-  :deep(.ant-menu-item-disabled) {
+  .ant-menu-item-disabled {
     color: #929bb0 !important;
   }
-  :deep(.ant-menu-item-selected) {
+  .ant-menu-item-selected {
     color: #fff;
     background: #48418b;
     font-weight: 650;

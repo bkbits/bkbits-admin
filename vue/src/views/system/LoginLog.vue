@@ -66,8 +66,6 @@ function handleRemove(record: LoginLogVO) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });

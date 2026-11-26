@@ -36,11 +36,8 @@ async function handleLogin() {
     message.success("登录成功");
     const redirect = (route.query.redirect as string) || "/dashboard";
     router.push(redirect);
-  } catch (error) {
-    // HTTP 错误已由 http 拦截器提示，这里只提示业务错误（如用户名或密码错误）
-    if (error instanceof Error && !("isAxiosError" in error)) {
-      message.error(error.message);
-    }
+  } catch {
+    // 失败信息（含用户名或密码错误）已由 http 拦截器统一提示
   } finally {
     loading.value = false;
   }

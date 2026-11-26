@@ -163,8 +163,6 @@ async function handleSubmit() {
       message.success(result.message);
       modalVisible.value = false;
       void loadList();
-    } else {
-      message.error(result.message);
     }
   } finally {
     submitting.value = false;
@@ -209,8 +207,6 @@ async function handleBindSubmit() {
     if (result.ok) {
       message.success(result.message);
       bindVisible.value = false;
-    } else {
-      message.error(result.message);
     }
   } finally {
     bindSubmitting.value = false;
@@ -244,8 +240,6 @@ async function handlePwdSubmit() {
     if (result.ok) {
       message.success(result.message);
       pwdVisible.value = false;
-    } else {
-      message.error(result.message);
     }
   } finally {
     pwdSubmitting.value = false;
@@ -266,8 +260,6 @@ function handleRemove(record: User) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });

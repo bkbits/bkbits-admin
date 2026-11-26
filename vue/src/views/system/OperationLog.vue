@@ -71,8 +71,6 @@ function handleRemove(record: OperationLogVO) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });

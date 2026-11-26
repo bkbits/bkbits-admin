@@ -99,8 +99,6 @@ async function handleSave() {
       profile.value = { ...profile.value, ...data };
       editing.value = false;
       await Promise.allSettled([authStore.fetchLoginUser(), loadProfile()]);
-    } else {
-      message.error(result.message || "保存失败");
     }
   } finally {
     saving.value = false;

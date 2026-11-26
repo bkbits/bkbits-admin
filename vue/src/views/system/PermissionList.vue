@@ -149,8 +149,6 @@ async function handleSubmit() {
       message.success(result.message);
       modalVisible.value = false;
       void loadList();
-    } else {
-      message.error(result.message);
     }
   } finally {
     submitting.value = false;
@@ -171,8 +169,6 @@ function handleRemove(record: Permission) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });

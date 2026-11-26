@@ -121,8 +121,6 @@ async function handleSubmit() {
       message.success(result.message);
       modalVisible.value = false;
       void loadList();
-    } else {
-      message.error(result.message);
     }
   } finally {
     submitting.value = false;
@@ -143,8 +141,6 @@ function handleRemove(record: Dict) {
       if (result.ok) {
         message.success(result.message);
         void loadList();
-      } else {
-        message.error(result.message);
       }
     },
   });
@@ -250,8 +246,6 @@ async function handleValueSubmit() {
       message.success(result.message);
       valueModalVisible.value = false;
       void loadDictValues();
-    } else {
-      message.error(result.message);
     }
   } finally {
     valueSubmitting.value = false;
@@ -272,8 +266,6 @@ function handleValueRemove(record: DictValueVO) {
       if (result.ok) {
         message.success(result.message);
         void loadDictValues();
-      } else {
-        message.error(result.message);
       }
     },
   });

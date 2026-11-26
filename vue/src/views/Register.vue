@@ -40,8 +40,6 @@ async function handleRegister() {
     if (result.ok) {
       message.success("注册成功，请登录");
       router.push("/login");
-    } else {
-      message.error(result.message);
     }
   } catch (error) {
     // 错误提示已在 http 拦截器中统一处理；加密失败单独提示
