@@ -13,9 +13,9 @@ import {
   Users,
   Wifi,
 } from "@lucide/vue";
-import { deptApi, dictApi, logApi, paramApi, roleApi, userApi } from "../api";
-import type { LoginLogVO } from "../api/modules/log";
-import { useAuthStore } from "../stores/auth";
+import { deptApi, dictApi, logApi, paramApi, roleApi, userApi } from "@/api";
+import type { LoginLogVO } from "@/api/modules/log";
+import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
 const today = new Date();

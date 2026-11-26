@@ -2,7 +2,7 @@
 import { computed, watchEffect } from "vue";
 import { ConfigProvider, theme as antdTheme } from "antdv-next";
 import zhCN from "antdv-next/locale/zh_CN";
-import { useAppStore } from "./stores/app";
+import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
 

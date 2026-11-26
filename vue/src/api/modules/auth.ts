@@ -1,17 +1,17 @@
-import { defineGet, definePagePost, definePost } from "../define";
-import type { LoginDTO, LoginUser, PageParams, Result, UserQueryDTO } from "../types";
+import { defineGet, definePagePost, definePost } from "@/api/define";
+import type { LoginDTO, LoginUser, PageParams, Result, UserQueryDTO } from "@/api/types";
 
 /** 登录 */
-export const login = definePost<LoginDTO, LoginUser>("/api/login");
+export const login = definePost<LoginDTO, LoginUser>("/login");
 
 /** 注销登录 */
-export const logout = definePost<Record<string, never>, unknown>("/api/logout");
+export const logout = definePost<Record<string, never>, unknown>("/logout");
 
 /** 获取当前登录用户 */
-export const getLoginUser = defineGet<Record<string, never>, LoginUser>("/api/loginUser");
+export const getLoginUser = defineGet<Record<string, never>, LoginUser>("/loginUser");
 
 /** 获取 RSA 公钥（用于登录密码加密） */
-export const getPublicKey = defineGet<Record<string, never>, string>("/api/publicKey");
+export const getPublicKey = defineGet<Record<string, never>, string>("/publicKey");
 
 /** 注册入参（mock 扩展：在登录 DTO 基础上增加姓名） */
 export interface RegisterDTO extends LoginDTO {
@@ -22,11 +22,11 @@ export interface RegisterDTO extends LoginDTO {
  * 注册（mock 扩展接口：后端 Swagger 未提供注册接口，
  * 依据 AGENTS.md 菜单「注册」补充，mock 层实现）。
  */
-export const register = definePost<RegisterDTO, unknown>("/api/register");
+export const register = definePost<RegisterDTO, unknown>("/register");
 
 /** 分页查询在线用户 */
 export const queryLoginUser = definePagePost<UserQueryDTO & PageParams, LoginUser>(
-  "/api/sys/user/queryLoginUser",
+  "/sys/user/queryLoginUser",
 );
 
 /** 空响应类型 */

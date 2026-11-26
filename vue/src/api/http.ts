@@ -1,13 +1,13 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import { message } from "antdv-next";
-import type { Result } from "./types";
+import type { Result } from "@/api/types";
 
 /** 本地存储 token 的键名 */
 export const TOKEN_KEY = "bkbits-admin-token";
 
 /** 创建 axios 实例 */
 const instance = axios.create({
-  baseURL: "/",
+  baseURL: import.meta.env.VITE_API,
   timeout: 15000,
 });
 

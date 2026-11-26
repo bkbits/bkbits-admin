@@ -1,5 +1,5 @@
-import { defineGet, definePost, defineQuery } from "../define";
-import type { IdDTO, PageParams } from "../types";
+import { defineGet, definePost, defineQuery } from "@/api/define";
+import type { IdDTO, PageParams } from "@/api/types";
 
 /** 登录日志 */
 export interface LoginLogVO {
@@ -97,26 +97,26 @@ export interface OperationLogQueryDTO {
 
 /** 分页查询登录日志 */
 export const queryLoginLog = defineQuery<LoginLogQueryDTO & PageParams, LoginLogVO>(
-  "/api/sys/log/login/query",
+  "/sys/log/login/query",
 );
 
 /** 按编号查询登录日志 */
-export const getLoginLogById = defineGet<{ id: string }, LoginLogVO>("/api/sys/log/login/getById");
+export const getLoginLogById = defineGet<{ id: string }, LoginLogVO>("/sys/log/login/getById");
 
 /** 按编号删除登录日志 */
-export const removeLoginLog = definePost<IdDTO, unknown>("/api/sys/log/login/remove");
+export const removeLoginLog = definePost<IdDTO, unknown>("/sys/log/login/remove");
 
 /* ------------------------------ 操作日志 ------------------------------ */
 
 /** 分页查询操作日志 */
 export const queryOperationLog = defineQuery<OperationLogQueryDTO & PageParams, OperationLogVO>(
-  "/api/sys/log/operation/query",
+  "/sys/log/operation/query",
 );
 
 /** 按编号查询操作日志 */
 export const getOperationLogById = defineGet<{ id: string }, OperationLogVO>(
-  "/api/sys/log/operation/getById",
+  "/sys/log/operation/getById",
 );
 
 /** 按编号删除操作日志 */
-export const removeOperationLog = definePost<IdDTO, unknown>("/api/sys/log/operation/remove");
+export const removeOperationLog = definePost<IdDTO, unknown>("/sys/log/operation/remove");

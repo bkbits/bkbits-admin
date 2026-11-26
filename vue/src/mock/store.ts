@@ -1107,11 +1107,11 @@ function seed() {
   const modules = ["部门管理", "用户管理", "角色管理", "菜单管理", "字典管理", "参数管理", "认证"];
   const actions = ["新增", "修改", "删除", "查询"];
   const urls = [
-    "/api/sys/user/query",
-    "/api/sys/role/update",
-    "/api/sys/dept/add",
-    "/api/sys/param/update",
-    "/api/sys/dict/add",
+    "/sys/user/query",
+    "/sys/role/update",
+    "/sys/dept/add",
+    "/sys/param/update",
+    "/sys/dict/add",
   ];
   for (let i = 0; i < 30; i += 1) {
     const module = modules[i % modules.length];

@@ -1,5 +1,5 @@
-import { http } from "./http";
-import type { PageData, Result } from "./types";
+import { http } from "@/api/http";
+import type { PageData, Result } from "@/api/types";
 
 /**
  * 将后端分页响应适配为 { rows, total }：
@@ -22,7 +22,7 @@ function toPageResult<Row>(result: Result<Row[] | PageData<Row>>): Result<PageDa
 
 /**
  * defineQuery —— GET 分页查询（query 参数），返回统一的分页数据体。
- * 例：const queryDept = defineQuery<DeptQueryDTO & PageParams, Dept>("/api/sys/dept/query");
+ * 例：const queryDept = defineQuery<DeptQueryDTO & PageParams, Dept>("/sys/dept/query");
  */
 export function defineQuery<Params, Row>(url: string) {
   return async (params?: Params): Promise<Result<PageData<Row>>> =>
@@ -31,7 +31,7 @@ export function defineQuery<Params, Row>(url: string) {
 
 /**
  * definePagePost —— POST 分页查询（JSON body），返回统一的分页数据体。
- * 例：const queryLoginUser = definePagePost<UserQueryDTO & PageParams, LoginUser>("/api/sys/user/queryLoginUser");
+ * 例：const queryLoginUser = definePagePost<UserQueryDTO & PageParams, LoginUser>("/sys/user/queryLoginUser");
  */
 export function definePagePost<Body, Row>(url: string) {
   return async (data?: Body): Promise<Result<PageData<Row>>> =>
@@ -40,7 +40,7 @@ export function definePagePost<Body, Row>(url: string) {
 
 /**
  * defineGet —— GET 获取（query 参数），用于按编号/键查询单条数据接口。
- * 例：const getDept = defineGet<{ deptId: string }, DeptVO>("/api/sys/dept/getById");
+ * 例：const getDept = defineGet<{ deptId: string }, DeptVO>("/sys/dept/getById");
  */
 export function defineGet<Params, T>(url: string) {
   return (params?: Params): Promise<Result<T>> => http.get<T>(url, { params });
@@ -48,7 +48,7 @@ export function defineGet<Params, T>(url: string) {
 
 /**
  * definePost —— POST JSON 提交，用于新增/修改/删除等写操作接口。
- * 例：const addDept = definePost<DeptAddDTO, unknown>("/api/sys/dept/add");
+ * 例：const addDept = definePost<DeptAddDTO, unknown>("/sys/dept/add");
  */
 export function definePost<Body, T = unknown>(url: string) {
   return (data?: Body): Promise<Result<T>> => http.post<T>(url, data);
@@ -57,7 +57,7 @@ export function definePost<Body, T = unknown>(url: string) {
 /**
  * defineMultipart —— POST multipart/form-data 上传，用于文件上传接口。
  * query 参数通过第二个参数传入，文件放入 FormData。
- * 例：const upload = defineMultipart<{ hash: string }, UploadFile>("/api/file/upload");
+ * 例：const upload = defineMultipart<{ hash: string }, UploadFile>("/file/upload");
  *     upload(formData, { hash: "..." })
  */
 export function defineMultipart<Query, T = unknown>(url: string) {

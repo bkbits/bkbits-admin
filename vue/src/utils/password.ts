@@ -1,5 +1,5 @@
 import JSEncrypt from "jsencrypt";
-import { authApi } from "../api";
+import { authApi } from "@/api";
 
 /** 公钥缓存：同一页面会话内只请求一次 */
 let publicKeyPromise: Promise<string> | null = null;

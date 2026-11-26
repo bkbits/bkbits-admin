@@ -2,13 +2,13 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Database, Pencil, ShieldCheck, Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { roleApi } from "../../api";
-import { permissionApi } from "../../api";
-import { dataScopeApi } from "../../api";
-import type { DataScopeVO, Permission, Role } from "../../api/types";
-import { STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { roleApi } from "@/api";
+import { permissionApi } from "@/api";
+import { dataScopeApi } from "@/api";
+import type { DataScopeVO, Permission, Role } from "@/api/types";
+import { STATUS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -317,7 +317,7 @@ async function handleDataScopeSubmit() {
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 90 },
           { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 260 },
+          { title: '操作', key: 'action', width: 260, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -336,6 +336,7 @@ async function handleDataScopeSubmit() {
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'status'">

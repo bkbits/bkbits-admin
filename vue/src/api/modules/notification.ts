@@ -1,5 +1,5 @@
-import { defineGet } from "../define";
-import type { Notification, PageData, PageParams } from "../types";
+import { defineGet } from "@/api/define";
+import type { Notification, PageData, PageParams } from "@/api/types";
 
 /**
  * 通知公告（mock 扩展接口：后端 Swagger 仅有 Notification 实体，
@@ -7,6 +7,4 @@ import type { Notification, PageData, PageParams } from "../types";
  */
 
 /** 分页查询通知 */
-export const listNotification = defineGet<PageParams, PageData<Notification>>(
-  "/api/notification/list",
-);
+export const listNotification = defineGet<PageParams, PageData<Notification>>("/notification/list");

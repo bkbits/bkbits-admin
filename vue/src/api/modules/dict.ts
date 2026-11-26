@@ -1,4 +1,4 @@
-import { defineGet, definePost, defineQuery } from "../define";
+import { defineGet, definePost, defineQuery } from "@/api/define";
 import type {
   Dict,
   DictAddDTO,
@@ -10,35 +10,31 @@ import type {
   DictVO,
   IdDTO,
   PageParams,
-} from "../types";
+} from "@/api/types";
 
 /** 分页查询系统字典 */
-export const queryDict = defineQuery<DictQueryDTO & PageParams, Dict>("/api/sys/dict/query");
+export const queryDict = defineQuery<DictQueryDTO & PageParams, Dict>("/sys/dict/query");
 
 /** 按字典键查询字典 */
-export const getDictByKey = defineGet<{ dictKey: string }, DictVO>("/api/sys/dict/getByKey");
+export const getDictByKey = defineGet<{ dictKey: string }, DictVO>("/sys/dict/getByKey");
 
 /** 新增系统字典 */
-export const addDict = definePost<DictAddDTO, unknown>("/api/sys/dict/add");
+export const addDict = definePost<DictAddDTO, unknown>("/sys/dict/add");
 
 /** 更新系统字典 */
-export const updateDict = definePost<DictUpdateDTO, unknown>("/api/sys/dict/update");
+export const updateDict = definePost<DictUpdateDTO, unknown>("/sys/dict/update");
 
 /** 删除系统字典 */
-export const removeDict = definePost<IdDTO, unknown>("/api/sys/dict/remove");
+export const removeDict = definePost<IdDTO, unknown>("/sys/dict/remove");
 
 /** 查询字典值列表 */
-export const listDictValue = defineGet<{ dictKey: string }, DictValueVO[]>(
-  "/api/sys/dict/value/list",
-);
+export const listDictValue = defineGet<{ dictKey: string }, DictValueVO[]>("/sys/dict/value/list");
 
 /** 新增字典值 */
-export const addDictValue = definePost<DictValueAddDTO, unknown>("/api/sys/dict/value/add");
+export const addDictValue = definePost<DictValueAddDTO, unknown>("/sys/dict/value/add");
 
 /** 更新字典值 */
-export const updateDictValue = definePost<DictValueUpdateDTO, unknown>(
-  "/api/sys/dict/value/update",
-);
+export const updateDictValue = definePost<DictValueUpdateDTO, unknown>("/sys/dict/value/update");
 
 /** 删除字典值 */
-export const removeDictValue = definePost<IdDTO, unknown>("/api/sys/dict/value/remove");
+export const removeDictValue = definePost<IdDTO, unknown>("/sys/dict/value/remove");

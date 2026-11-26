@@ -96,7 +96,7 @@ function decryptPassword(password: string): string {
   }
 }
 
-route("POST", "/api/login", (ctx) => {
+route("POST", "/login", (ctx) => {
   const { username, phone, email, password } = ctx.body as Record<string, string>;
   const user = db.users.find(
     (u) =>
@@ -146,7 +146,7 @@ route("POST", "/api/login", (ctx) => {
   return ok(online, "登录成功");
 });
 
-route("POST", "/api/register", (ctx) => {
+route("POST", "/register", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.username || !body.password) {
     return fail("用户名与密码不能为空", 400);
@@ -183,7 +183,7 @@ route("POST", "/api/register", (ctx) => {
   return ok(null, "注册成功");
 });
 
-route("POST", "/api/logout", (ctx) => {
+route("POST", "/logout", (ctx) => {
   if (ctx.token) {
     const userId = db.tokens.get(ctx.token);
     db.tokens.delete(ctx.token);
@@ -194,18 +194,18 @@ route("POST", "/api/logout", (ctx) => {
   return ok(null, "注销成功");
 });
 
-route("GET", "/api/loginUser", (ctx) => {
+route("GET", "/loginUser", (ctx) => {
   const user = currentUser(ctx);
   if (!user) return fail("未登录或登录已过期", 401);
   const online = db.onlineUsers.find((o) => o.userId === user.userId);
   return ok(online ?? null);
 });
 
-route("GET", "/api/publicKey", () => ok(mockPublicKey));
+route("GET", "/publicKey", () => ok(mockPublicKey));
 
 /* ------------------------------ 用户 ------------------------------ */
 
-route("GET", "/api/sys/user/query", (ctx) => {
+route("GET", "/sys/user/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.users.map(toPublicUser), query);
   return ok(paginate(rows, page, pageSize));
@@ -220,14 +220,12 @@ function findUserBy(key: string, value: string) {
   return ok(toVO(toPublicUser(user)));
 }
 
-route("GET", "/api/sys/user/getByUserId", (ctx) => findUserBy("userId", ctx.query.userId ?? ""));
-route("GET", "/api/sys/user/getByUserName", (ctx) =>
-  findUserBy("userName", ctx.query.userName ?? ""),
-);
-route("GET", "/api/sys/user/getByEmail", (ctx) => findUserBy("email", ctx.query.email ?? ""));
-route("GET", "/api/sys/user/getByPhone", (ctx) => findUserBy("phone", ctx.query.phone ?? ""));
+route("GET", "/sys/user/getByUserId", (ctx) => findUserBy("userId", ctx.query.userId ?? ""));
+route("GET", "/sys/user/getByUserName", (ctx) => findUserBy("userName", ctx.query.userName ?? ""));
+route("GET", "/sys/user/getByEmail", (ctx) => findUserBy("email", ctx.query.email ?? ""));
+route("GET", "/sys/user/getByPhone", (ctx) => findUserBy("phone", ctx.query.phone ?? ""));
 
-route("POST", "/api/sys/user/add", (ctx) => {
+route("POST", "/sys/user/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.userName) return fail("用户名不能为空", 400);
   if (db.users.some((u) => u.userName === body.userName)) return fail("用户名已存在", 400);
@@ -250,7 +248,7 @@ route("POST", "/api/sys/user/add", (ctx) => {
   return ok(null, "新增用户成功");
 });
 
-route("POST", "/api/sys/user/update", (ctx) => {
+route("POST", "/sys/user/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const user = db.users.find((u) => u.userId === body.userId);
   if (!user) return fail("用户不存在", 404);
@@ -270,7 +268,7 @@ route("POST", "/api/sys/user/update", (ctx) => {
   return ok(null, "更新用户成功");
 });
 
-route("POST", "/api/sys/user/remove", (ctx) => {
+route("POST", "/sys/user/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const user = db.users.find((u) => u.userId === id);
   if (!user) return fail("用户不存在", 404);
@@ -282,7 +280,7 @@ route("POST", "/api/sys/user/remove", (ctx) => {
   return ok(null, "删除用户成功");
 });
 
-route("POST", "/api/sys/user/resetPassword", (ctx) => {
+route("POST", "/sys/user/resetPassword", (ctx) => {
   const { userId, password } = ctx.body as { userId: string; password: string };
   const user = db.users.find((u) => u.userId === userId);
   if (!user) return fail("用户不存在", 404);
@@ -294,7 +292,7 @@ route("POST", "/api/sys/user/resetPassword", (ctx) => {
   return ok(null, "重置密码成功");
 });
 
-route("POST", "/api/sys/user/bindRole", (ctx) => {
+route("POST", "/sys/user/bindRole", (ctx) => {
   const { userId, roleIds } = ctx.body as { userId: string; roleIds: string[] };
   const user = db.users.find((u) => u.userId === userId);
   if (!user) return fail("用户不存在", 404);
@@ -303,13 +301,13 @@ route("POST", "/api/sys/user/bindRole", (ctx) => {
   return ok(null, "绑定角色成功");
 });
 
-route("GET", "/api/sys/user/listRoles", (ctx) => {
+route("GET", "/sys/user/listRoles", (ctx) => {
   const { userId } = ctx.query;
   const roleIds = db.roleBindings.get(userId ?? "") ?? [];
   return ok(db.roles.filter((r) => roleIds.includes(r.id ?? "")));
 });
 
-route("POST", "/api/sys/user/queryLoginUser", (ctx) => {
+route("POST", "/sys/user/queryLoginUser", (ctx) => {
   const body = (ctx.body ?? {}) as Record<string, string>;
   const page = body.page ?? ctx.query.page;
   const pageSize = body.pageSize ?? ctx.query.pageSize;
@@ -318,7 +316,7 @@ route("POST", "/api/sys/user/queryLoginUser", (ctx) => {
   return ok(paginate(rows, page, pageSize));
 });
 
-route("POST", "/api/sys/user/updateMyPassword", (ctx) => {
+route("POST", "/sys/user/updateMyPassword", (ctx) => {
   const user = currentUser(ctx);
   if (!user) return fail("未登录或登录已过期", 401);
   const { oldPassword, password } = ctx.body as { oldPassword: string; password: string };
@@ -333,19 +331,19 @@ route("POST", "/api/sys/user/updateMyPassword", (ctx) => {
 
 /* ------------------------------ 角色 ------------------------------ */
 
-route("GET", "/api/sys/role/query", (ctx) => {
+route("GET", "/sys/role/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.roles, query);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/role/getById", (ctx) => {
+route("GET", "/sys/role/getById", (ctx) => {
   const role = db.roles.find((r) => r.id === ctx.query.id);
   if (!role) return fail("角色不存在", 404);
   return ok(toVO(role));
 });
 
-route("POST", "/api/sys/role/add", (ctx) => {
+route("POST", "/sys/role/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.name) return fail("角色名不能为空", 400);
   if (db.roles.some((r) => r.code === body.code)) return fail("角色代码已存在", 400);
@@ -365,7 +363,7 @@ route("POST", "/api/sys/role/add", (ctx) => {
   return ok(null, "新增角色成功");
 });
 
-route("POST", "/api/sys/role/update", (ctx) => {
+route("POST", "/sys/role/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const role = db.roles.find((r) => r.id === body.id);
   if (!role) return fail("角色不存在", 404);
@@ -381,7 +379,7 @@ route("POST", "/api/sys/role/update", (ctx) => {
   return ok(null, "更新角色成功");
 });
 
-route("POST", "/api/sys/role/remove", (ctx) => {
+route("POST", "/sys/role/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const role = db.roles.find((r) => r.id === id);
   if (!role) return fail("角色不存在", 404);
@@ -394,7 +392,7 @@ route("POST", "/api/sys/role/remove", (ctx) => {
   return ok(null, "删除角色成功");
 });
 
-route("POST", "/api/sys/role/bindPermissions", (ctx) => {
+route("POST", "/sys/role/bindPermissions", (ctx) => {
   const { roleId, permissionIds } = ctx.body as { roleId: string; permissionIds: string[] };
   if (!db.roles.some((r) => r.id === roleId)) return fail("角色不存在", 404);
   db.permissionBindings.set(roleId, permissionIds ?? []);
@@ -402,7 +400,7 @@ route("POST", "/api/sys/role/bindPermissions", (ctx) => {
   return ok(null, "绑定权限成功");
 });
 
-route("POST", "/api/sys/role/bindDataPermissions", (ctx) => {
+route("POST", "/sys/role/bindDataPermissions", (ctx) => {
   const { roleId, permissionId, dataScopes } = ctx.body as {
     roleId: string;
     permissionId: string;
@@ -414,30 +412,30 @@ route("POST", "/api/sys/role/bindDataPermissions", (ctx) => {
   return ok(null, "绑定数据权限成功");
 });
 
-route("GET", "/api/sys/role/permissions", (ctx) => {
+route("GET", "/sys/role/permissions", (ctx) => {
   const ids = db.permissionBindings.get(ctx.query.roleId ?? "") ?? [];
   return ok(db.permissions.filter((p) => ids.includes(p.id ?? "")));
 });
 
-route("GET", "/api/sys/role/listDataScopes", (ctx) =>
+route("GET", "/sys/role/listDataScopes", (ctx) =>
   ok(db.dataScopeBindings.get(`${ctx.query.roleId ?? ""}::${ctx.query.permissionId ?? ""}`) ?? []),
 );
 
 /* ------------------------------ 权限 ------------------------------ */
 
-route("GET", "/api/sys/permission/list", (ctx) => {
+route("GET", "/sys/permission/list", (ctx) => {
   const query = ctx.query;
   const rows = filterRows(db.permissions, query, ["permission", "name"]);
   return ok(rows);
 });
 
-route("GET", "/api/sys/permission/getById", (ctx) => {
+route("GET", "/sys/permission/getById", (ctx) => {
   const permission = db.permissions.find((p) => p.id === ctx.query.id);
   if (!permission) return fail("权限不存在", 404);
   return ok(toVO(permission));
 });
 
-route("POST", "/api/sys/permission/add", (ctx) => {
+route("POST", "/sys/permission/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const permission: Permission = {
     id: String(Number(db.permissions[db.permissions.length - 1]?.id ?? "0") + 1),
@@ -458,7 +456,7 @@ route("POST", "/api/sys/permission/add", (ctx) => {
   return ok(null, "新增权限成功");
 });
 
-route("POST", "/api/sys/permission/update", (ctx) => {
+route("POST", "/sys/permission/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const permission = db.permissions.find((p) => p.id === body.id);
   if (!permission) return fail("权限不存在", 404);
@@ -477,7 +475,7 @@ route("POST", "/api/sys/permission/update", (ctx) => {
   return ok(null, "更新权限成功");
 });
 
-route("POST", "/api/sys/permission/remove", (ctx) => {
+route("POST", "/sys/permission/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const permission = db.permissions.find((p) => p.id === id);
   if (!permission) return fail("权限不存在", 404);
@@ -497,19 +495,19 @@ route("POST", "/api/sys/permission/remove", (ctx) => {
 
 /* ------------------------------ 部门 ------------------------------ */
 
-route("GET", "/api/sys/dept/query", (ctx) => {
+route("GET", "/sys/dept/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.depts, query);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/dept/getById", (ctx) => {
+route("GET", "/sys/dept/getById", (ctx) => {
   const dept = db.depts.find((d) => d.deptId === ctx.query.deptId);
   if (!dept) return fail("部门不存在", 404);
   return ok({ ...dept, children: deptChildren(dept.deptId ?? "") });
 });
 
-route("POST", "/api/sys/dept/add", (ctx) => {
+route("POST", "/sys/dept/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.name) return fail("部门名称不能为空", 400);
   const dept: Dept = {
@@ -528,7 +526,7 @@ route("POST", "/api/sys/dept/add", (ctx) => {
   return ok(null, "新增部门成功");
 });
 
-route("POST", "/api/sys/dept/update", (ctx) => {
+route("POST", "/sys/dept/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const dept = db.depts.find((d) => d.deptId === body.deptId);
   if (!dept) return fail("部门不存在", 404);
@@ -544,7 +542,7 @@ route("POST", "/api/sys/dept/update", (ctx) => {
   return ok(null, "更新部门成功");
 });
 
-route("POST", "/api/sys/dept/remove", (ctx) => {
+route("POST", "/sys/dept/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const dept = db.depts.find((d) => d.deptId === id);
   if (!dept) return fail("部门不存在", 404);
@@ -557,25 +555,25 @@ route("POST", "/api/sys/dept/remove", (ctx) => {
 
 /* ------------------------------ 系统参数 ------------------------------ */
 
-route("GET", "/api/sys/param/query", (ctx) => {
+route("GET", "/sys/param/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.params, query, ["paramKey", "name"]);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/param/getById", (ctx) => {
+route("GET", "/sys/param/getById", (ctx) => {
   const param = db.params.find((p) => p.id === ctx.query.id);
   if (!param) return fail("参数不存在", 404);
   return ok(toVO(param));
 });
 
-route("GET", "/api/sys/param/getByKey", (ctx) => {
+route("GET", "/sys/param/getByKey", (ctx) => {
   const param = db.params.find((p) => p.paramKey === ctx.query.paramKey);
   if (!param) return fail("参数不存在", 404);
   return ok(toVO(param));
 });
 
-route("POST", "/api/sys/param/add", (ctx) => {
+route("POST", "/sys/param/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.paramKey) return fail("参数键不能为空", 400);
   if (db.params.some((p) => p.paramKey === body.paramKey)) return fail("参数键已存在", 400);
@@ -596,7 +594,7 @@ route("POST", "/api/sys/param/add", (ctx) => {
   return ok(null, "新增参数成功");
 });
 
-route("POST", "/api/sys/param/update", (ctx) => {
+route("POST", "/sys/param/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const param = db.params.find((p) => p.id === body.id);
   if (!param) return fail("参数不存在", 404);
@@ -614,7 +612,7 @@ route("POST", "/api/sys/param/update", (ctx) => {
   return ok(null, "更新参数成功");
 });
 
-route("POST", "/api/sys/param/remove", (ctx) => {
+route("POST", "/sys/param/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const param = db.params.find((p) => p.id === id);
   if (!param) return fail("参数不存在", 404);
@@ -629,19 +627,19 @@ function dictToVO(dict: Dict): Dict {
   return { ...dict, valueList: db.dictValues.filter((v) => v.dictId === dict.id) };
 }
 
-route("GET", "/api/sys/dict/query", (ctx) => {
+route("GET", "/sys/dict/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.dicts.map(dictToVO), query, ["dictKey", "name"]);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/dict/getByKey", (ctx) => {
+route("GET", "/sys/dict/getByKey", (ctx) => {
   const dict = db.dicts.find((d) => d.dictKey === ctx.query.dictKey);
   if (!dict) return fail("字典不存在", 404);
   return ok(dictToVO(dict));
 });
 
-route("POST", "/api/sys/dict/add", (ctx) => {
+route("POST", "/sys/dict/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   if (!body.dictKey) return fail("字典键不能为空", 400);
   if (db.dicts.some((d) => d.dictKey === body.dictKey)) return fail("字典键已存在", 400);
@@ -661,7 +659,7 @@ route("POST", "/api/sys/dict/add", (ctx) => {
   return ok(null, "新增字典成功");
 });
 
-route("POST", "/api/sys/dict/update", (ctx) => {
+route("POST", "/sys/dict/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const dict = db.dicts.find((d) => d.id === body.id);
   if (!dict) return fail("字典不存在", 404);
@@ -678,7 +676,7 @@ route("POST", "/api/sys/dict/update", (ctx) => {
   return ok(null, "更新字典成功");
 });
 
-route("POST", "/api/sys/dict/remove", (ctx) => {
+route("POST", "/sys/dict/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const dict = db.dicts.find((d) => d.id === id);
   if (!dict) return fail("字典不存在", 404);
@@ -689,7 +687,7 @@ route("POST", "/api/sys/dict/remove", (ctx) => {
   return ok(null, "删除字典成功");
 });
 
-route("GET", "/api/sys/dict/value/list", (ctx) => {
+route("GET", "/sys/dict/value/list", (ctx) => {
   const dict = db.dicts.find((d) => d.dictKey === ctx.query.dictKey);
   if (!dict) return fail("字典不存在", 404);
   const rows = db.dictValues
@@ -698,7 +696,7 @@ route("GET", "/api/sys/dict/value/list", (ctx) => {
   return ok(rows.map((v) => ({ ...v })));
 });
 
-route("POST", "/api/sys/dict/value/add", (ctx) => {
+route("POST", "/sys/dict/value/add", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const dict = db.dicts.find((d) => d.id === body.dictId);
   if (!dict) return fail("字典不存在", 404);
@@ -717,7 +715,7 @@ route("POST", "/api/sys/dict/value/add", (ctx) => {
   return ok(null, "新增字典值成功");
 });
 
-route("POST", "/api/sys/dict/value/update", (ctx) => {
+route("POST", "/sys/dict/value/update", (ctx) => {
   const body = ctx.body as Record<string, string>;
   const value = db.dictValues.find((v) => v.id === body.id);
   if (!value) return fail("字典值不存在", 404);
@@ -734,7 +732,7 @@ route("POST", "/api/sys/dict/value/update", (ctx) => {
   return ok(null, "更新字典值成功");
 });
 
-route("POST", "/api/sys/dict/value/remove", (ctx) => {
+route("POST", "/sys/dict/value/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   const value = db.dictValues.find((v) => v.id === id);
   if (!value) return fail("字典值不存在", 404);
@@ -745,11 +743,11 @@ route("POST", "/api/sys/dict/value/remove", (ctx) => {
 
 /* ------------------------------ 数据域 ------------------------------ */
 
-route("GET", "/api/sys/permission/dataScope/list", () => ok(DATA_SCOPE_DEFS));
+route("GET", "/sys/permission/dataScope/list", () => ok(DATA_SCOPE_DEFS));
 
 /* ------------------------------ 文件 ------------------------------ */
 
-route("POST", "/api/file/upload", (ctx) => {
+route("POST", "/file/upload", (ctx) => {
   const hash = ctx.query.hash ?? "unknown";
   const filename = ctx.files[0]?.filename ?? `file-${Date.now()}`;
   const file = {
@@ -767,7 +765,7 @@ route("POST", "/api/file/upload", (ctx) => {
   return ok(file, "上传成功");
 });
 
-route("POST", "/api/file/task/create", (ctx) => {
+route("POST", "/file/task/create", (ctx) => {
   const body = ctx.body as Record<string, unknown>;
   const fileSize = Number(body.fileSize ?? 0);
   const pieceSize = Number(body.pieceSize ?? 5 * 1024 * 1024);
@@ -784,7 +782,7 @@ route("POST", "/api/file/task/create", (ctx) => {
   return ok({ taskId, pieceCount, pieceSize }, "创建上传任务成功");
 });
 
-route("POST", "/api/file/task/upload", (ctx) => {
+route("POST", "/file/task/upload", (ctx) => {
   const { taskId, fileIndex } = ctx.query;
   const task = db.uploadTasks.get(taskId ?? "");
   if (!task) return fail("上传任务不存在", 404);
@@ -796,7 +794,7 @@ route("POST", "/api/file/task/upload", (ctx) => {
   return ok(null, `分片 ${index + 1}/${task.pieceCount} 上传成功`);
 });
 
-route("POST", "/api/file/task/finish", (ctx) => {
+route("POST", "/file/task/finish", (ctx) => {
   const { taskId } = ctx.body as { taskId: string };
   const task = db.uploadTasks.get(taskId ?? "");
   if (!task) return fail("上传任务不存在", 404);
@@ -820,37 +818,37 @@ route("POST", "/api/file/task/finish", (ctx) => {
 
 /* ------------------------------ 日志（mock 扩展） ------------------------------ */
 
-route("GET", "/api/sys/log/login/query", (ctx) => {
+route("GET", "/sys/log/login/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.loginLogs, query, ["createBy"]);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/log/login/getById", (ctx) => {
+route("GET", "/sys/log/login/getById", (ctx) => {
   const log = db.loginLogs.find((l) => l.id === ctx.query.id);
   if (!log) return fail("登录日志不存在", 404);
   return ok(log);
 });
 
-route("POST", "/api/sys/log/login/remove", (ctx) => {
+route("POST", "/sys/log/login/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   db.loginLogs = db.loginLogs.filter((l) => l.id !== id);
   return ok(null, "删除登录日志成功");
 });
 
-route("GET", "/api/sys/log/operation/query", (ctx) => {
+route("GET", "/sys/log/operation/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.operationLogs, query, ["name", "module", "createBy"]);
   return ok(paginate(rows, page, pageSize));
 });
 
-route("GET", "/api/sys/log/operation/getById", (ctx) => {
+route("GET", "/sys/log/operation/getById", (ctx) => {
   const log = db.operationLogs.find((l) => l.id === ctx.query.id);
   if (!log) return fail("操作日志不存在", 404);
   return ok(log);
 });
 
-route("POST", "/api/sys/log/operation/remove", (ctx) => {
+route("POST", "/sys/log/operation/remove", (ctx) => {
   const { id } = ctx.body as { id: string };
   db.operationLogs = db.operationLogs.filter((l) => l.id !== id);
   return ok(null, "删除操作日志成功");
@@ -858,7 +856,7 @@ route("POST", "/api/sys/log/operation/remove", (ctx) => {
 
 /* ------------------------------ 通知公告（mock 扩展） ------------------------------ */
 
-route("GET", "/api/notification/list", (ctx) => {
+route("GET", "/notification/list", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(
     db.notifications.sort((a, b) => (b.publishTime ?? "").localeCompare(a.publishTime ?? "")),

@@ -3,9 +3,9 @@ import { createPinia } from "pinia";
 import AntdvNext from "antdv-next";
 
 import "antdv-next/dist/reset.css";
-import App from "./App.vue";
-import { router } from "./router";
-import "./styles/index.scss";
+import App from "@/App.vue";
+import { router } from "@/router";
+import "@/styles/index.scss";
 
 const app = createApp(App);
 

@@ -2,9 +2,9 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "antdv-next";
-import * as authApi from "../api/modules/auth";
-import AuthLayout from "../layouts/AuthLayout.vue";
-import { encryptPassword } from "../utils/password";
+import * as authApi from "@/api/modules/auth";
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import { encryptPassword } from "@/utils/password";
 
 const router = useRouter();
 

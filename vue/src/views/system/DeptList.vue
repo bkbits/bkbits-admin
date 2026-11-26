@@ -2,11 +2,11 @@
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { FolderPlus, Pencil, Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { deptApi } from "../../api";
-import type { Dept } from "../../api/types";
-import { STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { deptApi } from "@/api";
+import type { Dept } from "@/api/types";
+import { STATUS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -179,7 +179,7 @@ function handleRemove(record: Dept) {
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 90 },
           { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 180 },
+          { title: '操作', key: 'action', width: 180, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -198,6 +198,7 @@ function handleRemove(record: Dept) {
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'parentName'">

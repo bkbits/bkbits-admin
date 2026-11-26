@@ -26,14 +26,14 @@ import {
   Wifi,
 } from "@lucide/vue";
 import { message, type MenuProps } from "antdv-next";
-import { permissionApi } from "../api";
-import { notificationApi } from "../api";
-import { userApi } from "../api";
-import type { Notification, Permission } from "../api/types";
-import { MENU_ROUTE_MAP } from "../router";
-import { useAppStore } from "../stores/app";
-import { useAuthStore } from "../stores/auth";
-import { useTabsStore } from "../stores/tabs";
+import { permissionApi } from "@/api";
+import { notificationApi } from "@/api";
+import { userApi } from "@/api";
+import type { Notification, Permission } from "@/api/types";
+import { MENU_ROUTE_MAP } from "@/router";
+import { useAppStore } from "@/stores/app";
+import { useAuthStore } from "@/stores/auth";
+import { useTabsStore } from "@/stores/tabs";
 
 const route = useRoute();
 const router = useRouter();

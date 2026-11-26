@@ -1,6 +1,6 @@
 /**
  * 字典映射工具：与 mock 种子数据（src/mock/store.ts）保持一致，
- * 页面开发阶段直接使用，后端联调后可从 /api/dict/value/list 动态加载。
+ * 页面开发阶段直接使用，后端联调后可从 /dict/value/list 动态加载。
  */
 
 export interface DictOption {

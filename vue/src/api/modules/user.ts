@@ -1,4 +1,4 @@
-import { defineGet, definePagePost, definePost, defineQuery } from "../define";
+import { defineGet, definePagePost, definePost, defineQuery } from "@/api/define";
 import type {
   BindRolesToUserDTO,
   IdDTO,
@@ -11,51 +11,49 @@ import type {
   UserUpdateDTO,
   UserUpdateMyPasswordDTO,
   UserVO,
-} from "../types";
+} from "@/api/types";
 
 /** 分页查询用户 */
-export const queryUser = defineQuery<UserQueryDTO & PageParams, UserVO>("/api/sys/user/query");
+export const queryUser = defineQuery<UserQueryDTO & PageParams, UserVO>("/sys/user/query");
 
 /** 按编号查询用户 */
-export const getUserByUserId = defineGet<{ userId: string }, UserVO>("/api/sys/user/getByUserId");
+export const getUserByUserId = defineGet<{ userId: string }, UserVO>("/sys/user/getByUserId");
 
 /** 按用户名查询用户 */
-export const getUserByUserName = defineGet<{ userName: string }, UserVO>(
-  "/api/sys/user/getByUserName",
-);
+export const getUserByUserName = defineGet<{ userName: string }, UserVO>("/sys/user/getByUserName");
 
 /** 按邮箱查询用户 */
-export const getUserByEmail = defineGet<{ email: string }, UserVO>("/api/sys/user/getByEmail");
+export const getUserByEmail = defineGet<{ email: string }, UserVO>("/sys/user/getByEmail");
 
 /** 按手机号查询用户 */
-export const getUserByPhone = defineGet<{ phone: string }, UserVO>("/api/sys/user/getByPhone");
+export const getUserByPhone = defineGet<{ phone: string }, UserVO>("/sys/user/getByPhone");
 
 /** 查询用户所有角色 */
-export const listUserRoles = defineGet<{ userId: string }, Role[]>("/api/sys/user/listRoles");
+export const listUserRoles = defineGet<{ userId: string }, Role[]>("/sys/user/listRoles");
 
 /** 新增用户 */
-export const addUser = definePost<UserAddDTO, unknown>("/api/sys/user/add");
+export const addUser = definePost<UserAddDTO, unknown>("/sys/user/add");
 
 /** 更新用户 */
-export const updateUser = definePost<UserUpdateDTO, unknown>("/api/sys/user/update");
+export const updateUser = definePost<UserUpdateDTO, unknown>("/sys/user/update");
 
 /** 删除用户 */
-export const removeUser = definePost<IdDTO, unknown>("/api/sys/user/remove");
+export const removeUser = definePost<IdDTO, unknown>("/sys/user/remove");
 
 /** 重置密码 */
 export const resetUserPassword = definePost<UserResetPasswordDTO, unknown>(
-  "/api/sys/user/resetPassword",
+  "/sys/user/resetPassword",
 );
 
 /** 绑定角色到用户 */
-export const bindUserRole = definePost<BindRolesToUserDTO, unknown>("/api/sys/user/bindRole");
+export const bindUserRole = definePost<BindRolesToUserDTO, unknown>("/sys/user/bindRole");
 
 /** 更新当前登录用户密码 */
 export const updateMyPassword = definePost<UserUpdateMyPasswordDTO, unknown>(
-  "/api/sys/user/updateMyPassword",
+  "/sys/user/updateMyPassword",
 );
 
 /** 分页查询在线用户 */
 export const queryOnlineUser = definePagePost<UserQueryDTO & PageParams, LoginUser>(
-  "/api/sys/user/queryLoginUser",
+  "/sys/user/queryLoginUser",
 );

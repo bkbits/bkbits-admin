@@ -2,11 +2,11 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { ListPlus, Pencil, Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { permissionApi } from "../../api";
-import type { Permission } from "../../api/types";
-import { PERMISSION_TYPE_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { permissionApi } from "@/api";
+import type { Permission } from "@/api/types";
+import { PERMISSION_TYPE_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -216,12 +216,13 @@ function handleRemove(record: Permission) {
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 90 },
           { title: '状态', dataIndex: 'status', key: 'status', width: 100 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 180 },
+          { title: '操作', key: 'action', width: 180, fixed: 'right' },
         ]"
         :data-source="treeRows"
         :loading="loading"
         :pagination="false"
         row-key="id"
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'type'">

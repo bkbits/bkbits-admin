@@ -2,9 +2,9 @@
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
-import { queryOperationLog, removeOperationLog } from "../../api/modules/log";
-import type { OperationLogVO } from "../../api/modules/log";
+import RowAction from "@/components/RowAction.vue";
+import { queryOperationLog, removeOperationLog } from "@/api/modules/log";
+import type { OperationLogVO } from "@/api/modules/log";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -141,7 +141,7 @@ onMounted(loadList);
           { title: '结果', dataIndex: 'result', key: 'result', ellipsis: true },
           { title: '操作人', dataIndex: 'createBy', key: 'createBy', width: 120 },
           { title: '时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 90 },
+          { title: '操作', key: 'action', width: 90, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -160,6 +160,7 @@ onMounted(loadList);
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">

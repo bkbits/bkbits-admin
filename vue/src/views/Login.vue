@@ -2,9 +2,9 @@
 import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "antdv-next";
-import AuthLayout from "../layouts/AuthLayout.vue";
-import { useAuthStore } from "../stores/auth";
-import { encryptPassword } from "../utils/password";
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import { useAuthStore } from "@/stores/auth";
+import { encryptPassword } from "@/utils/password";
 
 const router = useRouter();
 const route = useRoute();

@@ -2,10 +2,10 @@
 import { computed, reactive, ref, watch } from "vue";
 import { message } from "antdv-next";
 import { Pencil } from "@lucide/vue";
-import { deptApi, userApi } from "../api";
-import type { UserVO } from "../api/types";
-import { SEX_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "../utils/dict";
-import { useAuthStore } from "../stores/auth";
+import { deptApi, userApi } from "@/api";
+import type { UserVO } from "@/api/types";
+import { SEX_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
+import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
 

@@ -2,11 +2,11 @@
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Pencil, Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { paramApi } from "../../api";
-import type { ParamVO } from "../../api/types";
-import { SYSTEM_BUSINESS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { paramApi } from "@/api";
+import type { ParamVO } from "@/api/types";
+import { SYSTEM_BUSINESS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -195,7 +195,7 @@ function handleRemove(record: ParamVO) {
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 80 },
           { title: '备注', dataIndex: 'remark', key: 'remark', width: 160 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
-          { title: '操作', key: 'action', width: 160 },
+          { title: '操作', key: 'action', width: 160, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -214,6 +214,7 @@ function handleRemove(record: ParamVO) {
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'type'">

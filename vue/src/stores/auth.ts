@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import * as authApi from "../api/modules/auth";
-import { TOKEN_KEY } from "../api/http";
-import type { LoginDTO, LoginUser } from "../api/types";
+import * as authApi from "@/api/modules/auth";
+import { TOKEN_KEY } from "@/api/http";
+import type { LoginDTO, LoginUser } from "@/api/types";
 
 /** 认证状态：token + 当前登录用户 */
 export const useAuthStore = defineStore("auth", () => {

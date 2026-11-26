@@ -1,7 +1,10 @@
 /**
  * bkbits-admin mock 服务器插件。
- * 在 Vite dev / preview 服务器中拦截 /api/* 请求，
+ * 在 Vite dev / preview 服务器中拦截 /* 请求，
  * 以内存数据实现后端 Swagger 全部接口（后端暂无数据，前端联调使用）。
+ *
+ * 注意：本目录被 vite.config.ts 在加载配置阶段静态引入，此时 resolve.alias 尚未生效，
+ * 因此目录内的 import 必须使用相对路径，不要改成 @ 别名。
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Connect } from "vite-plus";
@@ -10,12 +13,12 @@ import { extractFilenames, fail, readBody, type MockContext } from "./helpers";
 import { routes } from "./router";
 
 /** 无需登录即可访问的接口 */
-const PUBLIC_PATHS = new Set(["/api/login", "/api/register", "/api/publicKey"]);
+const PUBLIC_PATHS = new Set(["/login", "/register", "/publicKey"]);
 
 async function handleMockRequest(req: IncomingMessage, res: ServerResponse): Promise<boolean> {
   const url = new URL(req.url ?? "/", "http://localhost");
   const pathname = url.pathname;
-  if (!pathname.startsWith("/api/")) return false;
+  if (!pathname.startsWith("/")) return false;
 
   const method = (req.method ?? "GET").toUpperCase();
   const route = routes.find((r) => r.method === method && r.path === pathname);

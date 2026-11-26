@@ -2,14 +2,14 @@
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { KeyRound, Pencil, Trash2, UserRoundCog } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { deptApi } from "../../api";
-import { roleApi } from "../../api";
-import { userApi } from "../../api";
-import type { User } from "../../api/types";
-import { SEX_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
-import { encryptPassword } from "../../utils/password";
+import { deptApi } from "@/api";
+import { roleApi } from "@/api";
+import { userApi } from "@/api";
+import type { User } from "@/api/types";
+import { SEX_OPTIONS, STATUS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
+import { encryptPassword } from "@/utils/password";
 
 /* ------------------------------ 列表 ------------------------------ */
 
@@ -314,7 +314,7 @@ function handleRemove(record: User) {
           { title: '状态', dataIndex: 'status', key: 'status', width: 72 },
           { title: '所属部门', key: 'deptName', width: 108 },
           { title: '创建时间', dataIndex: 'createTime', key: 'createTime', width: 168 },
-          { title: '操作', key: 'action', width: 218 },
+          { title: '操作', key: 'action', width: 218, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -333,6 +333,7 @@ function handleRemove(record: User) {
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'sex'">

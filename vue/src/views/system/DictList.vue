@@ -2,11 +2,11 @@
 import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { List, Pencil, Trash2 } from "@lucide/vue";
-import RowAction from "../../components/RowAction.vue";
+import RowAction from "@/components/RowAction.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { dictApi } from "../../api";
-import type { Dict, DictValueVO } from "../../api/types";
-import { SYSTEM_BUSINESS_OPTIONS, dictColor, dictLabel } from "../../utils/dict";
+import { dictApi } from "@/api";
+import type { Dict, DictValueVO } from "@/api/types";
+import { SYSTEM_BUSINESS_OPTIONS, dictColor, dictLabel } from "@/utils/dict";
 
 /** 字典值类型（对应 BaseConstants 标签类型 S/I/W/E） */
 const VALUE_TYPE_OPTIONS = [
@@ -314,7 +314,7 @@ function handleValueRemove(record: DictValueVO) {
           { title: '类型', dataIndex: 'type', key: 'type', width: 120 },
           { title: '排序', dataIndex: 'sort', key: 'sort', width: 80 },
           { title: '备注', dataIndex: 'remark', key: 'remark', width: 160 },
-          { title: '操作', key: 'action', width: 200 },
+          { title: '操作', key: 'action', width: 200, fixed: 'right' },
         ]"
         :data-source="rows"
         :loading="loading"
@@ -333,6 +333,7 @@ function handleValueRemove(record: DictValueVO) {
             void loadList();
           }
         "
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'type'">
@@ -402,12 +403,13 @@ function handleValueRemove(record: DictValueVO) {
           { title: '类型', dataIndex: 'type', key: 'type', width: 90 },
           { title: '颜色', dataIndex: 'color', key: 'color', width: 120 },
           { title: '备注', dataIndex: 'remark', key: 'remark', width: 120 },
-          { title: '操作', key: 'action', width: 130 },
+          { title: '操作', key: 'action', width: 130, fixed: 'right' },
         ]"
         :data-source="valueRows"
         :loading="valueLoading"
         :pagination="false"
         row-key="id"
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'type'">

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
-import { deptApi } from "../../api";
-import { userApi } from "../../api";
-import type { LoginUser } from "../../api/types";
+import { deptApi } from "@/api";
+import { userApi } from "@/api";
+import type { LoginUser } from "@/api/types";
 
 /* ------------------------------ 列表 ------------------------------ */
 
