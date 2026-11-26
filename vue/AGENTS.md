@@ -1,3 +1,13 @@
+<!-- antdv-next-cli setup start -->
+
+## Antdv Next CLI Skill
+
+Use the installed antdv-next skill at `.\.claude\skills\antdv\SKILL.md` before working on Ant Design code in this repository.
+
+The skill teaches agents when and how to call `@antdv-next/cli` commands such as `antdv info`, `antdv doc`, `antdv demo`, `antdv token`, `antdv semantic`, and `antdv changelog`.
+
+<!-- antdv-next-cli setup end -->
+
 <!--VITE PLUS START-->
 
 # 使用 Vite+，Web 的统一工具链
@@ -141,3 +151,7 @@ src/
 - `vp dev` — 启动开发服务器（含 mock）
 - `vp check`（`--fix`）— 格式化 + lint + 类型检查
 - `vp build` — 生产构建
+
+## 设计
+
+- 使用命令行 `antdv design.md` 查看设计文档

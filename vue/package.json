@@ -10,19 +10,20 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@juggle/resize-observer": "^3.4.0",
     "@lucide/vue": "^1.80.0",
-    "antdv-next": "^1.5.1",
-    "axios": "^1.19.0",
+    "antdv-next": "^1.8.3",
+    "axios": "^1.21.1",
     "jsencrypt": "^3.5.4",
-    "pinia": "^4.0.3",
-    "sass": "^1.102.0",
-    "vue": "^3.5.41",
-    "vue-router": "^5.2.0"
+    "pinia": "^4.1.0",
+    "sass": "^1.108.2",
+    "vue": "^3.5.46",
+    "vue-router": "^5.5.1"
   },
   "devDependencies": {
-    "@types/node": "^26.2.0",
-    "@vitejs/plugin-vue": "^6.0.8",
-    "typescript": "~6.0.2",
+    "@types/node": "^26.6.10",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "typescript": "~6.0.3",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
     "vite-plus": "0.2.9"
   },
