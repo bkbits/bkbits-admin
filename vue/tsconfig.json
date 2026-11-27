@@ -3,7 +3,7 @@
     "target": "es2023",
     "module": "esnext",
     "lib": ["ES2023", "DOM"],
-    "types": ["vite/client", "node", "antdv-next/global.d.ts"],
+    "types": ["vite/client", "antdv-next/global.d.ts"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
@@ -23,5 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/mock"]
 }
