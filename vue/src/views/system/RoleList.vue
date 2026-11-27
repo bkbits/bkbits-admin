@@ -28,8 +28,8 @@ async function loadList() {
   loading.value = true;
   try {
     const result = await roleApi.queryRole({ ...query });
-    rows.value = result.data?.rows ?? [];
-    total.value = result.data?.total ?? 0;
+    rows.value = result.data ?? [];
+    total.value = result.total ?? 0;
   } finally {
     loading.value = false;
   }
@@ -386,7 +386,8 @@ async function handleDataScopeSubmit() {
       :confirm-loading="permissionSubmitting"
       ok-text="确定"
       cancel-text="取消"
-      width="480px"
+      width="min(max(60vw, 400px), calc(100vw - 32px))"
+      :classes="{ container: 'permission-modal-content', body: 'permission-modal-body' }"
       @ok="handlePermissionSubmit"
     >
       <div v-if="permissionLoading" class="modal-loading">加载中...</div>
@@ -444,8 +445,6 @@ async function handleDataScopeSubmit() {
 }
 
 .permission-tree {
-  max-height: 420px;
-  overflow: auto;
   padding: 8px 4px;
 }
 
@@ -482,5 +481,22 @@ async function handleDataScopeSubmit() {
     flex: 1;
     padding: 8px 4px;
   }
+}
+</style>
+
+<style lang="scss">
+.permission-modal-content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  overflow: hidden;
+  max-height: 75vh;
+}
+
+.permission-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 </style>
