@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { List, Pencil, Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { dictApi } from "@/api";
 import type { Dict, DictValueVO } from "@/api/types";
@@ -44,13 +47,6 @@ async function loadList() {
 function handleSearch() {
   query.page = 1;
   void loadList();
-}
-
-function handleReset() {
-  query.dictKey = "";
-  query.name = "";
-  query.type = undefined;
-  handleSearch();
 }
 
 onMounted(loadList);
@@ -273,9 +269,9 @@ function handleValueRemove(record: DictValueVO) {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="dictKey" label="字典键">
           <a-input v-model:value="query.dictKey" placeholder="请输入字典键" allow-clear />
         </a-form-item>
@@ -290,23 +286,16 @@ function handleValueRemove(record: DictValueVO) {
             allow-clear
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">字典列表</h2>
+    <BkCard title="字典列表">
+      <template #actions>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增字典
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '字典键', dataIndex: 'dictKey', key: 'dictKey', width: 160 },
@@ -350,7 +339,7 @@ function handleValueRemove(record: DictValueVO) {
           </template>
         </template>
       </a-table>
-    </a-card>
+    </BkCard>
 
     <a-modal
       v-model:open="modalVisible"
@@ -440,7 +429,7 @@ function handleValueRemove(record: DictValueVO) {
         cancel-text="取消"
         @ok="handleValueSubmit"
       >
-        <a-form :model="valueForm" layout="vertical" class="modal-form">
+        <a-form :model="valueForm" layout="horizontal" class="modal-form">
           <a-form-item label="值键" required>
             <a-input v-model:value="valueForm.valueKey" placeholder="请输入值键" />
           </a-form-item>
@@ -465,7 +454,7 @@ function handleValueRemove(record: DictValueVO) {
         </a-form>
       </a-modal>
     </a-drawer>
-  </div>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped>

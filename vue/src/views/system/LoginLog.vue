@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { queryLoginLog, removeLoginLog } from "@/api/modules/log";
 import type { LoginLogVO } from "@/api/modules/log";
 
@@ -44,16 +47,7 @@ function handleSearch() {
   void loadList();
 }
 
-function handleReset() {
-  query.createBy = "";
-  query.ip = "";
-  query.device = "";
-  query.succeed = undefined;
-  query.createTimeBegin = undefined;
-  query.createTimeEnd = undefined;
-  handleSearch();
-}
-
+onMounted(loadList);
 function handleRemove(record: LoginLogVO) {
   Modal.confirm({
     title: "删除登录日志",
@@ -75,9 +69,9 @@ onMounted(loadList);
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="createBy" label="登录者">
           <a-input v-model:value="query.createBy" placeholder="请输入登录者" allow-clear />
         </a-form-item>
@@ -111,19 +105,10 @@ onMounted(loadList);
             placeholder="结束时间"
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">登录记录</h2>
-      </div>
+    <BkCard title="登录记录">
       <a-table
         :columns="[
           { title: '登录者', dataIndex: 'createBy', key: 'createBy', width: 120 },
@@ -163,8 +148,8 @@ onMounted(loadList);
           </template>
         </template>
       </a-table>
-    </a-card>
-  </div>
+    </BkCard>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped></style>

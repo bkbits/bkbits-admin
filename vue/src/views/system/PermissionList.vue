@@ -3,6 +3,9 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { ListPlus, Pencil, Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { permissionApi } from "@/api";
 import type { Permission } from "@/api/types";
@@ -39,12 +42,6 @@ async function loadList() {
 
 function handleSearch() {
   void loadList();
-}
-
-function handleReset() {
-  query.name = "";
-  query.status = undefined;
-  handleSearch();
 }
 
 onMounted(loadList);
@@ -176,9 +173,9 @@ function handleRemove(record: Permission) {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="name" label="权限名称">
           <a-input v-model:value="query.name" placeholder="请输入权限名称" allow-clear />
         </a-form-item>
@@ -190,23 +187,16 @@ function handleRemove(record: Permission) {
             allow-clear
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">权限树</h2>
+    <BkCard title="权限树">
+      <template #actions>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增权限
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '权限名称', dataIndex: 'name', key: 'name' },
@@ -244,7 +234,7 @@ function handleRemove(record: Permission) {
           </template>
         </template>
       </a-table>
-    </a-card>
+    </BkCard>
 
     <a-modal
       v-model:open="modalVisible"
@@ -284,7 +274,7 @@ function handleRemove(record: Permission) {
         </a-form-item>
       </a-form>
     </a-modal>
-  </div>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped>

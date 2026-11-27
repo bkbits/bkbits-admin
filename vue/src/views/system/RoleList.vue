@@ -3,6 +3,9 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Database, Pencil, ShieldCheck, Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { roleApi } from "@/api";
 import { permissionApi } from "@/api";
@@ -38,13 +41,6 @@ async function loadList() {
 function handleSearch() {
   query.page = 1;
   void loadList();
-}
-
-function handleReset() {
-  query.name = "";
-  query.code = "";
-  query.status = undefined;
-  handleSearch();
 }
 
 onMounted(loadList);
@@ -276,9 +272,9 @@ async function handleDataScopeSubmit() {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="name" label="角色名">
           <a-input v-model:value="query.name" placeholder="请输入角色名" allow-clear />
         </a-form-item>
@@ -293,23 +289,16 @@ async function handleDataScopeSubmit() {
             allow-clear
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">角色列表</h2>
+    <BkCard title="角色列表">
+      <template #actions>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增角色
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '角色代码', dataIndex: 'code', key: 'code', width: 140 },
@@ -354,7 +343,7 @@ async function handleDataScopeSubmit() {
           </template>
         </template>
       </a-table>
-    </a-card>
+    </BkCard>
 
     <a-modal
       v-model:open="modalVisible"
@@ -430,7 +419,7 @@ async function handleDataScopeSubmit() {
         </div>
       </div>
     </a-modal>
-  </div>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped>

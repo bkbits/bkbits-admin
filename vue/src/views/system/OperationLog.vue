@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { queryOperationLog, removeOperationLog } from "@/api/modules/log";
 import type { OperationLogVO } from "@/api/modules/log";
 
@@ -49,16 +52,7 @@ function handleSearch() {
   void loadList();
 }
 
-function handleReset() {
-  query.name = "";
-  query.type = "";
-  query.module = undefined;
-  query.createBy = "";
-  query.createTimeBegin = undefined;
-  query.createTimeEnd = undefined;
-  handleSearch();
-}
-
+onMounted(loadList);
 function handleRemove(record: OperationLogVO) {
   Modal.confirm({
     title: "删除操作日志",
@@ -80,9 +74,9 @@ onMounted(loadList);
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="name" label="名称">
           <a-input v-model:value="query.name" placeholder="请输入日志名称" allow-clear />
         </a-form-item>
@@ -116,19 +110,10 @@ onMounted(loadList);
             placeholder="结束时间"
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">操作记录</h2>
-      </div>
+    <BkCard title="操作记录">
       <a-table
         :columns="[
           { title: '名称', dataIndex: 'name', key: 'name', width: 160 },
@@ -168,8 +153,8 @@ onMounted(loadList);
           </template>
         </template>
       </a-table>
-    </a-card>
-  </div>
+    </BkCard>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped></style>

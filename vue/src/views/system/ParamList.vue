@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { Pencil, Trash2 } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { paramApi } from "@/api";
 import type { ParamVO } from "@/api/types";
@@ -36,13 +39,6 @@ async function loadList() {
 function handleSearch() {
   query.page = 1;
   void loadList();
-}
-
-function handleReset() {
-  query.paramKey = "";
-  query.name = "";
-  query.type = undefined;
-  handleSearch();
 }
 
 onMounted(loadList);
@@ -152,9 +148,9 @@ function handleRemove(record: ParamVO) {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="paramKey" label="参数键">
           <a-input v-model:value="query.paramKey" placeholder="请输入参数键" allow-clear />
         </a-form-item>
@@ -169,23 +165,16 @@ function handleRemove(record: ParamVO) {
             allow-clear
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">参数列表</h2>
+    <BkCard title="参数列表">
+      <template #actions>
         <a-button type="primary" @click="openAdd()">
           <template #icon><PlusOutlined /></template>
           新增参数
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '参数键', dataIndex: 'paramKey', key: 'paramKey', width: 160 },
@@ -230,7 +219,7 @@ function handleRemove(record: ParamVO) {
           </template>
         </template>
       </a-table>
-    </a-card>
+    </BkCard>
 
     <a-modal
       v-model:open="modalVisible"
@@ -265,7 +254,7 @@ function handleRemove(record: ParamVO) {
         </a-form-item>
       </a-form>
     </a-modal>
-  </div>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped>

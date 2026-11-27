@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { deptApi } from "@/api";
 import { userApi } from "@/api";
 import type { LoginUser } from "@/api/types";
@@ -39,11 +42,6 @@ function handleSearch() {
   void loadList();
 }
 
-function handleReset() {
-  query.userName = "";
-  handleSearch();
-}
-
 function handleRefresh() {
   void loadList();
 }
@@ -67,29 +65,22 @@ async function loadOptions() {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="userName" label="用户名">
           <a-input v-model:value="query.userName" placeholder="请输入用户名" allow-clear />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">在线会话</h2>
+    <BkCard title="在线会话">
+      <template #actions>
         <a-button @click="handleRefresh">
           <template #icon><ReloadOutlined /></template>
           刷新
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '用户名', dataIndex: 'userName', key: 'userName' },
@@ -122,8 +113,8 @@ async function loadOptions() {
           </template>
         </template>
       </a-table>
-    </a-card>
-  </div>
+    </BkCard>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped></style>

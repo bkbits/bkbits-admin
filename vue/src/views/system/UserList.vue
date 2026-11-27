@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from "vue";
 import { message, Modal } from "antdv-next";
 import { KeyRound, Pencil, Trash2, UserRoundCog } from "@lucide/vue";
 import RowAction from "@/components/RowAction.vue";
+import BkCard from "@/components/BkCard.vue";
+import BkContainer from "@/components/BkContainer.vue";
+import BkSearch from "@/components/BkSearch.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { deptApi } from "@/api";
 import { roleApi } from "@/api";
@@ -40,14 +43,6 @@ async function loadList() {
 function handleSearch() {
   query.page = 1;
   void loadList();
-}
-
-function handleReset() {
-  query.userName = "";
-  query.realName = "";
-  query.phone = "";
-  query.status = undefined;
-  handleSearch();
 }
 
 onMounted(() => {
@@ -267,9 +262,9 @@ function handleRemove(record: User) {
 </script>
 
 <template>
-  <div class="page-container">
-    <a-card variant="borderless" class="search-card">
-      <a-form layout="vertical" class="filter-form" :model="query" @finish="handleSearch">
+  <BkContainer>
+    <BkCard>
+      <BkSearch v-model="query" :loading="loading" @search="handleSearch">
         <a-form-item name="userName" label="用户名">
           <a-input v-model:value="query.userName" placeholder="请输入用户名" allow-clear />
         </a-form-item>
@@ -287,23 +282,16 @@ function handleRemove(record: User) {
             allow-clear
           />
         </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-card>
+      </BkSearch>
+    </BkCard>
 
-    <a-card variant="borderless">
-      <div class="table-toolbar">
-        <h2 class="table-heading">用户列表</h2>
+    <BkCard title="用户列表">
+      <template #actions>
         <a-button type="primary" @click="openAdd">
           <template #icon><PlusOutlined /></template>
           新增用户
         </a-button>
-      </div>
+      </template>
       <a-table
         :columns="[
           { title: '用户名', dataIndex: 'userName', key: 'userName' },
@@ -359,7 +347,7 @@ function handleRemove(record: User) {
           </template>
         </template>
       </a-table>
-    </a-card>
+    </BkCard>
 
     <a-modal
       v-model:open="modalVisible"
@@ -435,7 +423,7 @@ function handleRemove(record: User) {
         </a-form-item>
       </a-form>
     </a-modal>
-  </div>
+  </BkContainer>
 </template>
 
 <style lang="scss" scoped>
