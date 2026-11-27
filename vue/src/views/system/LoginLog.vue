@@ -27,8 +27,8 @@ const query = reactive({
 });
 
 const RESULT_OPTIONS = [
-  { label: "成功", value: true },
-  { label: "失败", value: false },
+  { label: "成功", value: "true" },
+  { label: "失败", value: "false" },
 ];
 
 async function loadList() {

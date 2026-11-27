@@ -44,8 +44,8 @@ function handleReset() {
 
     <a-form-item class="bk-search-actions">
       <a-space>
-        <a-button type="primary" html-type="submit" :disabled="loading">查询</a-button>
-        <a-button :disabled="loading" @click="handleReset">重置</a-button>
+        <a-button type="primary" html-type="submit">查询</a-button>
+        <a-button @click="handleReset">重置</a-button>
       </a-space>
     </a-form-item>
   </a-form>
