@@ -1,0 +1,85 @@
+---
+title: BorderBeam
+description: Decorative component that renders a moving beam along a container border.
+---
+
+## When To Use
+
+- Use when a container needs stronger visual emphasis without introducing business state semantics.
+- Suitable for login panels, recommendation cards, AI modules, and key CTA blocks.
+- As a decorative effect, it should not replace focus rings, validation borders, or status feedback.
+
+## Examples
+
+## Demos
+
+| Demo | Path |
+| --- | --- |
+| Basic | demo/basic.md |
+| Show on hover | demo/hover.md |
+| Multiple beams | demo/count.md |
+| Custom Container | demo/custom-container.md |
+| Gradients | demo/customized-color.md |
+| Duration | demo/duration.md |
+| Size | demo/size.md |
+| Line Width | demo/line-width.md |
+| Non-uniform radius | demo/non-uniform-radius.md |
+| Component Token | demo/component-token.md |
+
+## API
+
+Common props ref：[Common props](../../docs/vue/common-props.md)
+
+### Props
+
+| Property | Description | Type | Default | Version | [Global Config](../config-provider/docs.md#component-config) |
+| --- | --- | --- | --- | --- | --- |
+| color | Beam color configuration. Supports a single color string or gradient stops. `percent` uses the `0 ~ 100` input range and BorderBeam reserves tail space for the transparent fade | `string \| { color: string, percent: number }[]` | - | - | × |
+| count | Number of evenly distributed beams. It should be a positive integer | number | 1 | - | × |
+| duration | Time in seconds for the beam to complete one loop | number | 6 | - | × |
+| items | Per-beam configurations. The array length determines the number of beams and takes precedence over `count`. Omitted item properties inherit the top-level `color`, `lineWidth`, `outset`, and `size` | [BorderBeamItem](#borderbeamitem)\[] | - | 1.7.0 | × |
+| lineWidth | Width of the beam line. Numbers are treated as pixels | `number \| string` | `1px` | - | × |
+| outset | Outset distance of the beam layer from the container edge. Set to `0` for clipped containers | `number \| string` | - | - | × |
+| size | Size of the visible beam segment. Numbers are treated as pixels | `number \| string` | 100 | - | × |
+
+### BorderBeamItem
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| color | Color configuration for this beam | `string \| { color: string, percent: number }[]` | - | 1.7.0 |
+| lineWidth | Line width for this beam. Numbers are treated as pixels | `number \| string` | - | 1.7.0 |
+| outset | Outset distance for this beam | `number \| string` | - | 1.7.0 |
+| size | Size of this beam's visible segment. Numbers are treated as pixels | `number \| string` | - | 1.7.0 |
+
+### Slots
+
+| Slot | Description | Type | Version |
+| --- | --- | --- | --- |
+| default | Decorated content. Must be a single DOM element or a Vue component that forwards its ref to a DOM element | () => any | - |
+
+## FAQ
+
+### How does BorderBeam behave when reduced motion is enabled? 
+`BorderBeam` treats the beam as a decorative effect. When `prefers-reduced-motion: reduce` is active, the beam effect is hidden.
+
+### What does `percent` mean in `color`? 
+`percent` represents the authored stop position and accepts values from `0` to `100`. BorderBeam maps those stops into the visible beam segment and reserves the trailing area for transparent fade-out so the moving tail stays visible.
+
+### `size` limits 
+`BorderBeam` creates the beam with a square gradient layer whose side length is `size`. The layer travels around the container border, and a mask exposes the areas where it overlaps the border. `size` sets the side length independently of the border path length.
+
+Along a horizontal edge, the gradient layer extends about `size / 2` to either side of the edge. If `size` approaches or exceeds twice the mask overlay height, the square can cover both the top and bottom edges. The same geometry applies to the width while the beam travels along a vertical edge.
+
+Keep `size` well below twice the shorter side of the mask overlay: `size < 2 × min(width, height)`. The mask overlay is usually close in size to the decorated container, while `outset` changes its dimensions. Border radius, `lineWidth`, and transparent areas in the gradient also affect the point at which the overlap becomes visible.
+
+### Why is `BorderBeam` not working? 
+`BorderBeam` needs to resolve the actual DOM node from the default slot and insert the beam layer into that node. Make sure the slot content is a native DOM element, or a Vue component that correctly forwards its `ref` to a DOM element. Otherwise BorderBeam cannot locate the real container and the beam cannot be rendered.
+
+The beam layer is positioned with `position: absolute`, so the resolved DOM node also needs to provide a positioning context. In most cases, set `position: relative` on the wrapped element. BorderBeam does not inspect or patch the child positioning style for you.
+
+For performance reasons, whether the slot can host the beam and its positioning information are resolved during initialization, and are not continuously updated when the child structure or positioning styles change later.
+
+### How do I keep the beam radius aligned with my container? 
+`BorderBeam` renders the beam layer as a child of the actual container and directly inherits its radius through `border-radius: inherit`. For a single-container child such as `Card`, the beam automatically follows the container radius. For more complex child trees, make sure the radius is set on the actual container root.
+
+The radius stays in sync through CSS inheritance, without being read or measured during initialization. Later changes made through `class`, responsive styles, or CSS variables are automatically reflected by the beam layer.

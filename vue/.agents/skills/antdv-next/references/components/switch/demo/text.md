@@ -1,0 +1,42 @@
+# Text & icon
+
+## Description (en-US)
+
+With text and icon.
+
+## Source
+
+```vue
+<script setup lang="ts">
+import { CheckOutlined, CloseOutlined, FrownOutlined, SmileOutlined } from '@antdv-next/icons'
+</script>
+
+<template>
+  <a-flex gap="medium" align="flex-start" justify="flex-start" vertical>
+    <a-switch checked-children="On" un-checked-children="Off" default-checked />
+    <a-switch :checked-children="1" :un-checked-children="0" default-checked />
+    <a-switch default-checked>
+      <template #checkedChildren>
+        <CheckOutlined />
+      </template>
+      <template #unCheckedChildren>
+        <CloseOutlined />
+      </template>
+    </a-switch>
+    <a-switch default-checked>
+      <template #checkedChildren>
+        <a-flex :gap="4" justify="flex-start" align="center">
+          <SmileOutlined />
+          Happy
+        </a-flex>
+      </template>
+      <template #unCheckedChildren>
+        <a-flex :gap="4" justify="flex-start" align="center">
+          <FrownOutlined />
+          Sad
+        </a-flex>
+      </template>
+    </a-switch>
+  </a-flex>
+</template>
+```
