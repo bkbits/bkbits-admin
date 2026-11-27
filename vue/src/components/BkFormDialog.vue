@@ -4,7 +4,11 @@ import { ResizeObserver as ResizeObserverPolyfill } from "@juggle/resize-observe
 import type { FormProps } from "antdv-next";
 import BkDialog from "@/components/BkDialog.vue";
 
-const { model = {}, loading, confirmDisabled } = defineProps<{
+const {
+  model = {},
+  loading,
+  confirmDisabled,
+} = defineProps<{
   title: string;
   model?: FormProps["model"];
   rules?: FormProps["rules"];
@@ -18,16 +22,21 @@ const formId = useId();
 const fields = useTemplateRef<HTMLDivElement>("fields");
 const columns = shallowRef(1);
 
-watch(fields, (element, _, onCleanup) => {
-  if (!element) return;
+watch(
+  fields,
+  (element, _, onCleanup) => {
+    if (!element) return;
 
-  const Observer = window.ResizeObserver ?? ResizeObserverPolyfill;
-  const observer = new Observer(([entry]) => {
-    if (entry) columns.value = Math.min(4, Math.max(1, Math.floor(entry.contentRect.width / 300)));
-  });
-  observer.observe(element);
-  onCleanup(() => observer.disconnect());
-}, { flush: "post" });
+    const Observer = window.ResizeObserver ?? ResizeObserverPolyfill;
+    const observer = new Observer(([entry]) => {
+      if (entry)
+        columns.value = Math.min(4, Math.max(1, Math.floor(entry.contentRect.width / 300)));
+    });
+    observer.observe(element);
+    onCleanup(() => observer.disconnect());
+  },
+  { flush: "post" },
+);
 
 function handleConfirm() {
   if (open.value && !loading && !confirmDisabled) emit("confirm");
@@ -45,11 +54,7 @@ function handleConfirm() {
       @finish="handleConfirm"
     >
       <fieldset class="bk-form-dialog-fieldset" :disabled="loading">
-        <div
-          ref="fields"
-          class="bk-form-dialog-fields"
-          :style="{ '--bk-form-columns': columns }"
-        >
+        <div ref="fields" class="bk-form-dialog-fields" :style="{ '--bk-form-columns': columns }">
           <slot />
         </div>
       </fieldset>

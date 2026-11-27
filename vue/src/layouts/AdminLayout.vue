@@ -314,7 +314,7 @@ function onTabChange(key: string | number) {
 }
 
 /** 关闭标签页（点击标签上的关闭按钮） */
-function onTabEdit(targetKey: string | number | MouseEvent, action: "add" | "remove") {
+function onTabEdit(targetKey: string | MouseEvent | KeyboardEvent, action: "add" | "remove") {
   if (action !== "remove") return;
   const path = String(targetKey);
   const next = tabsStore.closeTab(path);
@@ -741,6 +741,7 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
   display: -webkit-box;
   margin-top: 3px;
   overflow: hidden;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow-wrap: anywhere;

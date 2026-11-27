@@ -21,7 +21,10 @@ export default defineConfig({
       },
     },
   },
-  fmt: {},
+  fmt: {
+    // 生成的技能参考文档不纳入格式化检查
+    ignorePatterns: [".agents/**"],
+  },
   lint: {
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     rules: { "vite-plus/prefer-vite-plus-imports": "error" },
