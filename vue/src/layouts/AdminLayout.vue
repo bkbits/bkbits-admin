@@ -39,6 +39,7 @@ const route = useRoute();
 const router = useRouter();
 const appStore = useAppStore();
 const authStore = useAuthStore();
+const appTitle = import.meta.env.VITE_TITLE;
 const mobileQuery = window.matchMedia("(max-width: 760px)");
 const isMobile = ref(mobileQuery.matches);
 const mobileMenuOpen = ref(false);
@@ -73,6 +74,21 @@ onMounted(() => mobileQuery.addEventListener("change", syncViewport));
 onUnmounted(() => mobileQuery.removeEventListener("change", syncViewport));
 
 /* ------------------------------ 菜单 ------------------------------ */
+
+const sidebarMenuTheme = {
+  components: {
+    Menu: {
+      itemHoverColor: "var(--ui-accent)",
+      itemHoverBg: "var(--ui-canvas)",
+      itemActiveBg: "var(--ui-accent-soft)",
+      itemSelectedBg: "var(--ui-accent-soft)",
+      itemSelectedColor: "var(--ui-accent)",
+      subMenuItemSelectedColor: "var(--ui-accent)",
+      subMenuItemBg: "var(--ui-surface)",
+      popupBg: "var(--ui-surface)",
+    },
+  },
+};
 
 /** 权限码 → 图标（后端权限码为 admin.xxx；目录无权限码时回退 Settings） */
 const ICONS: Record<string, typeof Settings> = {
@@ -349,6 +365,7 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
       id="admin-sidebar"
       aria-label="主导航"
       :collapsed="sidebarCollapsed"
+      :theme="appStore.theme"
       :trigger="null"
       :width="228"
       :collapsed-width="72"
@@ -359,22 +376,23 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
       <router-link
         to="/dashboard"
         class="sider-logo"
-        aria-label="bkbits-admin 首页"
+        :aria-label="`${appTitle} 首页`"
         @click="closeMobileMenu(isMobile)"
       >
         <span class="sider-logo-mark"><img src="/favicon.svg" alt="" /></span>
-        <span v-if="!sidebarCollapsed" class="sider-logo-title">bkbits<span>-admin</span></span>
+        <span v-if="!sidebarCollapsed" class="sider-logo-title">{{ appTitle }}</span>
       </router-link>
-      <a-menu
-        theme="dark"
-        mode="inline"
-        :selected-keys="[route.path]"
-        :open-keys="openKeys"
-        :items="menuItems"
-        class="sider-menu"
-        @click="onMenuClick"
-        @open-change="onOpenChange"
-      />
+      <a-config-provider :theme="sidebarMenuTheme">
+        <a-menu
+          mode="inline"
+          :selected-keys="[route.path]"
+          :open-keys="openKeys"
+          :items="menuItems"
+          class="sider-menu"
+          @click="onMenuClick"
+          @open-change="onOpenChange"
+        />
+      </a-config-provider>
     </a-layout-sider>
 
     <a-layout class="admin-main">
@@ -409,7 +427,8 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
             :options="searchOptions"
             default-active-first-option
             :show-search="{
-              filterOption: (input, option) => String(option?.label ?? '').includes(input.trim()),
+              filterOption: (input: string, option: any) =>
+                String(option?.label ?? '').includes(input.trim()),
             }"
             @select="onSearchSelect"
           >
@@ -542,8 +561,8 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
 
 .admin-sider {
   z-index: 10;
-  background: #161b2d;
-  border-inline-end: 1px solid #252b43;
+  background: var(--ui-surface);
+  border-inline-end: 1px solid var(--ui-border);
 
   :deep(.ant-layout-sider-children) {
     display: flex;
@@ -559,7 +578,7 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
   height: 64px;
   margin: 0 12px 12px;
   padding: 0 6px;
-  border-bottom: 1px solid #30374e;
+  border-bottom: 1px solid var(--ui-border);
   white-space: nowrap;
   text-decoration: none;
 }
@@ -570,9 +589,9 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
   height: 36px;
   flex: none;
   place-items: center;
-  border: 1px solid #746ce9;
+  border: 1px solid var(--ui-border);
   border-radius: 10px;
-  background: #35316a;
+  background: var(--ui-accent-soft);
 
   img {
     width: 21px;
@@ -581,14 +600,12 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
 }
 
 .sider-logo-title {
-  color: #fff;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ui-text);
   font-size: 19px;
   font-weight: 730;
-
-  span {
-    color: #a2acc7;
-    font-weight: 500;
-  }
+  text-overflow: ellipsis;
 }
 
 // a-menu 的 class 落在内部 ul 上，该 ul 不带作用域属性，故用 :deep 匹配
@@ -600,22 +617,13 @@ const copyright = `© ${new Date().getFullYear()} bkbits-admin`;
   background: transparent;
   border-inline-end: 0;
 
-  .ant-menu-sub {
-    background: #121626;
-  }
   .ant-menu-item,
   .ant-menu-submenu-title {
     width: calc(100% - 16px);
     height: 38px;
     margin: 3px 8px;
-    color: #c3cce0;
-  }
-  .ant-menu-item-disabled {
-    color: #929bb0 !important;
   }
   .ant-menu-item-selected {
-    color: #fff;
-    background: #48418b;
     font-weight: 650;
   }
 }
