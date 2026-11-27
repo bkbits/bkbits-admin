@@ -26,6 +26,12 @@ public class Result<T> implements Serializable {
      */
     public static final int CODE_FAILURE = 699;
 
+
+    /**
+     * 内部错误
+     */
+    public static final int INTERNAL_ERROR = 500;
+
     /**
      * 是否成功
      */

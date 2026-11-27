@@ -73,6 +73,16 @@
             <groupId>com.bkbits</groupId>
             <artifactId>bkbits-encrypt</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-exception</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bkbits</groupId>
+            <artifactId>bkbits-monitor</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

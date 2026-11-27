@@ -39,6 +39,8 @@
         <module>bkbits-all</module>
         <module>bkbits-encrypt</module>
         <module>bkbits-id</module>
+        <module>bkbits-monitor</module>
+        <module>bkbits-exception</module>
     </modules>
 
 
@@ -112,6 +114,16 @@
             <dependency>
                 <groupId>com.bkbits</groupId>
                 <artifactId>bkbits-encrypt</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.bkbits</groupId>
+                <artifactId>bkbits-monitor</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.bkbits</groupId>
+                <artifactId>bkbits-exception</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>
