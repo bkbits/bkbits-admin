@@ -60,6 +60,10 @@ public class LogOperation implements IGenId, ICreateBy, ProxyEntityAvailable<Log
     @ApiModelProperty("创建者")
     private String createBy;
 
+    @ApiModelProperty("创建者用户名")
+    @Column(exist = false)
+    private String userName;
+
     @ApiModelProperty("创建时间")
     private LocalDateTime createTime;
 }

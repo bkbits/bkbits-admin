@@ -5,11 +5,14 @@ import com.bkbits.admin.pojo.IdDTO;
 import com.bkbits.core.PageQuery;
 import com.bkbits.core.PageResult;
 import com.bkbits.core.Result;
+import com.bkbits.dbo.entity.User;
 import com.bkbits.logging.dbo.LogLogin;
 import com.bkbits.logging.dbo.LogOperation;
 import com.bkbits.logging.pojo.LogLoginQueryDTO;
 import com.bkbits.logging.pojo.LogOperationQueryDTO;
 import com.bkbits.logging.service.LogService;
+import com.bkbits.util.StringUtil;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -22,6 +25,10 @@ import org.noear.solon.annotation.Param;
 import org.noear.solon.annotation.Post;
 import org.noear.solon.validation.annotation.Validated;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * 日志控制器。
  */
@@ -32,6 +39,9 @@ public class LogController {
 
     @Inject
     private LogService logService;
+
+    @Inject
+    private EasyEntityQuery easyEntityQuery;
 
     /**
      * 分页查询登录日志。
@@ -87,7 +97,9 @@ public class LogController {
     @Mapping("/operation/query")
     @SaCheckPermission("admin.operLog.query")
     public PageResult<LogOperation> queryOperationLog(LogOperationQueryDTO dto) {
-        return logService.pageOperationLogs(dto, PageQuery.current());
+        PageResult<LogOperation> result = logService.pageOperationLogs(dto, PageQuery.current());
+        fillUserNames(result.getData());
+        return result;
     }
 
     /**
@@ -101,7 +113,11 @@ public class LogController {
     @Mapping("/operation/getById")
     @SaCheckPermission("admin.operLog.query")
     public Result<LogOperation> getOperationLogById(@ApiParam("日志编号") @Param("id") String id) {
-        return Result.ok(logService.getOperationLogById(id));
+        LogOperation logOperation = logService.getOperationLogById(id);
+        if (logOperation != null) {
+            fillUserNames(List.of(logOperation));
+        }
+        return Result.ok(logOperation);
     }
 
     /**
@@ -117,5 +133,30 @@ public class LogController {
     public Result<Void> removeOperationLog(@Validated @Body IdDTO dto) {
         logService.removeOperationLogById(dto.getId());
         return Result.ok();
+    }
+
+    /**
+     * 为操作日志填充创建者用户名。
+     *
+     * @param logs 操作日志列表
+     */
+    private void fillUserNames(List<LogOperation> logs) {
+        if (logs == null || logs.isEmpty()) {
+            return;
+        }
+        List<String> userIds = logs.stream()
+                .map(LogOperation::getCreateBy)
+                .filter(StringUtil::isNotEmpty)
+                .distinct()
+                .toList();
+        if (userIds.isEmpty()) {
+            return;
+        }
+        Map<String, String> userNameMap = easyEntityQuery.queryable(User.class)
+                .where(u -> u.userId().in(userIds))
+                .toList()
+                .stream()
+                .collect(Collectors.toMap(User::getUserId, User::getUserName, (first, second) -> first));
+        logs.forEach(log -> log.setUserName(userNameMap.get(log.getCreateBy())));
     }
 }

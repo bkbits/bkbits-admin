@@ -1106,6 +1106,16 @@ function seed() {
 
   const modules = ["部门管理", "用户管理", "角色管理", "菜单管理", "字典管理", "参数管理", "认证"];
   const actions = ["新增", "修改", "删除", "查询"];
+  const operationUsers = [
+    { userId: "10001", userName: "admin" },
+    { userId: "10002", userName: "zhangsan" },
+    { userId: "10003", userName: "lisi" },
+    { userId: "10004", userName: "wangwu" },
+    { userId: "10005", userName: "zhaoliu" },
+    { userId: "10006", userName: "sunqi" },
+    { userId: "10007", userName: "zhouba" },
+    { userId: "10008", userName: "wujiu" },
+  ];
   const urls = [
     "/sys/user/query",
     "/sys/role/update",
@@ -1113,23 +1123,32 @@ function seed() {
     "/sys/param/update",
     "/sys/dict/add",
   ];
+  const argSamples = [
+    JSON.stringify([{ userId: "10002", roleIds: ["20001", "20002"] }]),
+    JSON.stringify(["admin", 1]),
+    JSON.stringify([{ deptId: "103", name: "前端组", sort: 1 }]),
+    JSON.stringify(["sys.user.initPassword", "123456"]),
+    JSON.stringify([{ dictKey: "user_sex", valueKey: "M", name: "男" }]),
+  ];
   for (let i = 0; i < 30; i += 1) {
     const module = modules[i % modules.length];
     const action = i % 5 === 3 ? "查询" : actions[i % 4];
+    const operator = operationUsers[i % operationUsers.length];
     db.operationLogs.push({
       id: String(70000 + i),
       name: `${action}${module.replace("管理", "")}`,
       type: action,
       module,
       method: "com.bkbits.admin.controller.MockController.handle",
-      args: "",
+      args: argSamples[i % argSamples.length],
       result: i % 9 === 8 ? "操作失败" : "操作成功",
       ip: ips[i % ips.length],
       userAgent: "",
       url: urls[i % urls.length],
       costTime: 10 + ((i * 13) % 200),
       remark: "",
-      createBy: names[i % names.length],
+      createBy: operator.userId,
+      userName: operator.userName,
       createTime: daysAgo(20 - i, 9 + (i % 9), (i * 3) % 60),
     });
   }

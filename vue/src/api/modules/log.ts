@@ -67,6 +67,8 @@ export interface OperationLogVO {
   remark?: string;
   /** 创建者 */
   createBy?: string;
+  /** 创建者用户名 */
+  userName?: string;
   /** 创建时间 */
   createTime?: string;
 }

@@ -39,6 +39,11 @@ function currentUserName(ctx: MockContext): string {
   return currentUser(ctx)?.userName ?? "anonymous";
 }
 
+/** 当前用户编号（用于操作日志 createBy，与后端保持一致） */
+function currentUserId(ctx: MockContext): string {
+  return currentUser(ctx)?.userId ?? "anonymous";
+}
+
 /** 记录操作日志 */
 function logOperation(ctx: MockContext, module: string, name: string, httpMethod = "POST") {
   const req = ctx.req;
@@ -55,7 +60,8 @@ function logOperation(ctx: MockContext, module: string, name: string, httpMethod
     url: req.url?.split("?")[0] ?? "",
     costTime: 10 + Math.floor(Math.random() * 150),
     remark: "",
-    createBy: currentUserName(ctx),
+    createBy: currentUserId(ctx),
+    userName: currentUserName(ctx),
     createTime: now(),
   });
 }

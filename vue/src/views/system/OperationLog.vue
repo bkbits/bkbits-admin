@@ -36,6 +36,13 @@ const query = reactive({
   createTimeEnd: undefined as string | undefined,
 });
 
+/* ------------------------------ 列表 ------------------------------ */
+
+function operatorLabel(record: OperationLogVO) {
+  if (!record.createBy) return "-";
+  return record.userName ? `${record.userName}(${record.createBy})` : record.createBy;
+}
+
 async function loadList() {
   loading.value = true;
   try {
@@ -53,6 +60,7 @@ function handleSearch() {
 }
 
 onMounted(loadList);
+
 function handleRemove(record: OperationLogVO) {
   Modal.confirm({
     title: "删除操作日志",
@@ -70,7 +78,43 @@ function handleRemove(record: OperationLogVO) {
   });
 }
 
-onMounted(loadList);
+/* ------------------------------ 展开详情 ------------------------------ */
+
+function formatArgValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value === null) return "null";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+/** 解析后端记录的参数 JSON（方法参数数组），拼成 参数1：xxx，参数2：xxx */
+function formatArgs(args?: string): string {
+  if (!args) return "-";
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(args);
+  } catch {
+    return args;
+  }
+  if (Array.isArray(parsed)) {
+    return parsed.map((value, index) => `参数${index + 1}：${formatArgValue(value)}`).join("，");
+  }
+  if (parsed !== null && typeof parsed === "object") {
+    return Object.entries(parsed)
+      .map(([key, value]) => `${key}：${formatArgValue(value)}`)
+      .join("，");
+  }
+  return formatArgValue(parsed);
+}
+
+function detailItems(record: OperationLogVO) {
+  return [
+    { key: "args", label: "参数", content: formatArgs(record.args) },
+    { key: "result", label: "结果", content: record.result || "-" },
+    { key: "remark", label: "备注", content: record.remark || "-" },
+    { key: "userAgent", label: "UserAgent", content: record.userAgent || "-" },
+  ];
+}
 </script>
 
 <template>
@@ -119,12 +163,10 @@ onMounted(loadList);
           { title: '名称', dataIndex: 'name', key: 'name', width: 160 },
           { title: '模块', dataIndex: 'module', key: 'module', width: 110 },
           { title: '类型', dataIndex: 'type', key: 'type', width: 100 },
-          { title: '方法', dataIndex: 'method', key: 'method', width: 220, ellipsis: true },
-          { title: 'URL', dataIndex: 'url', key: 'url', ellipsis: true },
+          { title: '方法 / URL', key: 'methodUrl', width: 320 },
           { title: 'IP', dataIndex: 'ip', key: 'ip', width: 140 },
           { title: '耗时(ms)', dataIndex: 'costTime', key: 'costTime', width: 100 },
-          { title: '结果', dataIndex: 'result', key: 'result', ellipsis: true },
-          { title: '操作人', dataIndex: 'createBy', key: 'createBy', width: 120 },
+          { title: '操作人', dataIndex: 'createBy', key: 'createBy', width: 160 },
           { title: '时间', dataIndex: 'createTime', key: 'createTime', width: 180 },
           { title: '操作', key: 'action', width: 90, fixed: 'right' },
         ]"
@@ -148,13 +190,43 @@ onMounted(loadList);
         :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
+          <template v-if="column.key === 'methodUrl'">
+            <div class="method-url">
+              <span>方法: {{ record.method || "-" }}</span>
+              <span>URL: {{ record.url || "-" }}</span>
+            </div>
+          </template>
+          <template v-else-if="column.key === 'createBy'">
+            {{ operatorLabel(record) }}
+          </template>
+          <template v-else-if="column.key === 'action'">
             <RowAction :icon="Trash2" danger @click="handleRemove(record)">删除</RowAction>
           </template>
+        </template>
+        <template #expandedRowRender="{ record }">
+          <a-descriptions
+            bordered
+            size="small"
+            :column="1"
+            :items="detailItems(record)"
+            class="log-detail"
+          />
         </template>
       </a-table>
     </BkCard>
   </BkContainer>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.method-url {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  word-break: break-all;
+}
+
+.log-detail :deep(.ant-descriptions-item-content) {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+</style>
