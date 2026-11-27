@@ -9,11 +9,11 @@ import type {
   DictValueVO,
   DictVO,
   IdDTO,
-  PageParams,
+  PageQuery,
 } from "@/api/types";
 
 /** 分页查询系统字典 */
-export const queryDict = defineQuery<DictQueryDTO & PageParams, Dict>("/sys/dict/query");
+export const queryDict = defineQuery<PageQuery<DictQueryDTO>, Dict>("/sys/dict/query");
 
 /** 按字典键查询字典 */
 export const getDictByKey = defineGet<{ dictKey: string }, DictVO>("/sys/dict/getByKey");

@@ -25,8 +25,8 @@ async function loadList() {
   loading.value = true;
   try {
     const result = await deptApi.queryDept({ ...query });
-    rows.value = result.data?.rows ?? [];
-    total.value = result.data?.total ?? 0;
+    rows.value = result.data ?? [];
+    total.value = result.total ?? 0;
   } finally {
     loading.value = false;
   }
@@ -64,7 +64,7 @@ const parentOptions = ref<{ label: string; value: string }[]>([]);
 async function loadOptions() {
   const deptResult = await deptApi.queryDept({ page: 1, pageSize: 100 });
   parentOptions.value = [{ label: "顶级部门", value: "0" }].concat(
-    (deptResult.data?.rows ?? []).map((d) => ({ label: d.name ?? "", value: d.deptId ?? "" })),
+    (deptResult.data ?? []).map((d) => ({ label: d.name ?? "", value: d.deptId ?? "" })),
   );
 }
 

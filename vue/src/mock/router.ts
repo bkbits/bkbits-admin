@@ -211,7 +211,7 @@ route("GET", "/publicKey", () => ok(mockPublicKey));
 route("GET", "/sys/user/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.users.map(toPublicUser), query);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 function findUserBy(key: string, value: string) {
@@ -310,13 +310,10 @@ route("GET", "/sys/user/listRoles", (ctx) => {
   return ok(db.roles.filter((r) => roleIds.includes(r.id ?? "")));
 });
 
-route("POST", "/sys/user/queryLoginUser", (ctx) => {
-  const body = (ctx.body ?? {}) as Record<string, string>;
-  const page = body.page ?? ctx.query.page;
-  const pageSize = body.pageSize ?? ctx.query.pageSize;
-  const { page: _p, pageSize: _ps, ...query } = { ...ctx.query, ...body };
+route("GET", "/sys/user/queryLoginUser", (ctx) => {
+  const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.onlineUsers, query);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("POST", "/sys/user/updateMyPassword", (ctx) => {
@@ -337,7 +334,7 @@ route("POST", "/sys/user/updateMyPassword", (ctx) => {
 route("GET", "/sys/role/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.roles, query);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/role/getById", (ctx) => {
@@ -501,7 +498,7 @@ route("POST", "/sys/permission/remove", (ctx) => {
 route("GET", "/sys/dept/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.depts, query);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/dept/getById", (ctx) => {
@@ -561,7 +558,7 @@ route("POST", "/sys/dept/remove", (ctx) => {
 route("GET", "/sys/param/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.params, query, ["paramKey", "name"]);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/param/getById", (ctx) => {
@@ -633,7 +630,7 @@ function dictToVO(dict: Dict): Dict {
 route("GET", "/sys/dict/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.dicts.map(dictToVO), query, ["dictKey", "name"]);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/dict/getByKey", (ctx) => {
@@ -824,7 +821,7 @@ route("POST", "/file/task/finish", (ctx) => {
 route("GET", "/sys/log/login/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.loginLogs, query, ["createBy"]);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/log/login/getById", (ctx) => {
@@ -842,7 +839,7 @@ route("POST", "/sys/log/login/remove", (ctx) => {
 route("GET", "/sys/log/operation/query", (ctx) => {
   const { page, pageSize, ...query } = ctx.query;
   const rows = filterRows(db.operationLogs, query, ["name", "module", "createBy"]);
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });
 
 route("GET", "/sys/log/operation/getById", (ctx) => {
@@ -866,5 +863,5 @@ route("GET", "/notification/list", (ctx) => {
     query,
     ["title", "content"],
   );
-  return ok(paginate(rows, page, pageSize));
+  return paginate(rows, page, pageSize);
 });

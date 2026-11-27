@@ -54,10 +54,10 @@ public class UserController {
      * @return 分页结果
      */
     @ApiOperation("查询在线用户")
-    @Post
+    @Get
     @Mapping("/queryLoginUser")
     @SaCheckPermission("admin.user.queryLoginUser")
-    public PageResult<LoginUser> queryLoginUser(@Body UserAddUpdateDTO dto) {
+    public PageResult<LoginUser> queryLoginUser(UserQueryDTO dto) {
         return LoginUtil.pageLoginUser(PageQuery.current());
     }
 

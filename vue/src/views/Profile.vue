@@ -60,7 +60,7 @@ async function loadProfile() {
     resetForm();
   }
   if (departments.status === "fulfilled" && departments.value.ok) {
-    deptOptions.value = (departments.value.data?.rows ?? []).flatMap((dept) =>
+    deptOptions.value = (departments.value.data ?? []).flatMap((dept) =>
       dept.deptId ? [{ label: dept.name || dept.deptId, value: dept.deptId }] : [],
     );
   }

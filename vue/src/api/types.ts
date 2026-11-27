@@ -1,5 +1,11 @@
 // 本文件由脚本从后端 Swagger 文档 (http://localhost:8088/swagger/v2?group=adminApi) 自动生成，勿手动修改。
 
+export interface ApiConfig {
+  showFail?: boolean | string;
+  showOk?: boolean | string;
+  timeout?: number;
+}
+
 /** 后端统一响应包装 */
 export interface Result<T = unknown> {
   /** 是否成功 */
@@ -14,16 +20,10 @@ export interface Result<T = unknown> {
   total?: number;
 }
 
-/** 分页数据体 */
-export interface PageData<T> {
-  /** 总条数 */
-  total: number;
-  /** 当前页数据 */
-  rows: T[];
-}
-
 /** 分页响应包装 */
-export type PageResult<T> = Result<PageData<T>>;
+export interface PageResult<T> extends Result<T[]> {
+  total: number;
+}
 
 /** 分页查询扩展参数（后端 Swagger 未列出，mock 层支持） */
 export interface PageParams {
@@ -32,6 +32,8 @@ export interface PageParams {
   /** 每页条数 */
   pageSize?: number;
 }
+
+export type PageQuery<T extends Record<string, any>> = PageParams & T;
 
 /** 通用删除入参 */
 export interface IdDTO {

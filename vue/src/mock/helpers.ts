@@ -88,12 +88,18 @@ export function now(): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
 
-/** 简单分页工具（page/pageSize 兼容字符串与数字） */
+/** 分页响应（与后端 PageResult 一致：total 在根级，data 为当前页数据） */
 export function paginate<T>(rows: T[], page?: string | number, pageSize?: string | number) {
   const p = Math.max(1, Number(page) || 1);
   const size = Math.max(1, Number(pageSize) || 10);
   const start = (p - 1) * size;
-  return { total: rows.length, rows: rows.slice(start, start + size) };
+  return {
+    ok: true,
+    code: 200,
+    message: "操作成功",
+    total: rows.length,
+    data: rows.slice(start, start + size),
+  };
 }
 
 /** 安全字符串化（对象转 JSON，避免 [object Object]） */

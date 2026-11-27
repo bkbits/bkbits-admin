@@ -1,41 +1,20 @@
 import { http } from "@/api/http";
-import type { PageData, Result } from "@/api/types";
+import type { PageResult, Result } from "@/api/types";
 
 /**
- * 将后端分页响应适配为 { rows, total }：
- * - 后端实时契约：`{ ok, code, total, data: [...] }`（total 在根级，data 为数组）
- * - mock 兼容：`{ ok, code, data: { total, rows } }`
+ * 补全分页总条数（后端在根级返回 total，data 为当前页数据）。
  */
-function toPageResult<Row>(result: Result<Row[] | PageData<Row>>): Result<PageData<Row>> {
-  const data = result.data;
-  if (Array.isArray(data)) {
-    return { ...result, data: { rows: data, total: result.total ?? data.length } };
-  }
-  if (data && Array.isArray(data.rows)) {
-    return {
-      ...result,
-      data: { rows: data.rows, total: data.total ?? result.total ?? data.rows.length },
-    };
-  }
-  return { ...result, data: { rows: [], total: result.total ?? 0 } };
+function toPageResult<Row>(result: Result<Row[]>): PageResult<Row> {
+  return { ...result, total: result.total ?? result.data?.length ?? 0 };
 }
 
 /**
- * defineQuery —— GET 分页查询（query 参数），返回统一的分页数据体。
- * 例：const queryDept = defineQuery<DeptQueryDTO & PageParams, Dept>("/sys/dept/query");
+ * defineQuery —— GET 分页查询（query 参数），返回分页数据体。
+ * 例：const queryDept = defineQuery<PageQuery<DeptQueryDTO>, Dept>("/sys/dept/query");
  */
-export function defineQuery<Params, Row>(url: string) {
-  return async (params?: Params): Promise<Result<PageData<Row>>> =>
-    toPageResult(await http.get<Row[] | PageData<Row>>(url, { params }));
-}
-
-/**
- * definePagePost —— POST 分页查询（JSON body），返回统一的分页数据体。
- * 例：const queryLoginUser = definePagePost<UserQueryDTO & PageParams, LoginUser>("/sys/user/queryLoginUser");
- */
-export function definePagePost<Body, Row>(url: string) {
-  return async (data?: Body): Promise<Result<PageData<Row>>> =>
-    toPageResult(await http.post<Row[] | PageData<Row>>(url, data));
+export function defineQuery<Query, Row>(url: string) {
+  return async (params?: Query): Promise<PageResult<Row>> =>
+    toPageResult(await http.get<Row[]>(url, { params }));
 }
 
 /**

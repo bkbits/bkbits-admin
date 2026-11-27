@@ -3,7 +3,7 @@ import type {
   BindDataPermissionsToRoleDTO,
   BindPermissionsToRoleDTO,
   IdDTO,
-  PageParams,
+  PageQuery,
   Permission,
   Role,
   RoleAddDTO,
@@ -13,14 +13,14 @@ import type {
 import { flattenPermissionTree } from "@/api/modules/permission";
 
 /** 角色分页查询条件 */
-export interface RoleQueryDTO extends PageParams {
+export interface RoleQueryDTO {
   code?: string;
   name?: string;
   status?: string;
 }
 
 /** 分页查询角色 */
-export const queryRole = defineQuery<RoleQueryDTO, Role>("/sys/role/query");
+export const queryRole = defineQuery<PageQuery<RoleQueryDTO>, Role>("/sys/role/query");
 
 /** 按编号查询角色 */
 export const getRoleById = defineGet<{ id: string }, Role>("/sys/role/getById");

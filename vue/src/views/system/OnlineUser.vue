@@ -26,8 +26,8 @@ async function loadList() {
       pageSize: query.pageSize,
     });
     if (result.ok) {
-      rows.value = result.data?.rows ?? [];
-      total.value = result.data?.total ?? 0;
+      rows.value = result.data ?? [];
+      total.value = result.total ?? 0;
     }
   } finally {
     loading.value = false;
@@ -59,7 +59,7 @@ const deptOptions = ref<{ label: string; value: string }[]>([]);
 
 async function loadOptions() {
   const deptResult = await deptApi.queryDept({ page: 1, pageSize: 100 });
-  deptOptions.value = (deptResult.data?.rows ?? []).map((d) => ({
+  deptOptions.value = (deptResult.data ?? []).map((d) => ({
     label: d.name ?? "",
     value: d.deptId ?? "",
   }));

@@ -86,11 +86,11 @@ onMounted(async () => {
     logApi.queryLoginLog({ page: 1, pageSize: 5 }),
     ...cards.map(async ({ key, query }) => {
       const result = await query({ page: 1, pageSize: 1 });
-      if (result.ok) stats[key] = result.data?.total;
+      if (result.ok) stats[key] = result.total;
     }),
   ]);
   if (logs.status === "fulfilled" && logs.value.ok) {
-    recentLogs.value = logs.value.data?.rows ?? [];
+    recentLogs.value = logs.value.data ?? [];
   } else {
     logsUnavailable.value = true;
   }

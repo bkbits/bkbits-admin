@@ -1,9 +1,9 @@
-import { defineGet, definePagePost, definePost, defineQuery } from "@/api/define";
+import { defineGet, definePost, defineQuery } from "@/api/define";
 import type {
   BindRolesToUserDTO,
   IdDTO,
   LoginUser,
-  PageParams,
+  PageQuery,
   Role,
   UserAddDTO,
   UserQueryDTO,
@@ -14,7 +14,7 @@ import type {
 } from "@/api/types";
 
 /** 分页查询用户 */
-export const queryUser = defineQuery<UserQueryDTO & PageParams, UserVO>("/sys/user/query");
+export const queryUser = defineQuery<PageQuery<UserQueryDTO>, UserVO>("/sys/user/query");
 
 /** 按编号查询用户 */
 export const getUserByUserId = defineGet<{ userId: string }, UserVO>("/sys/user/getByUserId");
@@ -54,6 +54,6 @@ export const updateMyPassword = definePost<UserUpdateMyPasswordDTO, unknown>(
 );
 
 /** 分页查询在线用户 */
-export const queryOnlineUser = definePagePost<UserQueryDTO & PageParams, LoginUser>(
+export const queryOnlineUser = defineQuery<PageQuery<UserQueryDTO>, LoginUser>(
   "/sys/user/queryLoginUser",
 );

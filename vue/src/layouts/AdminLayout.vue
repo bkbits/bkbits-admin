@@ -206,7 +206,7 @@ const notifications = ref<Notification[]>([]);
 
 async function loadNotifications() {
   const result = await notificationApi.listNotification({ page: 1, pageSize: 20 });
-  notifications.value = result.data?.rows ?? [];
+  notifications.value = result.data ?? [];
 }
 
 /* ------------------------------ 用户 ------------------------------ */

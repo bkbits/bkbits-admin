@@ -37,8 +37,8 @@ async function loadList() {
   loading.value = true;
   try {
     const result = await queryOperationLog({ ...query });
-    rows.value = result.data?.rows ?? [];
-    total.value = result.data?.total ?? 0;
+    rows.value = result.data ?? [];
+    total.value = result.total ?? 0;
   } finally {
     loading.value = false;
   }

@@ -6,11 +6,11 @@ import type {
   DeptUpdateDTO,
   DeptVO,
   IdDTO,
-  PageParams,
+  PageQuery,
 } from "@/api/types";
 
 /** 分页查询部门 */
-export const queryDept = defineQuery<DeptQueryDTO & PageParams, Dept>("/sys/dept/query");
+export const queryDept = defineQuery<PageQuery<DeptQueryDTO>, Dept>("/sys/dept/query");
 
 /** 按编号查询部门 */
 export const getDeptById = defineGet<{ deptId: string }, DeptVO>("/sys/dept/getById");

@@ -1,7 +1,7 @@
 import { defineGet, definePost, defineQuery } from "@/api/define";
 import type {
   IdDTO,
-  PageParams,
+  PageQuery,
   ParamAddDTO,
   ParamQueryDTO,
   ParamUpdateDTO,
@@ -9,7 +9,7 @@ import type {
 } from "@/api/types";
 
 /** 分页查询系统参数 */
-export const queryParam = defineQuery<ParamQueryDTO & PageParams, ParamVO>("/sys/param/query");
+export const queryParam = defineQuery<PageQuery<ParamQueryDTO>, ParamVO>("/sys/param/query");
 
 /** 按编号查询系统参数 */
 export const getParamById = defineGet<{ id: string }, ParamVO>("/sys/param/getById");

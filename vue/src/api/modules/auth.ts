@@ -1,5 +1,5 @@
-import { defineGet, definePagePost, definePost } from "@/api/define";
-import type { LoginDTO, LoginUser, PageParams, Result, UserQueryDTO } from "@/api/types";
+import { defineGet, definePost, defineQuery } from "@/api/define";
+import type { LoginDTO, LoginUser, PageQuery, Result, UserQueryDTO } from "@/api/types";
 
 /** 登录 */
 export const login = definePost<LoginDTO, LoginUser>("/login");
@@ -25,7 +25,7 @@ export interface RegisterDTO extends LoginDTO {
 export const register = definePost<RegisterDTO, unknown>("/register");
 
 /** 分页查询在线用户 */
-export const queryLoginUser = definePagePost<UserQueryDTO & PageParams, LoginUser>(
+export const queryLoginUser = defineQuery<PageQuery<UserQueryDTO>, LoginUser>(
   "/sys/user/queryLoginUser",
 );
 

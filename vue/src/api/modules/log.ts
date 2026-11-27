@@ -1,5 +1,5 @@
 import { defineGet, definePost, defineQuery } from "@/api/define";
-import type { IdDTO, PageParams } from "@/api/types";
+import type { IdDTO, PageQuery } from "@/api/types";
 
 /** 登录日志 */
 export interface LoginLogVO {
@@ -96,7 +96,7 @@ export interface OperationLogQueryDTO {
 /* ------------------------------ 登录日志 ------------------------------ */
 
 /** 分页查询登录日志 */
-export const queryLoginLog = defineQuery<LoginLogQueryDTO & PageParams, LoginLogVO>(
+export const queryLoginLog = defineQuery<PageQuery<LoginLogQueryDTO>, LoginLogVO>(
   "/sys/log/login/query",
 );
 
@@ -109,7 +109,7 @@ export const removeLoginLog = definePost<IdDTO, unknown>("/sys/log/login/remove"
 /* ------------------------------ 操作日志 ------------------------------ */
 
 /** 分页查询操作日志 */
-export const queryOperationLog = defineQuery<OperationLogQueryDTO & PageParams, OperationLogVO>(
+export const queryOperationLog = defineQuery<PageQuery<OperationLogQueryDTO>, OperationLogVO>(
   "/sys/log/operation/query",
 );
 
